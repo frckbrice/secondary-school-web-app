@@ -475,7 +475,7 @@ export default function StudentsManagement() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Classes</SelectItem>
-                    {availableClasses.map((className: string) => (
+                    {availableClasses.map(className => (
                       <SelectItem key={className} value={className}>
                         {className}
                       </SelectItem>
@@ -490,7 +490,7 @@ export default function StudentsManagement() {
                     <SelectValue placeholder="Gender" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Genders</SelectItem>
+                    {/* <SelectItem value="all">All Genders</SelectItem> */}
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
                   </SelectContent>

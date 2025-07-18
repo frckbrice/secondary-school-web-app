@@ -12,7 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  swcMinify: true, // ✅ Only a boolean here
 };
 
 module.exports = nextConfig;
