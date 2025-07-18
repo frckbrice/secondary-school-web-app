@@ -449,7 +449,7 @@ export default function EventsManagement() {
                     <p className="text-2xl font-bold">
                       {
                         eventsDataEvents.filter(
-                          e => new Date(e.eventDate) >= new Date()
+                          (e: Event) => new Date(e.eventDate) >= new Date()
                         ).length
                       }
                     </p>
@@ -467,7 +467,7 @@ export default function EventsManagement() {
                     </p>
                     <p className="text-2xl font-bold">
                       {eventsDataEvents.reduce(
-                        (sum, e) => sum + e.currentAttendees,
+                        (sum: number, e: Event) => sum + e.currentAttendees,
                         0
                       )}
                     </p>
@@ -484,7 +484,10 @@ export default function EventsManagement() {
                       Published
                     </p>
                     <p className="text-2xl font-bold">
-                      {eventsDataEvents.filter(e => e.isPublished).length}
+                      {
+                        eventsDataEvents.filter((e: Event) => e.isPublished)
+                          .length
+                      }
                     </p>
                   </div>
                 </div>
@@ -802,7 +805,7 @@ export default function EventsManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {eventsDataEvents.map(event => {
+                      {eventsDataEvents.map((event: Event) => {
                         const dateStatus = getDateStatus(event.eventDate);
                         return (
                           <TableRow key={event.id}>

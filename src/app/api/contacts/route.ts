@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
       status: status || undefined,
       inquiryType: inquiryType || undefined,
       respondedBy: respondedBy || undefined,
+      page: pageNum,
       limit: limitNum,
-      offset,
     });
 
     if (!result.success) {

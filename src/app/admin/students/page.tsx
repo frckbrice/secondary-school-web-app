@@ -323,7 +323,9 @@ export default function StudentsManagement() {
   };
 
   // Get unique classes for filter
-  const availableClasses = Array.from(new Set(students.map(s => s.className)));
+  const availableClasses: string[] = Array.from(
+    new Set(students.map((s: Student) => s.className))
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -386,7 +388,7 @@ export default function StudentsManagement() {
                       Active Students
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {students.filter(s => s.isActive).length}
+                      {students.filter((s: Student) => s.isActive).length}
                     </p>
                   </div>
                 </div>
@@ -403,7 +405,10 @@ export default function StudentsManagement() {
                       Male Students
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {students.filter(s => s.gender === 'male').length}
+                      {
+                        students.filter((s: Student) => s.gender === 'male')
+                          .length
+                      }
                     </p>
                   </div>
                 </div>
@@ -420,7 +425,10 @@ export default function StudentsManagement() {
                       Female Students
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {students.filter(s => s.gender === 'female').length}
+                      {
+                        students.filter((s: Student) => s.gender === 'female')
+                          .length
+                      }
                     </p>
                   </div>
                 </div>
@@ -467,7 +475,7 @@ export default function StudentsManagement() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Classes</SelectItem>
-                    {availableClasses.map(className => (
+                    {availableClasses.map((className: string) => (
                       <SelectItem key={className} value={className}>
                         {className}
                       </SelectItem>
@@ -740,7 +748,7 @@ export default function StudentsManagement() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {students.map(student => (
+                          {students.map((student: Student) => (
                             <TableRow key={student.id}>
                               <TableCell>
                                 <div>

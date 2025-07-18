@@ -72,18 +72,6 @@ export async function POST(request: NextRequest) {
       folder: folder,
       public_id: publicId,
       resource_type: resourceType,
-      allowed_formats: [
-        'pdf',
-        'jpg',
-        'jpeg',
-        'png',
-        'doc',
-        'docx',
-        'txt',
-        'csv',
-        'xls',
-        'xlsx',
-      ],
     });
 
     return NextResponse.json(

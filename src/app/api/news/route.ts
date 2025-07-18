@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
       category: category || undefined,
       page: pageNum,
       limit: limitNum,
-      search: search || undefined,
     });
 
     if (!result.success) {

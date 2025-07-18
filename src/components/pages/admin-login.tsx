@@ -31,6 +31,9 @@ export function AdminLogin() {
         username,
         password,
       });
+      if (!res) {
+        throw new Error('No response received');
+      }
       const response = await res.json();
 
       if (response.success) {

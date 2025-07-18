@@ -85,8 +85,7 @@ export default function GalleryPage() {
   );
 
   // Flattened gallery list
-  const galleryImages: Gallery[] =
-    data?.pages?.flatMap(page => page.data) || [];
+  const galleryImages: Gallery[] = data?.data || [];
 
   // Intersection observer for infinite scroll
   const { ref: loadMoreRef } = useInfiniteScroll(

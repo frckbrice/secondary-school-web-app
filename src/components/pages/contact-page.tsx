@@ -59,6 +59,9 @@ export default function ContactPage() {
   const submitContact = useMutation({
     mutationFn: async (data: InsertContact) => {
       const response = await apiRequest('POST', '/api/contacts', data);
+      if (!response) {
+        throw new Error('No response received');
+      }
       return response.json();
     },
     onSuccess: () => {

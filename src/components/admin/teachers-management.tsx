@@ -232,7 +232,7 @@ export default function TeachersManagement() {
       gender: teacher.gender,
       email: teacher.email,
       phone: teacher.phone || '',
-      subject: teacher.subject,
+      subject: teacher.subject || '',
       status: teacher.status,
     });
     setIsEditDialogOpen(true);

@@ -239,7 +239,7 @@ export const SingleImageUpload: React.FC<
         <div className="relative group">
           <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
             <Image
-              src={uploadedImage?.secure_url || value}
+              src={uploadedImage?.secure_url || value || ''}
               alt="Current"
               width={200}
               height={200}
