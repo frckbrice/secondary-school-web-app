@@ -21,17 +21,32 @@ A modern, fullstack school management platform built with Next.js 15, TypeScript
 ## 🗂️ Project Structure
 
 ```
-src/
-├── app/                    # Next.js App Router
-│   ├── admin/             # Admin dashboard routes
-│   ├── api/               # API routes
-│   ├── ...                # Other pages/routes
-├── components/            # React components (UI, admin, pages, providers)
-├── hooks/                 # Custom React hooks
-├── lib/                   # Utilities, db, services
-├── types/                 # TypeScript types
-├── utils/                 # Test/data utilities
+├── public/                  # Static assets
+│   ├── images/             # Static images (school photos, logos, etc.)
+│   ├── grading-templates/  # Excel templates for grade reports
+│   ├── sample-documents/   # Sample PDFs and documents
+│   └── favicon.png         # Site favicon
+├── src/
+│   ├── app/                # Next.js App Router
+│   │   ├── admin/          # Admin dashboard routes
+│   │   ├── api/            # API routes
+│   │   └── ...             # Other pages/routes
+│   ├── components/         # React components (UI, admin, pages, providers)
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Utilities, db, services
+│   ├── types/              # TypeScript types
+│   └── utils/              # Test/data utilities
+├── migrations/             # Database migrations
+└── docs/                   # Documentation
 ```
+
+## 📁 Static Assets
+
+- **Images**: Place all static images in `/public/images/*`
+  - School photos, logos, and static content images
+  - Accessible via `/images/filename.ext` in the app
+- **Documents**: Sample documents in `/public/sample-documents/*`
+- **Templates**: Grading templates in `/public/grading-templates/*`
 
 ## 🛠️ Setup
 
