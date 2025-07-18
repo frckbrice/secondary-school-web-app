@@ -1,0 +1,40 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+
+# env
+.env 
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.replit
+
+*.txt
+*.csv
+
+scripts/
+docs/
+.nest
+scripts/
+.replit
+sample_students.csv
+ADMIN_ACCESS.md
+cookies.txt
+super_cookies.txt
+.next
+shared/
+
+# API_ROUTES.md
+CLOUDINARY_INTEGRATION_SUMMARY.md
+CLOUDINARY_SETUP.md
+CRUD_TEST_REPORT.md
+FRONTEND_MIGRATION_GUIDE.md
+MIGRATION_SUMMARY.md
+PAGINATION_UPDATE_SUMMARY.md
+# STUDENT_PORTAL_TESTING_GUIDE.md
+USER_FORMS_TEST_REPORT.md

@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1751603587839,
+      "tag": "0000_little_phalanx",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751741724368,
+      "tag": "0001_overconfident_ricochet",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751753373071,
+      "tag": "0002_smart_arclight",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752019984329,
+      "tag": "0003_legal_blue_blade",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true, // Must be false to fully suppress type errors
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true, // Moved inside compilerOptions
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "config/**/*.ts",
+    "drizzle.config.ts",
+    "index.ts",
+    "middlewares/**/*.ts",
+    "server/**/*.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "**/node_modules/drizzle-orm/sqlite-core/**",
+    "**/node_modules/drizzle-orm/singlestore-core/**",
+    "**/node_modules/drizzle-orm/mysql-core/**",
+    "**/node_modules/drizzle-orm/sqlite-core*",
+    "**/node_modules/.pnpm/**/sqlite-core*"
+  ]
+}
