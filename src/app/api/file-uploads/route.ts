@@ -46,14 +46,6 @@ export async function POST(request: NextRequest) {
     const relatedId = formData.get('relatedId') as string;
     const uploadedBy = formData.get('uploadedBy') as string;
 
-    console.log('File upload request:', {
-      fileName: file?.name,
-      fileSize: file?.size,
-      relatedType,
-      relatedId,
-      uploadedBy,
-    });
-
     // Validate required fields
     if (!file || !relatedType || !relatedId || !uploadedBy) {
       return NextResponse.json(
@@ -78,10 +70,7 @@ export async function POST(request: NextRequest) {
       uploadedBy: uploadedBy ?? '',
     };
 
-    console.log('File upload data before validation:', fileUploadData);
-
     const validatedData = insertFileUploadSchema.parse(fileUploadData);
-    console.log('File upload data after validation:', validatedData);
 
     const result = await DataService.createFileUpload(validatedData);
 

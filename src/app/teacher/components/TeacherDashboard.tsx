@@ -1,19 +1,18 @@
 'use client';
 
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  createContext,
-  useContext,
-} from 'react';
+import React, { useState, useMemo, createContext, useContext } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import * as XLSX from 'xlsx';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
 import {
   Plus,
   Home,
@@ -35,31 +34,35 @@ import {
   MessageSquare,
   Upload,
 } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
-import { useAuth } from '../../hooks/use-auth';
-import { apiRequest, queryClient } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
+import { useLanguage } from '../../../hooks/use-language';
+import { useAuth } from '../../../hooks/use-auth';
+import { apiRequest, queryClient } from '../../../lib/queryClient';
+import { useToast } from '../../../hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { TeacherSidebar } from '../ui/teacher-sidebar';
-import type { GradeReport, StudentGrade } from '../../schema';
+import { TeacherSidebar } from '../../../components/ui/teacher-sidebar';
+import type { GradeReport, StudentGrade } from '../../../schema';
 import Link from 'next/link';
-import { Input } from '../ui/input';
+import { Input } from '../../../components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '../ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Badge } from '../ui/badge';
+} from '../../../components/ui/dropdown-menu';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '../../../components/ui/avatar';
+import { Badge } from '../../../components/ui/badge';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
+} from '../../../components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -67,17 +70,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
+} from '../../../components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { Textarea } from '../ui/textarea';
+} from '../../../components/ui/select';
+import { Textarea } from '../../../components/ui/textarea';
 import { Edit, Trash2 } from 'lucide-react';
-import { Label } from '../ui/label';
+import { Label } from '../../../components/ui/label';
 
 interface GradeStatistics {
   totalStudents: number;
@@ -2404,8 +2407,8 @@ export default function TeacherDashboard() {
       }
     }, []);
 
-    let compCoords = null;
-    let statsCoords = null;
+    let compCoords: any = null;
+    let statsCoords: any = null;
     for (let i = 0; i < allRows.length; i++) {
       for (let j = 0; j < allRows[i].length; j++) {
         if (allRows[i][j] === 'COMPETENCES TRIMESTRIELLES VISEES') {

@@ -58,18 +58,16 @@ import {
   Edit,
   Trash2,
   Eye,
-  Filter,
   Clock,
   Calendar,
   ArrowLeft,
   CheckCircle,
   XCircle,
   AlertCircle,
-  User,
-  Mail,
-  Phone,
   Download,
   Send,
+  Mail,
+  Phone,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -91,7 +89,7 @@ interface Application {
 
 export default function ApplicationsManagement() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+
   const { toast } = useToast();
   const router = useRouter();
 
@@ -242,7 +240,7 @@ export default function ApplicationsManagement() {
       setFilteredApplications(mockApplications);
       setIsLoading(false);
     }, 1000);
-  }, []);
+  }, [mockApplications]);
 
   useEffect(() => {
     let filtered = applications;
@@ -352,7 +350,7 @@ export default function ApplicationsManagement() {
               ...app,
               status: reviewData.status,
               reviewedAt: new Date().toISOString(),
-              reviewedBy: user?.id || 1,
+              reviewedBy: typeof user?.id === 'number' ? user.id : 1,
               reviewerName: user?.fullName || 'Admin User',
               notes: reviewData.notes,
             }

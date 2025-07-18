@@ -41,7 +41,6 @@ export async function GET(request: NextRequest) {
       pagination: result.data?.pagination,
     });
   } catch (error: any) {
-    console.error('Get applications error:', error);
     return NextResponse.json(
       { success: false, message: 'Internal server error' },
       { status: 500 }
@@ -84,7 +83,6 @@ export async function POST(request: NextRequest) {
       application: result.data,
     });
   } catch (error: any) {
-    console.error('Create application error:', error);
     return NextResponse.json(
       { success: false, message: 'Internal server error' },
       { status: 500 }

@@ -21,8 +21,6 @@ export class CRUDTester {
 
   // Test Booking Management CRUD
   async testBookingCRUD(): Promise<CRUDTestResult[]> {
-    console.log('🧪 Testing Booking Management CRUD...');
-
     const testData = mockBookingData.sampleBookings[0];
 
     try {
@@ -120,8 +118,6 @@ export class CRUDTester {
 
   // Test Application Management CRUD
   async testApplicationCRUD(): Promise<CRUDTestResult[]> {
-    console.log('🧪 Testing Application Management CRUD...');
-
     const testData = mockApplicationData.sampleApplications[0];
 
     try {
@@ -219,8 +215,6 @@ export class CRUDTester {
 
   // Test Contact Management CRUD
   async testContactCRUD(): Promise<CRUDTestResult[]> {
-    console.log('🧪 Testing Contact Management CRUD...');
-
     const testData = mockContactData.sampleContacts[0];
 
     try {
@@ -321,8 +315,6 @@ export class CRUDTester {
 
   // Test News Management CRUD
   async testNewsCRUD(): Promise<CRUDTestResult[]> {
-    console.log('🧪 Testing News Management CRUD...');
-
     const testData = {
       title: 'Test News Article',
       titleFr: 'Article de test',
@@ -428,8 +420,6 @@ export class CRUDTester {
 
   // Test Facilities Management CRUD
   async testFacilitiesCRUD(): Promise<CRUDTestResult[]> {
-    console.log('🧪 Testing Facilities Management CRUD...');
-
     const testData = {
       name: 'Test Laboratory',
       nameFr: 'Laboratoire de test',
@@ -537,8 +527,6 @@ export class CRUDTester {
 
   // Test Achievements Management CRUD
   async testAchievementsCRUD(): Promise<CRUDTestResult[]> {
-    console.log('🧪 Testing Achievements Management CRUD...');
-
     const testData = {
       title: 'Test Achievement',
       titleFr: 'Réussite de test',
@@ -646,8 +634,6 @@ export class CRUDTester {
 
   // Run all CRUD tests
   async runAllTests(): Promise<CRUDTestResult[]> {
-    console.log('🚀 Starting comprehensive CRUD testing...');
-
     await this.testBookingCRUD();
     await this.testApplicationCRUD();
     await this.testContactCRUD();
@@ -655,7 +641,6 @@ export class CRUDTester {
     await this.testFacilitiesCRUD();
     await this.testAchievementsCRUD();
 
-    console.log('✅ All CRUD tests completed!');
     return this.results;
   }
 
@@ -714,6 +699,5 @@ export const crudTester = new CRUDTester();
 export const runCRUDTests = async () => {
   const results = await crudTester.runAllTests();
   const report = crudTester.generateReport();
-  console.log(report);
   return { results, report };
 };

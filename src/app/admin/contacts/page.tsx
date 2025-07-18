@@ -58,7 +58,6 @@ import {
   Edit,
   Trash2,
   Eye,
-  Filter,
   Clock,
   Calendar,
   ArrowLeft,
@@ -72,7 +71,6 @@ import {
   Reply,
   Archive,
   Star,
-  MapPin,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -103,7 +101,7 @@ interface Contact {
 
 export default function ContactsManagement() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+
   const { toast } = useToast();
   const router = useRouter();
 
@@ -416,7 +414,7 @@ export default function ContactsManagement() {
               status: responseData.status,
               response: responseData.response,
               respondedAt: new Date().toISOString(),
-              respondedBy: user?.id,
+              respondedBy: typeof user?.id === 'number' ? user.id : undefined,
               responderName: user?.username,
             }
           : contact

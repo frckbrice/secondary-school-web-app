@@ -1,0 +1,9 @@
+{
+    "jsc": {
+        "minify": {
+            "compress": {
+                "drop_console": true
+            }
+        }
+    }
+}

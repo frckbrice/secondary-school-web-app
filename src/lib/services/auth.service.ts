@@ -104,7 +104,6 @@ export class AuthService {
         message: 'Invalid credentials',
       };
     } catch (error) {
-      console.error('Authentication error:', error);
       return {
         success: false,
         message: 'Internal server error',
@@ -175,7 +174,6 @@ export class AuthService {
         token,
       };
     } catch (error) {
-      console.error('Registration error:', error);
       return {
         success: false,
         message: 'Internal server error',
@@ -233,7 +231,6 @@ export class AuthService {
         message: 'User not found',
       };
     } catch (error) {
-      console.error('Token validation error:', error);
       return {
         success: false,
         message: 'Invalid or expired token',
@@ -280,7 +277,6 @@ export class AuthService {
 
       return null;
     } catch (error) {
-      console.error('Get user by ID error:', error);
       return null;
     }
   }
@@ -344,7 +340,6 @@ export class AuthService {
         message: 'User not found',
       };
     } catch (error) {
-      console.error('Update user profile error:', error);
       return {
         success: false,
         message: 'Internal server error',

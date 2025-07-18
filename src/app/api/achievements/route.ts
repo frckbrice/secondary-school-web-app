@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json({ success: true, ...result.data });
   } catch (error) {
-    console.error('Error fetching achievements', error);
     return NextResponse.json(
       { success: false, message: 'Failed to fetch achievements' },
       { status: 500 }
@@ -53,7 +52,6 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json({ success: true, achievement: result.data });
   } catch (error) {
-    console.error('Error creating achievement', error);
     return NextResponse.json(
       { success: false, message: 'Failed to create achievement' },
       { status: 400 }

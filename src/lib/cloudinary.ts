@@ -58,7 +58,6 @@ export class CloudinaryService {
         resource_type: result.resource_type,
       };
     } catch (error) {
-      console.error('Cloudinary upload error:', error);
       throw new Error('Failed to upload image to Cloudinary');
     }
   }
@@ -82,7 +81,6 @@ export class CloudinaryService {
       const result = await cloudinary.uploader.destroy(publicId);
       return result.result === 'ok';
     } catch (error) {
-      console.error('Cloudinary delete error:', error);
       return false;
     }
   }

@@ -15,7 +15,7 @@ A modern, fullstack school management platform built with Next.js 15, TypeScript
 - **Teacher Portal**: Grade reports, student management, import/export
 - **SEO & PWA**: SEO-optimized, installable, offline support
 - **Accessibility**: WCAG AA, keyboard navigation, ARIA labels
-- **Testing**: Jest, React Testing Library, Playwright (E2E)
+- **Testing**: Vitest, React Testing Library, Playwright (E2E)
 - **Dev Experience**: TypeScript, ESLint, Prettier, hot reload
 
 ## 🗂️ Project Structure
@@ -37,8 +37,8 @@ src/
 
 1. **Clone & Install**
    ```bash
-   git clone <repo-url>
-   cd gbhs_bafia_website_copie
+   git clone git@github.com:frckbrice/secondary-school-web-app.git
+   cd secondary-school-web-app
    yarn install
    ```
 2. **Configure Environment**
@@ -50,7 +50,7 @@ src/
      yarn run db:generate
      yarn run db:push
      # (Optional) Seed sample data
-     yarn run db:seed
+     yarn run db:setup
      ```
 4. **Run Dev Server**
    ```bash
@@ -66,13 +66,13 @@ docker run --name gbhs-postgres \
   -e POSTGRES_DB=gbhs_db \
   -e POSTGRES_USER=gbhs_user \
   -p 5432:5432 \
-  -v gbhs_pgdata:/var/lib/postgresql/data \  // if you need to perist data
+  -v gbhs_pgdata:/var/lib/postgresql/data \
   -d postgres:15
 ```
 
 ## 🧪 Testing
 
-- **Unit/Integration**: `yarn test` (Jest, React Testing Library)
+- **Unit/Integration**: `yarn test` (Vitest, React Testing Library)
 - **E2E**: `yarn run test:e2e` (Playwright)
 - **Custom scripts**: See `src/utils/test-crud.ts`, `src/utils/test-user-forms.ts`
 
@@ -81,6 +81,7 @@ docker run --name gbhs-postgres \
 - **Build**: `yarn run build`
 - **Start**: `yarn run start`
 - **Lint**: `yarn run lint`
+- **Format**: `yarn run format`
 
 ## 📝 Default Logins (after seeding)
 

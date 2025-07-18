@@ -273,7 +273,7 @@ export default function NewsManagement() {
         id: news.length + 1,
         ...formData,
         createdAt: new Date().toISOString().split('T')[0],
-        authorId: user?.id || 1,
+        authorId: typeof user?.id === 'number' ? user.id : 1,
         authorName: user?.fullName || 'Administrator',
         publishedAt: formData.isPublished
           ? new Date().toISOString().split('T')[0]
@@ -849,9 +849,9 @@ export default function NewsManagement() {
                                       Delete News Article
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to delete "
-                                      {newsItem.title}"? This action cannot be
-                                      undone.
+                                      Are you sure you want to delete &quot;
+                                      {newsItem.title}&quot;? This action cannot
+                                      be undone.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
