@@ -8,6 +8,14 @@ import {
 import { Button } from '../../../ui/button';
 import { Input } from '../../../ui/input';
 import { Textarea } from '../../../ui/textarea';
+import {
+  FaWhatsapp,
+  FaTelegram,
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaCopy,
+} from 'react-icons/fa';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -89,26 +97,57 @@ const ShareModal: React.FC<ShareModalProps> = ({
   };
 
   const socialPlatforms = [
-    { name: 'WhatsApp', icon: '💬', color: '#25D366', platform: 'whatsapp' },
-    { name: 'Telegram', icon: '📱', color: '#0088cc', platform: 'telegram' },
-    { name: 'Facebook', icon: '📘', color: '#1877f2', platform: 'facebook' },
-    { name: 'Twitter', icon: '🐦', color: '#1da1f2', platform: 'twitter' },
-    { name: 'LinkedIn', icon: '💼', color: '#0077b5', platform: 'linkedin' },
-    { name: 'Copy Link', icon: '📋', color: '#6c757d', platform: 'copy' },
+    // add specific color to the icons
+    {
+      name: 'WhatsApp',
+      icon: <FaWhatsapp className="text-2xl text-green-500" />,
+      color: '#25D366',
+      platform: 'whatsapp',
+    },
+    {
+      name: 'Telegram',
+      icon: <FaTelegram className="text-2xl text-blue-500" />,
+      color: '#0088cc',
+      platform: 'telegram',
+    },
+    {
+      name: 'Facebook',
+      icon: <FaFacebook className="text-2xl text-blue-500" />,
+      color: '#1877f2',
+      platform: 'facebook',
+    },
+    {
+      name: 'Twitter',
+      icon: <FaTwitter className="text-2xl text-blue-500" />,
+      color: '#1da1f2',
+      platform: 'twitter',
+    },
+    {
+      name: 'LinkedIn',
+      icon: <FaLinkedin className="text-2xl text-blue-500" />,
+      color: '#0077b5',
+      platform: 'linkedin',
+    },
+    {
+      name: 'Copy Link',
+      icon: <FaCopy className="text-2xl text-gray-500" />,
+      color: '#6c757d',
+      platform: 'copy',
+    },
   ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md sm:max-w-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl p-0 overflow-hidden">
+      <DialogContent className="max-w-lg sm:max-w-2xl lg:max-w-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl p-0 overflow-hidden">
         <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
           <DialogTitle className="text-lg sm:text-xl font-semibold">
             {language === 'fr' ? 'Partager le fichier' : 'Share File'}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+        <div className="px-6 sm:px-8 pb-6 sm:pb-8">
           {/* File Info */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-6 sm:mb-8">
             <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">
               {language === 'fr' ? 'Fichier à partager' : 'File to share'}
             </div>
@@ -119,7 +158,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
           </div>
 
           {/* Share Method Tabs */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-6 sm:mb-8">
             <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
               <button
                 onClick={() => setShareMethod('email')}
@@ -146,7 +185,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
 
           {shareMethod === 'email' ? (
             /* Email Sharing */
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   {language === 'fr'
@@ -215,7 +254,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                      <span>📧</span>
+                    <span>📧</span>
                     {language === 'fr' ? 'Envoyer par email' : 'Send via Email'}
                   </div>
                 )}
@@ -223,24 +262,24 @@ const ShareModal: React.FC<ShareModalProps> = ({
             </div>
           ) : (
             /* Social Sharing */
-            <div className="space-y-4">
-                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
-                  <div className="flex items-start gap-2">
-                    <span className="text-green-500 text-lg">🌐</span>
-                    <div className="text-sm text-green-700 dark:text-green-300">
-                      <p className="font-medium mb-1">
-                        {language === 'fr'
-                          ? 'Partagez facilement'
-                          : 'Share easily'}
-                      </p>
-                      <p>
-                        {language === 'fr'
-                          ? 'Partagez le lien du fichier sur vos réseaux sociaux préférés.'
-                          : 'Share the file link on your favorite social networks.'}
-                      </p>
-                    </div>
+            <div className="space-y-6">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <span className="text-green-500 text-lg">🌐</span>
+                  <div className="text-sm text-green-700 dark:text-green-300">
+                    <p className="font-medium mb-1">
+                      {language === 'fr'
+                        ? 'Partagez facilement'
+                        : 'Share easily'}
+                    </p>
+                    <p>
+                      {language === 'fr'
+                        ? 'Partagez le lien du fichier sur vos réseaux sociaux préférés.'
+                        : 'Share the file link on your favorite social networks.'}
+                    </p>
                   </div>
                 </div>
+              </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {socialPlatforms.map(platform => (
@@ -262,13 +301,13 @@ const ShareModal: React.FC<ShareModalProps> = ({
                 ))}
               </div>
 
-                {copySuccess && (
-                  <div className="bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
-                    <span className="text-green-700 dark:text-green-300 text-sm">
-                      ✅ {language === 'fr' ? 'Lien copié !' : 'Link copied!'}
-                    </span>
-                  </div>
-                )}
+              {copySuccess && (
+                <div className="bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
+                  <span className="text-green-700 dark:text-green-300 text-sm">
+                    ✅ {language === 'fr' ? 'Lien copié !' : 'Link copied!'}
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
