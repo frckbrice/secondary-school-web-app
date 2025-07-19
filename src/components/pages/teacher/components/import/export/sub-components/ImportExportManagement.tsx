@@ -103,6 +103,8 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [shareEmail, setShareEmail] = useState('');
   const [shareMessage, setShareMessage] = useState('');
   const [shareLoading, setShareLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<any>(null);
 
   useEffect(() => {
     if (!selectedClass) return;
@@ -1001,53 +1003,9 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                       {language === 'fr' ? 'Partager' : 'Share'}
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={async () => {
-                        if (
-                          !window.confirm(
-                            language === 'fr'
-                              ? 'Voulez-vous vraiment supprimer ce fichier ?'
-                              : 'Are you sure you want to delete this file?'
-                          )
-                        )
-                          return;
-                        try {
-                          const res = await fetch(
-                            `/api/file-uploads/${file.id}`,
-                            { method: 'DELETE' }
-                          );
-                          const data = await res.json();
-                          if (data.success) {
-                            setUploadedFiles(prev =>
-                              prev.filter(f => f.id !== file.id)
-                            );
-                            toast({
-                              title: language === 'fr' ? 'Supprimé' : 'Deleted',
-                              description:
-                                language === 'fr'
-                                  ? 'Fichier supprimé avec succès.'
-                                  : 'File deleted successfully.',
-                            });
-                          } else {
-                            toast({
-                              title: language === 'fr' ? 'Erreur' : 'Error',
-                              description:
-                                data.message ||
-                                (language === 'fr'
-                                  ? 'Échec de la suppression.'
-                                  : 'Failed to delete.'),
-                              variant: 'destructive',
-                            });
-                          }
-                        } catch (err) {
-                          toast({
-                            title: language === 'fr' ? 'Erreur' : 'Error',
-                            description:
-                              language === 'fr'
-                                ? 'Échec de la suppression.'
-                                : 'Failed to delete.',
-                            variant: 'destructive',
-                          });
-                        }
+                      onClick={() => {
+                        setFileToDelete(file);
+                        setShowDeleteModal(true);
                       }}
                       className="flex items-center gap-2 text-red-600 hover:bg-red-50"
                     >
@@ -1069,6 +1027,65 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           </ul>
         )}
       </div>
+      {/* Delete Confirmation Modal */}
+      <ApprovalModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setFileToDelete(null);
+        }}
+        onApprove={async () => {
+          if (!fileToDelete) return;
+          try {
+            const res = await fetch(`/api/file-uploads/${fileToDelete.id}`, {
+              method: 'DELETE',
+            });
+            const data = await res.json();
+            if (data.success) {
+              setUploadedFiles(prev =>
+                prev.filter(f => f.id !== fileToDelete.id)
+              );
+              toast({
+                title: language === 'fr' ? 'Supprimé' : 'Deleted',
+                description:
+                  language === 'fr'
+                    ? 'Fichier supprimé avec succès.'
+                    : 'File deleted successfully.',
+              });
+            } else {
+              toast({
+                title: language === 'fr' ? 'Erreur' : 'Error',
+                description:
+                  data.message ||
+                  (language === 'fr'
+                    ? 'Échec de la suppression.'
+                    : 'Failed to delete.'),
+                variant: 'destructive',
+              });
+            }
+          } catch (err) {
+            toast({
+              title: language === 'fr' ? 'Erreur' : 'Error',
+              description:
+                language === 'fr'
+                  ? 'Échec de la suppression.'
+                  : 'Failed to delete.',
+              variant: 'destructive',
+            });
+          } finally {
+            setShowDeleteModal(false);
+            setFileToDelete(null);
+          }
+        }}
+        message={
+          language === 'fr'
+            ? 'Voulez-vous vraiment supprimer ce fichier ?'
+            : 'Are you sure you want to delete this file?'
+        }
+        isLoading={false}
+        t={t}
+        language={language}
+      />
       {/* */}
 
       {/* Comprehensive Grading Table Modal */}
