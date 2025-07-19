@@ -976,6 +976,75 @@ export class DataService {
     }
   }
 
+  static async getPetitionsWithFilters(filters: {
+    status?: string;
+    petitionType?: string;
+    className?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<ServiceResult<PaginationResult<Petition>>> {
+    try {
+      const conditions: ReturnType<typeof eq>[] = [];
+
+      if (filters.status) {
+        conditions.push(eq(petitions.status, filters.status));
+      }
+      if (filters.petitionType) {
+        conditions.push(eq(petitions.petitionType, filters.petitionType));
+      }
+      if (filters.className) {
+        conditions.push(eq(petitions.className, filters.className));
+      }
+
+      const whereCondition =
+        conditions.length > 0 ? and(...conditions) : undefined;
+
+      // Get total count first
+      const totalCount = await db
+        .select({ count: sql`count(*)` })
+        .from(petitions)
+        .where(whereCondition)
+        .then(result => Number(result[0]?.count || 0));
+
+      // Get pagination parameters
+      const { page, limit, offset } = getPaginationParams({
+        page: filters.page,
+        limit: filters.limit,
+      });
+
+      // Get paginated data
+      const allPetitions = await db.query.petitions.findMany({
+        where: whereCondition,
+        orderBy: [desc(petitions.submittedAt)],
+        limit,
+        offset,
+      });
+
+      const totalPages = Math.ceil(totalCount / limit);
+
+      return {
+        success: true,
+        data: {
+          data: allPetitions,
+          pagination: {
+            page,
+            limit,
+            total: totalCount,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1,
+          },
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to fetch petitions',
+        error,
+      };
+    }
+  }
+
   static async createPetition(
     data: InsertPetition
   ): Promise<ServiceResult<Petition>> {
@@ -1883,6 +1952,19 @@ export class DataService {
       return { success: true, data: newUpload };
     } catch (error) {
       return { success: false, message: 'Failed to create file upload', error };
+    }
+  }
+
+  static async getFileUploadById(id: string): Promise<ServiceResult<FileUpload>> {
+    try {
+      const fileUpload = await db.query.fileUploads.findFirst({
+        where: eq(fileUploads.id, id),
+      });
+      return fileUpload
+        ? { success: true, data: fileUpload }
+        : { success: false, message: 'File upload not found' };
+    } catch (error) {
+      return { success: false, message: 'Failed to fetch file upload', error };
     }
   }
 

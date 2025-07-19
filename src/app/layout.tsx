@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     'Form 6',
     'Form 7',
   ],
-  authors: [{ name: 'GBHS Bafia', url: 'https://gbhsbafia.cm' }],
+  authors: [{ name: 'GBHS Bafia', url: 'https://gbhs-bafia-web-site.vercel.app' }],
   creator: 'GBHS Bafia',
   publisher: 'GBHS Bafia',
   formatDetection: {
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://gbhsbafia.cm'),
+  metadataBase: new URL('https://gbhs-bafia-web-site.vercel.app'),
   alternates: {
     canonical: '/',
     languages: {
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     title: 'GBHS Bafia - Government Bilingual High School',
     description:
       'Premier secondary education in Centre Region, Cameroon. Excellence in academics, sports, and character development. Join our community of learners.',
-    url: 'https://gbhsbafia.cm',
+    url: 'https://gbhs-bafia-web-site.vercel.app',
     siteName: 'GBHS Bafia',
     images: [
       {
@@ -145,19 +145,19 @@ export const metadata: Metadata = {
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'EducationalOrganization',
-  '@id': 'https://gbhsbafia.cm/#organization',
+  '@id': 'https://gbhs-bafia-web-site.vercel.app/#organization',
   name: 'Government Bilingual High School Bafia',
   alternateName: ['GBHS Bafia', 'Lycée Bilingue du Gouvernement Bafia'],
-  url: 'https://gbhsbafia.cm',
+  url: 'https://gbhs-bafia-web-site.vercel.app',
   logo: {
     '@type': 'ImageObject',
-    url: 'https://gbhsbafia.cm/favicon.png',
+    url: 'https://gbhs-bafia-web-site.vercel.app/favicon.png',
     width: 244,
     height: 244,
   },
   image: {
     '@type': 'ImageObject',
-    url: 'https://gbhsbafia.cm/og-image.jpg',
+    url: 'https://gbhs-bafia-web-site.vercel.app/og-image.jpg',
     width: 1200,
     height: 630,
   },
@@ -234,7 +234,7 @@ const structuredData = {
     '@type': 'ApplyAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://gbhsbafia.cm/contact',
+      urlTemplate: 'https://gbhs-bafia-web-site.vercel.app/contact',
       inLanguage: 'en',
       actionPlatform: [
         'http://schema.org/DesktopWebPlatform',
@@ -257,7 +257,7 @@ const breadcrumbStructuredData = {
       '@type': 'ListItem',
       position: 1,
       name: 'Home',
-      item: 'https://gbhsbafia.cm',
+      item: 'https://gbhs-bafia-web-site.vercel.app',
     },
   ],
 };

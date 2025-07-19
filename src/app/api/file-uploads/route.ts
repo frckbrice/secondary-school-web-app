@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DataService } from '../../../lib/services/data.service';
 import { insertFileUploadSchema } from '../../../schema';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,9 +27,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Transform the data to match frontend expectations
+    const transformedUploads = (result.data?.data || []).map(upload => ({
+      id: upload.id,
+      name: upload.fileName,
+      url: upload.filePath,
+      uploadedAt: upload.createdAt,
+      uploadedBy: upload.uploadedBy,
+      fileSize: upload.fileSize,
+      mimeType: upload.mimeType,
+      originalName: upload.originalName,
+    }));
+
     return NextResponse.json({
       success: true,
-      fileUploads: result.data?.data || [],
+      fileUploads: transformedUploads,
       pagination: result.data?.pagination,
     });
   } catch (error) {
@@ -57,45 +71,64 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For now, we'll create a simple file upload record without cloudinary
-    // TODO: Implement cloudinary upload when the service is available
-    const fileUploadData = {
-      relatedType,
-      relatedId,
-      fileName: file.name,
-      originalName: file.name,
-      fileSize: file.size,
-      mimeType: file.type,
-      filePath: `/uploads/${file.name}`, // Temporary path
-      uploadedBy: uploadedBy ?? '',
-    };
+    // Save file to disk
+    const uploadDir = join(process.cwd(), 'uploads', 'teacher-grades', uploadedBy);
+    const fileName = `${Date.now()}-${file.name}`;
+    const filePath = join(uploadDir, fileName);
 
-    const validatedData = insertFileUploadSchema.parse(fileUploadData);
+    try {
+      // Create directory if it doesn't exist
+      await mkdir(uploadDir, { recursive: true });
 
-    const result = await DataService.createFileUpload(validatedData);
+      // Convert file to buffer and save
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      await writeFile(filePath, buffer);
 
-    if (!result.success) {
+      // Create database record
+      const fileUploadData = {
+        relatedType,
+        relatedId,
+        fileName: file.name,
+        originalName: file.name,
+        fileSize: file.size,
+        mimeType: file.type,
+        filePath: `/uploads/teacher-grades/${uploadedBy}/${fileName}`,
+        uploadedBy: uploadedBy ?? '',
+      };
+
+      const validatedData = insertFileUploadSchema.parse(fileUploadData);
+
+      const result = await DataService.createFileUpload(validatedData);
+
+      if (!result.success) {
+        return NextResponse.json(
+          { success: false, message: result.message },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json(
-        { success: false, message: result.message },
-        { status: 400 }
+        {
+          success: true,
+          message: 'File uploaded successfully',
+          fileUpload: result.data,
+        },
+        { status: 201 }
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        return NextResponse.json(
+          { success: false, message: error.message },
+          { status: 400 }
+        );
+      }
+      return NextResponse.json(
+        { success: false, message: 'Failed to upload file' },
+        { status: 500 }
       );
     }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'File uploaded successfully',
-        fileUpload: result.data,
-      },
-      { status: 201 }
-    );
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json(
-        { success: false, message: error.message },
-        { status: 400 }
-      );
-    }
     return NextResponse.json(
       { success: false, message: 'Failed to upload file' },
       { status: 500 }

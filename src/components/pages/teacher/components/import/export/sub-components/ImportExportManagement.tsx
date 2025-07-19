@@ -16,11 +16,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '../../../../../../ui/dialog';
 import { Button } from '../../../../../../ui/button';
 import { Input } from '../../../../../../ui/input';
 import { Textarea } from '../../../../../../ui/textarea';
 import { useToast } from '../../../../../../../hooks/use-toast';
+import { useAuth } from '../../../../../../../hooks/use-auth';
 import { FileText, Users, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -61,7 +63,10 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   // ...other injected dependencies
 }) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const router = useRouter();
+
+
   const [selectedClass, setSelectedClass] = useState('');
   const [templates, setTemplates] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -82,6 +87,10 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [successMessage, setSuccessMessage] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [showGradePreview, setShowGradePreview] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareFile, setShareFile] = useState<any>(null);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareLoading, setShareLoading] = useState(false);
 
   useEffect(() => {
     if (!selectedClass) return;
@@ -96,18 +105,25 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       .catch(() => setTemplates([]));
   }, [selectedClass, classFolderMap]);
 
-  // Simulate fetching uploaded files (replace with real API call)
+  // Fetch uploaded files
   useEffect(() => {
-    setUploadedFiles([
-      // Example stub
-      {
-        id: '1',
-        name: 'grades-math-2024.xlsx',
-        url: '/uploads/teacher-grades/teacher1/2024-06-01/grades-math-2024.xlsx',
-        uploadedAt: '2024-06-01',
-      },
-    ]);
-  }, []);
+    if (!user?.id) return;
+
+    fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setUploadedFiles(data.fileUploads || []);
+        } else {
+          console.error('Failed to fetch uploaded files:', data.message);
+          setUploadedFiles([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching uploaded files:', error);
+        setUploadedFiles([]);
+      });
+  }, [user?.id]);
 
   // Handler for Fill Grades Online
   const handleFillOnline = async (templateFile: string) => {
@@ -300,7 +316,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
     formData.append('file', file);
     formData.append('relatedType', 'grading');
     formData.append('relatedId', `teacher-grades-${Date.now()}`);
-    formData.append('uploadedBy', 'teacher-user'); // Provide a valid user ID
+    formData.append('uploadedBy', user?.id || 'unknown'); // Use actual user ID
 
     setUploading(true);
     try {
@@ -446,27 +462,51 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   };
 
   const handleUploadApproval = async () => {
-    if (!uploadPreviewFile) return;
+    if (!uploadPreviewFile || !user?.id) {
+      console.error('Missing file or user ID');
+      return;
+    }
     setApprovalLoading(true);
     try {
-      // Simulate upload (replace with real API call)
-      await new Promise(res => setTimeout(res, 1000));
-      setSuccessMessage(
-        t('uploadSuccess') ||
-          (language === 'fr'
-            ? 'Fichier téléchargé avec succès !'
-            : 'File uploaded successfully!')
-      );
-      setShowUploadPreview(false);
-      setUploadPreviewFile(null);
-      setUploadPreviewData([]);
+      const formData = new FormData();
+      formData.append('file', uploadPreviewFile);
+      formData.append('relatedType', 'grading');
+      formData.append('relatedId', `${user.id}-${Date.now()}`);
+      formData.append('uploadedBy', user.id);
+
+      const res = await fetch('/api/file-uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast({
+          title: 'Success',
+          description: 'File uploaded successfully',
+        });
+
+        // Refresh uploaded files immediately
+        const refreshRes = await fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`);
+        const refreshData = await refreshRes.json();
+        setUploadedFiles(refreshData.fileUploads || []);
+
+        setShowUploadPreview(false);
+        setUploadPreviewFile(null);
+        setUploadPreviewData([]);
+      } else {
+        toast({
+          title: 'Error',
+          description: data.message || 'Upload failed',
+          variant: 'destructive',
+        });
+      }
     } catch (err) {
+      console.error('Upload error:', err);
       toast({
-        title:
-          t('uploadError') ||
-          (language === 'fr'
-            ? 'Erreur lors du téléchargement.'
-            : 'Upload error.'),
+        title: 'Error',
+        description: 'Upload failed',
         variant: 'destructive',
       });
     } finally {
@@ -889,11 +929,25 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       {/* Uploaded Files List */}
       <div className="my-6 border-t border-gray-400" />
       <div className="bg-slate-50 rounded-xl shadow-sm border p-6 mb-6">
-        <h3 className="font-semibold mb-2">
-          {language === 'fr'
-            ? 'Vos Fichiers Téléchargés'
-            : 'Your Uploaded Files'}
-        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold">
+            {language === 'fr'
+              ? 'Vos Fichiers Téléchargés'
+              : 'Your Uploaded Files'}
+          </h3>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={async () => {
+              if (!user?.id) return;
+              const res = await fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`);
+              const data = await res.json();
+              setUploadedFiles(data.fileUploads || []);
+            }}
+          >
+            {language === 'fr' ? 'Actualiser' : 'Refresh'}
+          </Button>
+        </div>
         {uploadedFiles.length === 0 ? (
           <div className="text-gray-500">
             {language === 'fr'
@@ -906,7 +960,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
               <li key={file.id} className="flex items-center gap-2">
                 <span>{file.name}</span>
                 <a
-                  href={file.url}
+                  href={`/api${file.url}`}
                   download
                   className="text-blue-600 underline text-sm"
                 >
@@ -914,13 +968,10 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                 </a>
                 <button
                   className="ml-2 px-2 py-1 bg-purple-500 text-white rounded text-xs"
-                  onClick={() =>
-                    alert(
-                      language === 'fr'
-                        ? 'Partage non implémenté.'
-                        : 'Share not implemented.'
-                    )
-                  }
+                  onClick={() => {
+                    setShareFile(file);
+                    setShowShareModal(true);
+                  }}
                 >
                   {language === 'fr' ? 'Partager' : 'Share'}
                 </button>
@@ -1412,6 +1463,64 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
               </div>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Modal */}
+      <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{language === 'fr' ? 'Partager le fichier' : 'Share File'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <span className="font-semibold">{language === 'fr' ? 'Fichier:' : 'File:'}</span> {shareFile?.name}
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium">{language === 'fr' ? 'Email du destinataire' : 'Recipient Email'}</label>
+              <input
+                type="email"
+                className="border rounded px-2 py-1 w-full"
+                value={shareEmail}
+                onChange={e => setShareEmail(e.target.value)}
+                placeholder={language === 'fr' ? 'Entrer un email...' : 'Enter email...'}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={async () => {
+                if (!shareEmail || !shareFile?.id) return;
+                setShareLoading(true);
+                try {
+                  const res = await fetch('/api/file-uploads/share', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileId: shareFile.id, recipientEmail: shareEmail }),
+                  });
+                  const data = await res.json();
+                  if (data.success) {
+                    toast({ title: language === 'fr' ? 'Succès' : 'Success', description: language === 'fr' ? 'Fichier partagé !' : 'File shared!' });
+                    setShowShareModal(false);
+                    setShareEmail('');
+                    setShareFile(null);
+                  } else {
+                    toast({ title: language === 'fr' ? 'Erreur' : 'Error', description: data.message || 'Failed to share file', variant: 'destructive' });
+                  }
+                } catch (err) {
+                  toast({ title: language === 'fr' ? 'Erreur' : 'Error', description: 'Failed to share file', variant: 'destructive' });
+                } finally {
+                  setShareLoading(false);
+                }
+              }}
+              disabled={shareLoading || !shareEmail}
+            >
+              {shareLoading ? (language === 'fr' ? 'Partage...' : 'Sharing...') : (language === 'fr' ? 'Partager' : 'Share')}
+            </Button>
+            <Button variant="outline" onClick={() => setShowShareModal(false)}>
+              {language === 'fr' ? 'Annuler' : 'Cancel'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

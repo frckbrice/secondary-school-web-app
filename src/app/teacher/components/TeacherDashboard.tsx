@@ -2433,13 +2433,26 @@ export default function TeacherDashboard() {
         .catch(() => setTemplates([]));
     }, [selectedClass]);
 
-    // Fetch uploaded files (stubbed, replace with real API call)
+    // Fetch uploaded files
     React.useEffect(() => {
-      // TODO: Replace with API call to /api/file-uploads?uploadedBy=teacherId&relatedType=grading
-      setUploadedFiles([
-        // Example stub
-        // { name: 'grades-math-2024.xlsx', url: '/uploads/teacher-grades/teacher1/2024-06-01/grades-math-2024.xlsx', uploadedAt: '2024-06-01', id: '1' },
-      ]);
+      if (!user?.id) return;
+
+      console.log('Fetching uploaded files for user:', user.id);
+      fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`)
+        .then(res => res.json())
+        .then(data => {
+          console.log('Initial fetch response:', data);
+          if (data.success) {
+            setUploadedFiles(data.fileUploads || []);
+          } else {
+            console.error('Failed to fetch uploaded files:', data.message);
+            setUploadedFiles([]);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching uploaded files:', error);
+          setUploadedFiles([]);
+        });
     }, [user?.id]);
 
     // 2. Update handleFileChange to show preview first
@@ -2521,6 +2534,7 @@ export default function TeacherDashboard() {
           body: formData,
         });
         const data = await res.json();
+        console.log('Upload response:', data);
         if (data.success) {
           toast({
             title: 'Success',
@@ -2528,9 +2542,11 @@ export default function TeacherDashboard() {
               ? 'File replaced successfully'
               : 'File uploaded successfully',
           });
-          fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`)
-            .then(res => res.json())
-            .then(data => setUploadedFiles(data.fileUploads || []));
+          // Refresh uploaded files immediately
+          const refreshRes = await fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`);
+          const refreshData = await refreshRes.json();
+          console.log('Refresh response:', refreshData);
+          setUploadedFiles(refreshData.fileUploads || []);
         } else {
           toast({
             title: 'Error',
@@ -2546,7 +2562,10 @@ export default function TeacherDashboard() {
         });
       } finally {
         setUploading(false);
-        props.onClose?.();
+        // Don't close modal immediately, let the user see the success
+        setTimeout(() => {
+          props.onClose?.();
+        }, 1000);
       }
     };
 
@@ -3132,11 +3151,27 @@ export default function TeacherDashboard() {
           </div>
           <div className="my-6 border-t border-gray-400" />
           <div>
-            <h3 className="font-semibold mb-2">
-              {language === 'fr'
-                ? 'Vos Fichiers Téléchargés'
-                : 'Your Uploaded Files'}
-            </h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold">
+                {language === 'fr'
+                  ? 'Vos Fichiers Téléchargés'
+                  : 'Your Uploaded Files'}
+              </h3>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={async () => {
+                  if (!user?.id) return;
+                  console.log('Manual refresh triggered');
+                  const res = await fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`);
+                  const data = await res.json();
+                  console.log('Manual refresh response:', data);
+                  setUploadedFiles(data.fileUploads || []);
+                }}
+              >
+                {language === 'fr' ? 'Actualiser' : 'Refresh'}
+              </Button>
+            </div>
             {uploadedFiles.length === 0 ? (
               <div className="text-gray-500">
                 {language === 'fr'
