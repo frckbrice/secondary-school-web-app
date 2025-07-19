@@ -31,27 +31,23 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {t('importExport.confirmApproval') ||
-              (language === 'fr'
-                ? "Confirmer l'approbation"
-                : 'Confirm Approval')}
+            {language === 'fr'
+              ? 'Confirmer la suppression'
+              : 'Confirm Deletion'}
           </DialogTitle>
         </DialogHeader>
         <div className="py-4">
           {message ||
-            t('importExport.confirmApprovalMessage') ||
             (language === 'fr'
-              ? 'Êtes-vous sûr de vouloir approuver cette action ?'
-              : 'Are you sure you want to approve this action?')}
+              ? 'Êtes-vous sûr de vouloir supprimer cet élément ?'
+              : 'Are you sure you want to delete this item?')}
         </div>
         <div className="flex justify-end mt-4 space-x-2">
           <Button onClick={onClose} variant="outline" disabled={isLoading}>
-            {t('importExport.cancel') ||
-              (language === 'fr' ? 'Annuler' : 'Cancel')}
+            {language === 'fr' ? 'Annuler' : 'Cancel'}
           </Button>
           <Button onClick={onApprove} disabled={isLoading}>
-            {t('importExport.approve') ||
-              (language === 'fr' ? 'Approuver' : 'Approve')}
+            {language === 'fr' ? 'Supprimer' : 'Delete'}
           </Button>
         </div>
       </DialogContent>

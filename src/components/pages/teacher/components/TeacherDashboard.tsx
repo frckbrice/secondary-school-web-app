@@ -106,88 +106,91 @@ const TeacherDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar with beautiful bg */}
-      <div className="hidden md:flex flex-col w-64 border-r bg-gradient-to-b from-blue-100 to-blue-300">
+    <div className="flex h-screen bg-gray-50">
+      {/* Fixed Sidebar with different theme */}
+      <div className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-full bg-gradient-to-b from-indigo-600 to-indigo-800 shadow-lg z-10">
         <TeacherSidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           sections={['importExport', 'gradeReports', 'studentGrades']}
         />
       </div>
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center px-4 py-8 md:px-12 md:py-12">
-        <div className="w-full max-w-5xl">
-          {/* Beautiful Header */}
-          <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-                {sectionTitles[activeSection]}
-              </h1>
-              <p className="text-gray-500 mt-2">
-                {language === 'fr'
-                  ? 'Bienvenue sur votre espace enseignant GBHS Bafia'
-                  : 'Welcome to your GBHS Bafia teacher portal'}
-              </p>
-            </div>
-            {/* Add any future header actions here */}
-          </header>
-          {activeSection === 'importExport' && (
-            <section className="mb-12 space-y-8">
-              {/* Available Templates Card */}
-              <div className="bg-white rounded-xl shadow-sm border p-6">
-                <ImportExportManagement
-                  section="availableTemplatesFor"
-                  classList={constants.CLASS_LIST}
-                  classFolderMap={constants.CLASS_FOLDER_MAP}
-                  englishClasses={constants.ENGLISH_CLASSES}
-                  frenchClasses={constants.FRENCH_CLASSES}
+
+      {/* Main Content Area - scrollable */}
+      <main className="flex-1 md:ml-64 flex flex-col overflow-y-auto">
+        <div className="flex flex-col items-center px-4 py-8 md:px-12 md:py-12">
+          <div className="w-full max-w-5xl">
+            {/* Beautiful Header */}
+            <header className="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+                  {sectionTitles[activeSection]}
+                </h1>
+                <p className="text-gray-500 mt-2">
+                  {language === 'fr'
+                    ? 'Bienvenue sur votre espace enseignant GBHS Bafia'
+                    : 'Welcome to your GBHS Bafia teacher portal'}
+                </p>
+              </div>
+              {/* Add any future header actions here */}
+            </header>
+            {activeSection === 'importExport' && (
+              <section className="mb-12 space-y-8">
+                {/* Available Templates Card */}
+                <div className="bg-white rounded-xl shadow-sm border p-6">
+                  <ImportExportManagement
+                    section="availableTemplatesFor"
+                    classList={constants.CLASS_LIST}
+                    classFolderMap={constants.CLASS_FOLDER_MAP}
+                    englishClasses={constants.ENGLISH_CLASSES}
+                    frenchClasses={constants.FRENCH_CLASSES}
+                    calculateStatistics={utils.calculateStatistics}
+                    calculateTermStatistics={utils.calculateTermStatistics}
+                    parseStudentList={utils.parseStudentList}
+                    parseCSVContent={utils.parseCSVContent}
+                    ImportModal={ImportModal}
+                    PreviewModal={PreviewModal}
+                    ApprovalModal={ApprovalModal}
+                    t={t}
+                    language={language}
+                  />
+                </div>
+              </section>
+            )}
+            {activeSection === 'gradeReports' && (
+              <section className="mb-12">
+                <h1 className="text-2xl font-bold mb-6 text-gray-900">
+                  {sectionTitles.gradeReports}
+                </h1>
+                <GradeReportsManagement
+                  gradeReports={gradeReports}
                   calculateStatistics={utils.calculateStatistics}
-                  calculateTermStatistics={utils.calculateTermStatistics}
-                  parseStudentList={utils.parseStudentList}
-                  parseCSVContent={utils.parseCSVContent}
-                  ImportModal={ImportModal}
-                  PreviewModal={PreviewModal}
-                  ApprovalModal={ApprovalModal}
                   t={t}
                   language={language}
                 />
-              </div>
-            </section>
-          )}
-          {activeSection === 'gradeReports' && (
-            <section className="mb-12">
-              <h1 className="text-2xl font-bold mb-6 text-gray-900">
-                {sectionTitles.gradeReports}
-              </h1>
-              <GradeReportsManagement
-                gradeReports={gradeReports}
-                calculateStatistics={utils.calculateStatistics}
-                t={t}
-                language={language}
-              />
-            </section>
-          )}
-          {activeSection === 'studentGrades' && (
-            <section className="mb-12">
-              <h1 className="text-2xl font-bold mb-6 text-gray-900">
-                {sectionTitles.studentGrades}
-              </h1>
-              <StudentGradesManagement
-                studentGrades={studentGrades}
-                gradeReports={gradeReports}
-                calculateStatistics={utils.calculateStatistics}
-                t={t}
-                language={language}
-              />
-            </section>
-          )}
-          {/* <StatisticsManagement /> */}
-          {/* <StudentsManagement /> */}
-          {/* <CalendarManagement /> */}
-          {/* <AwardsManagement /> */}
-          {/* <MessagesManagement /> */}
-          {/* <SettingsManagement /> */}
+              </section>
+            )}
+            {activeSection === 'studentGrades' && (
+              <section className="mb-12">
+                <h1 className="text-2xl font-bold mb-6 text-gray-900">
+                  {sectionTitles.studentGrades}
+                </h1>
+                <StudentGradesManagement
+                  studentGrades={studentGrades}
+                  gradeReports={gradeReports}
+                  calculateStatistics={utils.calculateStatistics}
+                  t={t}
+                  language={language}
+                />
+              </section>
+            )}
+            {/* <StatisticsManagement /> */}
+            {/* <StudentsManagement /> */}
+            {/* <CalendarManagement /> */}
+            {/* <AwardsManagement /> */}
+            {/* <MessagesManagement /> */}
+            {/* <SettingsManagement /> */}
+          </div>
         </div>
       </main>
     </div>

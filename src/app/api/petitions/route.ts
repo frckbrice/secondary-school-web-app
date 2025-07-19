@@ -17,9 +17,14 @@ export async function GET(request: NextRequest) {
     const limitNum = limit ? parseInt(limit) : 10;
     const offset = (pageNum - 1) * limitNum;
 
-    // For now, use getAllPetitions since we haven't added filters yet
-    // TODO: Add getPetitionsWithFilters method to DataService
-    const result = await DataService.getAllPetitions();
+    // Use the new getPetitionsWithFilters method
+    const result = await DataService.getPetitionsWithFilters({
+      status: status || undefined,
+      petitionType: petitionType || undefined,
+      className: className || undefined,
+      page: pageNum,
+      limit: limitNum,
+    });
 
     if (!result.success) {
       return NextResponse.json(
@@ -28,19 +33,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Apply pagination manually for now
-    const allPetitions = result.data || [];
-    const paginatedPetitions = allPetitions.slice(offset, offset + limitNum);
-
     return NextResponse.json({
       success: true,
-      petitions: paginatedPetitions,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        offset,
-        total: allPetitions.length,
-      },
+      petitions: result.data?.data || [],
+      pagination: result.data?.pagination,
     });
   } catch (error) {
     return NextResponse.json(
