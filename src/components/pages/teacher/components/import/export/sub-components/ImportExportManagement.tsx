@@ -21,7 +21,7 @@ import { Button } from '../../../../../../ui/button';
 import { Input } from '../../../../../../ui/input';
 import { useToast } from '../../../../../../../hooks/use-toast';
 import { useAuth } from '../../../../../../../hooks/use-auth';
-import { FileText, Users, Upload } from 'lucide-react';
+import { FileText, Users, Upload, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ShareModal from '@/components/pages/teacher/modals/ShareModal';
 
@@ -855,17 +855,18 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
             <span className="text-gray-700 text-sm">
               {uploadPreviewFile.name}
             </span>
-            <Button
-              size="sm"
-              variant="destructive"
+            <button
+              type="button"
+              className="p-1 rounded hover:bg-red-100 text-red-600 transition-colors"
+              aria-label={language === 'fr' ? 'Supprimer' : 'Remove'}
               onClick={() => {
                 setUploadPreviewFile(null);
                 setUploadPreviewData([]);
                 setShowUploadPreview(false);
               }}
             >
-              {language === 'fr' ? 'Supprimer' : 'Remove'}
-            </Button>
+              <Trash2 className="w-5 h-5" />
+            </button>
           </div>
         )}
         {uploading && (
@@ -891,7 +892,11 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       {showUploadPreview && (
         <PreviewModal
           isOpen={showUploadPreview}
-          onClose={() => setShowUploadPreview(false)}
+          onClose={() => {
+            setShowUploadPreview(false);
+            setUploadPreviewFile(null);
+            setUploadPreviewData([]);
+          }}
           data={uploadPreviewData}
           onApprove={handleApprovePreview}
           isLoading={uploading}
