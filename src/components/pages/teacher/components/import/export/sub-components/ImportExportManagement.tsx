@@ -65,6 +65,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [selectedClass, setSelectedClass] = useState('');
   const [templates, setTemplates] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [editorData, setEditorData] = useState<any[][]>([]);
   const [allRows, setAllRows] = useState<any[][]>([]);
   const [editorFileName, setEditorFileName] = useState('');

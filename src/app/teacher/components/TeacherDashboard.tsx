@@ -2328,6 +2328,7 @@ export default function TeacherDashboard() {
     const [selectedClass, setSelectedClass] = React.useState('');
     const [templates, setTemplates] = React.useState<string[]>([]);
     const [loading, setLoading] = React.useState(false);
+    const [searchTerm, setSearchTerm] = React.useState('');
     const [uploadedFiles, setUploadedFiles] = React.useState<any[]>([]);
     const [uploading, setUploading] = React.useState(false);
     const [shareModalOpen, setShareModalOpen] = React.useState(false);
@@ -2984,88 +2985,127 @@ export default function TeacherDashboard() {
                     </p>
                 </div>
               ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {templates.map(file => {
-                        // Extract subject name from filename (remove .xlsx extension)
-                        const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-
-                        // Get subject icon based on subject name
-                        const getSubjectIcon = (subject: string) => {
-                          const lowerSubject = subject.toLowerCase();
-                          if (lowerSubject.includes('math') || lowerSubject.includes('mathematics')) {
-                            return '∑'; // Math symbol
-                          } else if (lowerSubject.includes('physics')) {
-                            return '⚡'; // Lightning bolt
-                          } else if (lowerSubject.includes('chemistry')) {
-                            return '⚗️'; // Test tube
-                          } else if (lowerSubject.includes('english')) {
-                            return '📚'; // Book
-                          } else if (lowerSubject.includes('informatique') || lowerSubject.includes('computer')) {
-                            return '💻'; // Computer
-                          } else {
-                            return '📝'; // Default document
-                          }
-                        };
-
-                        const subjectIcon = getSubjectIcon(subjectName);
-
-                        return (
-                          <div
-                            key={file}
-                            className="bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 p-4"
-                          >
-                            <div className="flex items-start justify-between mb-3">
-                              <div className="flex items-center space-x-3">
-                                <div className="text-2xl">{subjectIcon}</div>
-                                <div>
-                                  <h4 className="font-semibold text-gray-900 capitalize">
-                                    {subjectName}
-                                  </h4>
-                                  <p className="text-sm text-gray-500">
-                                    {language === 'fr' ? 'Modèle Excel' : 'Excel Template'}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-col space-y-2">
-                              <Button
-                                onClick={() => handleFillOnline(file)}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                                size="sm"
-                              >
-                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                {language === 'fr'
-                                  ? 'Remplir en Ligne'
-                                  : 'Fill Online'}
-                              </Button>
-
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full"
-                                onClick={() => {
-                                  const folderName = CLASS_FOLDER_MAP[selectedClass] || selectedClass;
-                                  const url = `/grading-templates/${encodeURIComponent(folderName)}/${encodeURIComponent(file)}`;
-                                  const link = document.createElement('a');
-                                  link.href = url;
-                                  link.download = file;
-                                  document.body.appendChild(link);
-                                  link.click();
-                                  document.body.removeChild(link);
-                                }}
-                              >
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            {language === 'fr' ? 'Télécharger' : 'Download'}
-                          </Button>
+                    <div className="space-y-4">
+                      {/* Search Input */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder={language === 'fr' ? 'Rechercher un sujet...' : 'Search for a subject...'}
+                          className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
                         </div>
                       </div>
-                    );
-                  })}
+
+                      {/* Scrollable Template Grid */}
+                      <div className="max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {templates
+                            .filter(file => {
+                              const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                              return subjectName.toLowerCase().includes(searchTerm.toLowerCase());
+                            })
+                            .map(file => {
+                              // Extract subject name from filename (remove .xlsx extension)
+                              const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                          // Get subject icon based on subject name
+                          const getSubjectIcon = (subject: string) => {
+                            const lowerSubject = subject.toLowerCase();
+                            if (lowerSubject.includes('math') || lowerSubject.includes('mathematics')) {
+                              return '∑'; // Math symbol
+                            } else if (lowerSubject.includes('physics')) {
+                              return '⚡'; // Lightning bolt
+                            } else if (lowerSubject.includes('chemistry')) {
+                              return '⚗️'; // Test tube
+                            } else if (lowerSubject.includes('english')) {
+                              return '📚'; // Book
+                            } else if (lowerSubject.includes('informatique') || lowerSubject.includes('computer')) {
+                              return '💻'; // Computer
+                            } else {
+                              return '📝'; // Default document
+                            }
+                          };
+
+                          const subjectIcon = getSubjectIcon(subjectName);
+
+                          return (
+                            <div
+                              key={file}
+                              className="bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 p-4"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-center space-x-3">
+                                  <div className="text-2xl">{subjectIcon}</div>
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900 capitalize">
+                                      {subjectName}
+                                    </h4>
+                                    <p className="text-sm text-gray-500">
+                                      {language === 'fr' ? 'Modèle Excel' : 'Excel Template'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-col space-y-2">
+                                <Button
+                                  onClick={() => handleFillOnline(file)}
+                                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                  size="sm"
+                                >
+                                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                  {language === 'fr'
+                                    ? 'Remplir en Ligne'
+                                    : 'Fill Online'}
+                                </Button>
+
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full"
+                                  onClick={() => {
+                                    const folderName = CLASS_FOLDER_MAP[selectedClass] || selectedClass;
+                                    const url = `/grading-templates/${encodeURIComponent(folderName)}/${encodeURIComponent(file)}`;
+                                    const link = document.createElement('a');
+                                    link.href = url;
+                                    link.download = file;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                  }}
+                                >
+                                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  {language === 'fr' ? 'Télécharger' : 'Download'}
+                                </Button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                        {templates.filter(file => {
+                          const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                          return subjectName.toLowerCase().includes(searchTerm.toLowerCase());
+                        }).length === 0 && searchTerm && (
+                            <div className="text-center py-8">
+                              <div className="text-gray-400 text-4xl mb-2">🔍</div>
+                              <p className="text-gray-500">
+                                {language === 'fr'
+                                  ? 'Aucun sujet trouvé pour cette recherche.'
+                                  : 'No subjects found for this search.'}
+                              </p>
+                            </div>
+                          )}
+                      </div>
                     </div>
               )}
             </div>
