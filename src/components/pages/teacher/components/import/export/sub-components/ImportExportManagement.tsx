@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { GradeReport, StudentGrade } from '../../../../api/constants';
 import {
   calculateStatistics,
   calculateTermStatistics,
@@ -17,11 +16,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '../../../../../../ui/dialog';
 import { Button } from '../../../../../../ui/button';
 import { Input } from '../../../../../../ui/input';
-import { Textarea } from '../../../../../../ui/textarea';
 import { useToast } from '../../../../../../../hooks/use-toast';
 import { useAuth } from '../../../../../../../hooks/use-auth';
 import { FileText, Users, Upload } from 'lucide-react';
@@ -48,15 +45,15 @@ export interface ImportExportManagementProps {
 }
 
 const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
-  classList,
+  // classList,
   classFolderMap,
   englishClasses,
   frenchClasses,
-  calculateStatistics,
-  calculateTermStatistics,
-  parseStudentList,
-  parseCSVContent,
-  ImportModal,
+  // calculateStatistics,
+  // calculateTermStatistics,
+  // parseStudentList,
+  // parseCSVContent,
+  // ImportModal,
   PreviewModal,
   ApprovalModal,
   t,
@@ -71,7 +68,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [selectedClass, setSelectedClass] = useState('');
   const [templates, setTemplates] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  // const [searchTerm, setSearchTerm] = useState('');
   const [editorData, setEditorData] = useState<any[][]>([]);
   const [allRows, setAllRows] = useState<any[][]>([]);
   const [editorFileName, setEditorFileName] = useState('');
@@ -853,6 +850,24 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           disabled={uploading || showUploadPreview}
           className="mb-2"
         />
+        {uploadPreviewFile && (
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-gray-700 text-sm">
+              {uploadPreviewFile.name}
+            </span>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => {
+                setUploadPreviewFile(null);
+                setUploadPreviewData([]);
+                setShowUploadPreview(false);
+              }}
+            >
+              {language === 'fr' ? 'Supprimer' : 'Remove'}
+            </Button>
+          </div>
+        )}
         {uploading && (
           <span className="text-blue-600 ml-2">
             {language === 'fr' ? 'Téléchargement...' : 'Uploading...'}
@@ -959,6 +974,58 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                   }}
                 >
                   {language === 'fr' ? 'Partager' : 'Share'}
+                </button>
+                <button
+                  className="ml-2 px-2 py-1 bg-red-500 text-white rounded text-xs"
+                  onClick={async () => {
+                    if (
+                      !window.confirm(
+                        language === 'fr'
+                          ? 'Voulez-vous vraiment supprimer ce fichier ?'
+                          : 'Are you sure you want to delete this file?'
+                      )
+                    )
+                      return;
+                    try {
+                      const res = await fetch(`/api/file-uploads/${file.id}`, {
+                        method: 'DELETE',
+                      });
+                      const data = await res.json();
+                      if (data.success) {
+                        setUploadedFiles(prev =>
+                          prev.filter(f => f.id !== file.id)
+                        );
+                        toast({
+                          title: language === 'fr' ? 'Supprimé' : 'Deleted',
+                          description:
+                            language === 'fr'
+                              ? 'Fichier supprimé avec succès.'
+                              : 'File deleted successfully.',
+                        });
+                      } else {
+                        toast({
+                          title: language === 'fr' ? 'Erreur' : 'Error',
+                          description:
+                            data.message ||
+                            (language === 'fr'
+                              ? 'Échec de la suppression.'
+                              : 'Failed to delete.'),
+                          variant: 'destructive',
+                        });
+                      }
+                    } catch (err) {
+                      toast({
+                        title: language === 'fr' ? 'Erreur' : 'Error',
+                        description:
+                          language === 'fr'
+                            ? 'Échec de la suppression.'
+                            : 'Failed to delete.',
+                        variant: 'destructive',
+                      });
+                    }
+                  }}
+                >
+                  {language === 'fr' ? 'Supprimer' : 'Delete'}
                 </button>
               </li>
             ))}
