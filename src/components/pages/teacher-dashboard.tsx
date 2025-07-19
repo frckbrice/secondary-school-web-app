@@ -2954,44 +2954,118 @@ export default function TeacherDashboard() {
           {/* Template List */}
           {selectedClass && (
             <div className="mb-6">
-              <h3 className="font-semibold mb-2">
+              <h3 className="font-semibold mb-4 text-lg">
                 {language === 'fr'
-                  ? 'Modèles Disponibles pour'
-                  : 'Available Templates for'}{' '}
-                <span className="text-blue-700">{selectedClass}</span>
+                  ? 'Modèles de Notes Disponibles'
+                  : 'Available Grade Templates'}{' '}
+                <span className="text-blue-700 font-bold">{selectedClass}</span>
               </h3>
               {loading ? (
-                <div>
-                  {language === 'fr'
-                    ? 'Chargement des modèles...'
-                    : 'Loading templates...'}
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="ml-3 text-gray-600">
+                    {language === 'fr'
+                      ? 'Chargement des modèles...'
+                      : 'Loading templates...'}
+                  </span>
                 </div>
               ) : templates.length === 0 ? (
-                <div className="text-gray-500">
-                  {language === 'fr'
-                    ? 'Aucun modèle trouvé pour cette classe.'
-                    : 'No templates found for this class.'}
+                  <div className="text-center py-8">
+                    <div className="text-gray-400 mb-2">
+                      <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500">
+                      {language === 'fr'
+                        ? 'Aucun modèle trouvé pour cette classe.'
+                        : 'No templates found for this class.'}
+                    </p>
                 </div>
               ) : (
-                <ul className="space-y-2">
-                  {templates.map(file => (
-                    <li key={file} className="flex items-center gap-2">
-                      <span>{file}</span>
-                      <a
-                        href={`/grading-templates/${CLASS_FOLDER_MAP[selectedClass] || selectedClass}/${file}`}
-                        download
-                        className="text-blue-600 underline text-sm"
-                      >
-                        {language === 'fr' ? 'Télécharger' : 'Download'}
-                      </a>
-                      <Button onClick={() => handleFillOnline(file)}>
-                        {language === 'fr'
-                          ? 'Remplir les Notes en Ligne'
-                          : 'Fill Grades Online'}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {templates.map(file => {
+                        // Extract subject name from filename (remove .xlsx extension)
+                        const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                        // Get subject icon based on subject name
+                        const getSubjectIcon = (subject: string) => {
+                          const lowerSubject = subject.toLowerCase();
+                          if (lowerSubject.includes('math') || lowerSubject.includes('mathematics')) {
+                            return '∑'; // Math symbol
+                          } else if (lowerSubject.includes('physics')) {
+                            return '⚡'; // Lightning bolt
+                          } else if (lowerSubject.includes('chemistry')) {
+                            return '⚗️'; // Test tube
+                          } else if (lowerSubject.includes('english')) {
+                            return '📚'; // Book
+                          } else if (lowerSubject.includes('informatique') || lowerSubject.includes('computer')) {
+                            return '💻'; // Computer
+                          } else {
+                            return '📝'; // Default document
+                          }
+                        };
+
+                        const subjectIcon = getSubjectIcon(subjectName);
+
+                        return (
+                          <div
+                            key={file}
+                            className="bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 p-4"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex items-center space-x-3">
+                                <div className="text-2xl">{subjectIcon}</div>
+                                <div>
+                                  <h4 className="font-semibold text-gray-900 capitalize">
+                                    {subjectName}
+                                  </h4>
+                                  <p className="text-sm text-gray-500">
+                                    {language === 'fr' ? 'Modèle Excel' : 'Excel Template'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col space-y-2">
+                              <Button
+                                onClick={() => handleFillOnline(file)}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                size="sm"
+                              >
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                {language === 'fr'
+                                  ? 'Remplir en Ligne'
+                                  : 'Fill Online'}
+                              </Button>
+
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full"
+                                onClick={() => {
+                                  const folderName = CLASS_FOLDER_MAP[selectedClass] || selectedClass;
+                                  const url = `/grading-templates/${encodeURIComponent(folderName)}/${encodeURIComponent(file)}`;
+                                  const link = document.createElement('a');
+                                  link.href = url;
+                                  link.download = file;
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  document.body.removeChild(link);
+                                }}
+                              >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            {language === 'fr' ? 'Télécharger' : 'Download'}
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                    </div>
               )}
             </div>
           )}

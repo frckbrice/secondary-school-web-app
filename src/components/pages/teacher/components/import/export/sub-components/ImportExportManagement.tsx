@@ -709,56 +709,108 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       {/* Template List */}
       {selectedClass && (
         <div className="bg-slate-50 rounded-xl shadow-sm border p-6 mb-6">
-          <h3 className="font-semibold mb-2">
+          <h3 className="font-semibold mb-4 text-lg">
             {language === 'fr'
-              ? 'Modèles Disponibles pour'
-              : 'Available Templates for'}{' '}
-            <span className="text-blue-700">{selectedClass}</span>
+              ? 'Modèles de Notes Disponibles'
+              : 'Available Grade Templates'}{' '}
+            <span className="text-blue-700 font-bold">{selectedClass}</span>
           </h3>
           {loading ? (
-            <div>
-              {language === 'fr'
-                ? 'Chargement des modèles...'
-                : 'Loading templates...'}
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span className="ml-3 text-gray-600">
+                {language === 'fr'
+                  ? 'Chargement des modèles...'
+                  : 'Loading templates...'}
+              </span>
             </div>
           ) : templates.length === 0 ? (
-            <div className="text-gray-500">
-              {language === 'fr'
-                ? 'Aucun modèle trouvé pour cette classe.'
-                : 'No templates found for this class.'}
+              <div className="text-center py-8">
+                <div className="text-gray-400 mb-2">
+                  <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <p className="text-gray-500">
+                  {language === 'fr'
+                    ? 'Aucun modèle trouvé pour cette classe.'
+                    : 'No templates found for this class.'}
+                </p>
             </div>
           ) : (
-            <ul className="space-y-2">
-              {templates.map(file => (
-                <li
-                  key={file}
-                  className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border"
-                >
-                  <span className="flex-1 font-medium text-gray-700">
-                    {file}
-                  </span>
-                  <a
-                    href={`/api/grading-templates/${classFolderMap[selectedClass] || selectedClass}/${file}`}
-                    download
-                    className="text-blue-600 hover:text-blue-800 underline text-sm font-medium transition-colors duration-200"
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {templates.map(file => {
+                    // Extract subject name from filename (remove .xlsx extension)
+                    const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                    // Get subject icon based on subject name
+                    const getSubjectIcon = (subject: string) => {
+                      const lowerSubject = subject.toLowerCase();
+                      if (lowerSubject.includes('math') || lowerSubject.includes('mathematics')) {
+                        return '∑'; // Math symbol
+                      } else if (lowerSubject.includes('physics')) {
+                        return '⚡'; // Lightning bolt
+                      } else if (lowerSubject.includes('chemistry')) {
+                        return '⚗️'; // Test tube
+                      } else if (lowerSubject.includes('english')) {
+                        return '📚'; // Book
+                      } else if (lowerSubject.includes('informatique') || lowerSubject.includes('computer')) {
+                        return '💻'; // Computer
+                      } else {
+                        return '📝'; // Default document
+                      }
+                    };
+
+                    const subjectIcon = getSubjectIcon(subjectName);
+
+                    return (
+                      <div
+                        key={file}
+                    className="bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 p-4"
                   >
-                    {language === 'fr' ? 'Télécharger' : 'Download'}
-                  </a>
-                  <button
-                    className="ml-3 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
-                    onClick={() => handleFillOnline(file)}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <FileText className="w-4 h-4" />
-                    )}
-                    {language === 'fr' ? 'Remplir en ligne' : 'Fill Online'}
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="text-2xl">{subjectIcon}</div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 capitalize">
+                            {subjectName}
+                          </h4>
+                          <p className="text-sm text-gray-500">
+                            {language === 'fr' ? 'Modèle Excel' : 'Excel Template'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col space-y-2">
+                      <button
+                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 py-2"
+                        onClick={() => handleFillOnline(file)}
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <FileText className="w-4 h-4" />
+                        )}
+                        {language === 'fr' ? 'Remplir en Ligne' : 'Fill Online'}
+                      </button>
+
+                      <a
+                        href={`/api/grading-templates/${classFolderMap[selectedClass] || selectedClass}/${file}`}
+                        download
+                        className="w-full text-center px-4 py-2 border border-gray-300 hover:border-blue-400 text-gray-700 hover:text-blue-700 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {language === 'fr' ? 'Télécharger' : 'Download'}
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+                </div>
           )}
         </div>
       )}
