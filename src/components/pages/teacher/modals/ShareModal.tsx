@@ -8,8 +8,6 @@ import {
 import { Button } from '../../../ui/button';
 import { Input } from '../../../ui/input';
 import { Textarea } from '../../../ui/textarea';
-import { Badge } from '../../../ui/badge';
-import { Separator } from '../../../ui/separator';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -104,8 +102,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
       <DialogContent className="max-w-md sm:max-w-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl p-0 overflow-hidden">
         <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
           <DialogTitle className="text-lg sm:text-xl font-semibold">
-            {t('importExport.shareFile') ||
-              (language === 'fr' ? 'Partager le fichier' : 'Share File')}
+            {language === 'fr' ? 'Partager le fichier' : 'Share File'}
           </DialogTitle>
         </DialogHeader>
 
@@ -113,8 +110,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
           {/* File Info */}
           <div className="mb-4 sm:mb-6">
             <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-              {t('importExport.fileToShare') ||
-                (language === 'fr' ? 'Fichier à partager' : 'File to share')}
+              {language === 'fr' ? 'Fichier à partager' : 'File to share'}
             </div>
             <div className="font-medium text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-3 flex items-center gap-2">
               <span className="text-blue-500">📄</span>
@@ -153,10 +149,9 @@ const ShareModal: React.FC<ShareModalProps> = ({
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('importExport.recipientEmail') ||
-                    (language === 'fr'
-                      ? 'E-mail du destinataire'
-                      : 'Recipient Email')}
+                  {language === 'fr'
+                    ? 'E-mail du destinataire'
+                    : 'Recipient Email'}
                 </label>
                 <Input
                   ref={emailRef}
@@ -164,10 +159,9 @@ const ShareModal: React.FC<ShareModalProps> = ({
                   value={email}
                   onChange={e => onEmailChange(e.target.value)}
                   placeholder={
-                    t('importExport.emailPlaceholder') ||
-                    (language === 'fr'
+                    language === 'fr'
                       ? 'Entrer une adresse e-mail...'
-                      : 'Enter an email address...')
+                      : 'Enter an email address...'
                   }
                   disabled={isLoading}
                   className="w-full"
@@ -176,17 +170,15 @@ const ShareModal: React.FC<ShareModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('importExport.message') ||
-                    (language === 'fr' ? 'Message' : 'Message')}
+                  {language === 'fr' ? 'Message' : 'Message'}
                 </label>
                 <Textarea
                   value={message}
                   onChange={e => onMessageChange(e.target.value)}
                   placeholder={
-                    t('importExport.messagePlaceholder') ||
-                    (language === 'fr'
+                    language === 'fr'
                       ? 'Message facultatif...'
-                      : 'Optional message...')
+                      : 'Optional message...'
                   }
                   disabled={isLoading}
                   className="w-full min-h-[80px] resize-none"
@@ -198,12 +190,14 @@ const ShareModal: React.FC<ShareModalProps> = ({
                   <span className="text-blue-500 text-lg">💡</span>
                   <div className="text-sm text-blue-700 dark:text-blue-300">
                     <p className="font-medium mb-1">
-                      {language === 'fr' ? 'Nouveau !' : 'New!'}
+                      {language === 'fr'
+                        ? 'Comment ça fonctionne'
+                        : 'How it works'}
                     </p>
                     <p>
                       {language === 'fr'
-                        ? "Le fichier sera envoyé directement en pièce jointe. Le destinataire n'a pas besoin de se connecter."
-                        : "The file will be sent directly as an attachment. The recipient doesn't need to log in."}
+                        ? 'Le fichier sera envoyé directement en pièce jointe. Le destinataire pourra le télécharger sans avoir besoin de se connecter.'
+                        : 'The file will be sent directly as an attachment. The recipient can download it without needing to log in.'}
                     </p>
                   </div>
                 </div>
@@ -211,17 +205,17 @@ const ShareModal: React.FC<ShareModalProps> = ({
 
               <Button
                 onClick={onShare}
-                disabled={isLoading || !email}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
+                disabled={!email || isLoading}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    {language === 'fr' ? 'Envoi...' : 'Sending...'}
+                    {language === 'fr' ? 'Envoi en cours...' : 'Sending...'}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <span>📤</span>
+                      <span>📧</span>
                     {language === 'fr' ? 'Envoyer par email' : 'Send via Email'}
                   </div>
                 )}
@@ -230,60 +224,51 @@ const ShareModal: React.FC<ShareModalProps> = ({
           ) : (
             /* Social Sharing */
             <div className="space-y-4">
-              <div className="text-center mb-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  {language === 'fr'
-                    ? 'Partagez ce fichier sur vos réseaux sociaux préférés'
-                    : 'Share this file on your favorite social networks'}
-                </p>
-              </div>
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-green-500 text-lg">🌐</span>
+                    <div className="text-sm text-green-700 dark:text-green-300">
+                      <p className="font-medium mb-1">
+                        {language === 'fr'
+                          ? 'Partagez facilement'
+                          : 'Share easily'}
+                      </p>
+                      <p>
+                        {language === 'fr'
+                          ? 'Partagez le lien du fichier sur vos réseaux sociaux préférés.'
+                          : 'Share the file link on your favorite social networks.'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {socialPlatforms.map(platform => (
                   <button
                     key={platform.platform}
                     onClick={() => handleSocialShare(platform.platform)}
-                    className="flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 hover:shadow-md bg-white dark:bg-gray-800"
-                    style={{
-                      backgroundColor:
-                        platform.platform === 'copy' && copySuccess
-                          ? '#10b981'
-                          : undefined,
-                      color:
-                        platform.platform === 'copy' && copySuccess
-                          ? 'white'
-                          : undefined,
-                    }}
+                    className="flex flex-col items-center gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 hover:shadow-md bg-white dark:bg-gray-800"
+                    style={
+                      {
+                        '--hover-color': platform.color,
+                      } as React.CSSProperties
+                    }
                   >
                     <span className="text-2xl">{platform.icon}</span>
-                    <span className="text-xs font-medium">
-                      {platform.platform === 'copy' && copySuccess
-                        ? language === 'fr'
-                          ? 'Copié !'
-                          : 'Copied!'
-                        : platform.name}
+                    <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                      {platform.name}
                     </span>
                   </button>
                 ))}
               </div>
 
-              <Separator className="my-4" />
-
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                <div className="flex items-start gap-2">
-                  <span className="text-gray-500 text-lg">ℹ️</span>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <p className="font-medium mb-1">
-                      {language === 'fr' ? 'Comment ça marche' : 'How it works'}
-                    </p>
-                    <p>
-                      {language === 'fr'
-                        ? 'Un lien direct vers le fichier sera partagé. Les destinataires pourront le télécharger sans compte.'
-                        : 'A direct link to the file will be shared. Recipients can download it without an account.'}
-                    </p>
+                {copySuccess && (
+                  <div className="bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
+                    <span className="text-green-700 dark:text-green-300 text-sm">
+                      ✅ {language === 'fr' ? 'Lien copié !' : 'Link copied!'}
+                    </span>
                   </div>
-                </div>
-              </div>
+                )}
             </div>
           )}
         </div>

@@ -41,12 +41,24 @@ export async function POST(request: NextRequest) {
     }
 
     const fileData = fileResult.data;
-    const filePath = path.join(process.cwd(), 'uploads', fileData.filePath);
+
+    // Construct the correct file path based on how files are stored
+    // Files are stored in: uploads/teacher-grades/{uploadedBy}/{fileName}
+    const filePath = path.join(
+      process.cwd(),
+      'uploads',
+      'teacher-grades',
+      fileData.uploadedBy,
+      path.basename(fileData.filePath)
+    );
+
+    console.log('Looking for file at:', filePath);
 
     // Check if file exists on disk
     try {
       await fs.access(filePath);
     } catch (error) {
+      console.error('File not found at path:', filePath);
       return NextResponse.json(
         { success: false, message: 'File not found on disk' },
         { status: 404 }
