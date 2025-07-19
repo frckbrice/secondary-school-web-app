@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
       public_id: `profile-${userId}-${Date.now()}`,
       transformation: [
         { width: 400, height: 400, crop: 'fill', gravity: 'face' },
-        { quality: 'auto', fetch_format: 'auto' }
-      ]
+        { quality: 'auto', fetch_format: 'auto' },
+      ],
     });
 
     const imageUrl = uploadResult.secure_url;

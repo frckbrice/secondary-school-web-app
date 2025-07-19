@@ -54,12 +54,7 @@ export function TeacherSidebar({
   ].filter(item => sections.includes(item.key));
 
   return (
-    <div
-      className={cn(
-        'flex flex-col h-full bg-transparent',
-        className
-      )}
-    >
+    <div className={cn('flex flex-col h-full bg-transparent', className)}>
       {/* Header */}
       <div className="p-6 border-b border-indigo-500/30">
         <div className="flex items-center space-x-2">
@@ -82,10 +77,10 @@ export function TeacherSidebar({
             key={item.key}
             variant={activeSection === item.key ? 'default' : 'ghost'}
             className={cn(
-              "w-full flex items-center justify-start gap-3 mb-2 transition-all duration-200",
+              'w-full flex items-center justify-start gap-3 mb-2 transition-all duration-200',
               activeSection === item.key
-                ? "bg-white text-indigo-700 hover:bg-indigo-50 shadow-md"
-                : "text-indigo-100 hover:bg-indigo-700/50 hover:text-white"
+                ? 'bg-white text-indigo-700 hover:bg-indigo-50 shadow-md'
+                : 'text-indigo-100 hover:bg-indigo-700/50 hover:text-white'
             )}
             onClick={() => onSectionChange(item.key)}
           >

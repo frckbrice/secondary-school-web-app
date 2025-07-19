@@ -5,10 +5,11 @@ import { existsSync } from 'fs';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { path: string[] } }
+    { params }: { params: Promise<{ path: string[] }> }
 ) {
     try {
-        const filePath = join(process.cwd(), 'uploads', ...params.path);
+        const resolvedParams = await params;
+        const filePath = join(process.cwd(), 'uploads', ...resolvedParams.path);
 
         // Check if file exists
         if (!existsSync(filePath)) {
@@ -39,7 +40,7 @@ export async function GET(
         return new NextResponse(fileBuffer, {
             headers: {
                 'Content-Type': contentType,
-                'Content-Disposition': `inline; filename="${params.path[params.path.length - 1]}"`,
+                'Content-Disposition': `inline; filename="${resolvedParams.path[resolvedParams.path.length - 1]}"`,
             },
         });
     } catch (error) {

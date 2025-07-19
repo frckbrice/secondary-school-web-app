@@ -25,6 +25,7 @@ import { useToast } from '../../../../../../../hooks/use-toast';
 import { useAuth } from '../../../../../../../hooks/use-auth';
 import { FileText, Users, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import ShareModal from '@/components/pages/teacher/modals/ShareModal';
 
 export interface ImportExportManagementProps {
   classList: string[];
@@ -66,7 +67,6 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const { user } = useAuth();
   const router = useRouter();
 
-
   const [selectedClass, setSelectedClass] = useState('');
   const [templates, setTemplates] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -90,6 +90,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareFile, setShareFile] = useState<any>(null);
   const [shareEmail, setShareEmail] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
   const [shareLoading, setShareLoading] = useState(false);
 
   useEffect(() => {
@@ -488,7 +489,9 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         });
 
         // Refresh uploaded files immediately
-        const refreshRes = await fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`);
+        const refreshRes = await fetch(
+          `/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`
+        );
         const refreshData = await refreshRes.json();
         setUploadedFiles(refreshData.fileUploads || []);
 
@@ -766,47 +769,66 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
               </span>
             </div>
           ) : templates.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="text-gray-400 mb-2">
-                  <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <p className="text-gray-500">
-                  {language === 'fr'
-                    ? 'Aucun modèle trouvé pour cette classe.'
-                    : 'No templates found for this class.'}
-                </p>
+            <div className="text-center py-8">
+              <div className="text-gray-400 mb-2">
+                <svg
+                  className="w-12 h-12 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <p className="text-gray-500">
+                {language === 'fr'
+                  ? 'Aucun modèle trouvé pour cette classe.'
+                  : 'No templates found for this class.'}
+              </p>
             </div>
           ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {templates.map(file => {
-                    // Extract subject name from filename (remove .xlsx extension)
-                    const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {templates.map(file => {
+                // Extract subject name from filename (remove .xlsx extension)
+                const subjectName = file
+                  .replace('.xlsx', '')
+                  .replace(/_/g, ' ')
+                  .replace(/\b\w/g, l => l.toUpperCase());
 
-                    // Get subject icon based on subject name
-                    const getSubjectIcon = (subject: string) => {
-                      const lowerSubject = subject.toLowerCase();
-                      if (lowerSubject.includes('math') || lowerSubject.includes('mathematics')) {
-                        return '∑'; // Math symbol
-                      } else if (lowerSubject.includes('physics')) {
-                        return '⚡'; // Lightning bolt
-                      } else if (lowerSubject.includes('chemistry')) {
-                        return '⚗️'; // Test tube
-                      } else if (lowerSubject.includes('english')) {
-                        return '📚'; // Book
-                      } else if (lowerSubject.includes('informatique') || lowerSubject.includes('computer')) {
-                        return '💻'; // Computer
-                      } else {
-                        return '📝'; // Default document
-                      }
-                    };
+                // Get subject icon based on subject name
+                const getSubjectIcon = (subject: string) => {
+                  const lowerSubject = subject.toLowerCase();
+                  if (
+                    lowerSubject.includes('math') ||
+                    lowerSubject.includes('mathematics')
+                  ) {
+                    return '∑'; // Math symbol
+                  } else if (lowerSubject.includes('physics')) {
+                    return '⚡'; // Lightning bolt
+                  } else if (lowerSubject.includes('chemistry')) {
+                    return '⚗️'; // Test tube
+                  } else if (lowerSubject.includes('english')) {
+                    return '📚'; // Book
+                  } else if (
+                    lowerSubject.includes('informatique') ||
+                    lowerSubject.includes('computer')
+                  ) {
+                    return '💻'; // Computer
+                  } else {
+                    return '📝'; // Default document
+                  }
+                };
 
-                    const subjectIcon = getSubjectIcon(subjectName);
+                const subjectIcon = getSubjectIcon(subjectName);
 
-                    return (
-                      <div
-                        key={file}
+                return (
+                  <div
+                    key={file}
                     className="bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 p-4"
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -817,7 +839,9 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                             {subjectName}
                           </h4>
                           <p className="text-sm text-gray-500">
-                            {language === 'fr' ? 'Modèle Excel' : 'Excel Template'}
+                            {language === 'fr'
+                              ? 'Modèle Excel'
+                              : 'Excel Template'}
                           </p>
                         </div>
                       </div>
@@ -842,8 +866,18 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                         download
                         className="w-full text-center px-4 py-2 border border-gray-300 hover:border-blue-400 text-gray-700 hover:text-blue-700 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
                         </svg>
                         {language === 'fr' ? 'Télécharger' : 'Download'}
                       </a>
@@ -851,7 +885,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                   </div>
                 );
               })}
-                </div>
+            </div>
           )}
         </div>
       )}
@@ -940,7 +974,9 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
             variant="outline"
             onClick={async () => {
               if (!user?.id) return;
-              const res = await fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`);
+              const res = await fetch(
+                `/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`
+              );
               const data = await res.json();
               setUploadedFiles(data.fileUploads || []);
             }}
@@ -1466,63 +1502,66 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         </DialogContent>
       </Dialog>
 
-      {/* Share Modal */}
-      <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{language === 'fr' ? 'Partager le fichier' : 'Share File'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <span className="font-semibold">{language === 'fr' ? 'Fichier:' : 'File:'}</span> {shareFile?.name}
-            </div>
-            <div>
-              <label className="block mb-1 text-sm font-medium">{language === 'fr' ? 'Email du destinataire' : 'Recipient Email'}</label>
-              <input
-                type="email"
-                className="border rounded px-2 py-1 w-full"
-                value={shareEmail}
-                onChange={e => setShareEmail(e.target.value)}
-                placeholder={language === 'fr' ? 'Entrer un email...' : 'Enter email...'}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              onClick={async () => {
-                if (!shareEmail || !shareFile?.id) return;
-                setShareLoading(true);
-                try {
-                  const res = await fetch('/api/file-uploads/share', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileId: shareFile.id, recipientEmail: shareEmail }),
-                  });
-                  const data = await res.json();
-                  if (data.success) {
-                    toast({ title: language === 'fr' ? 'Succès' : 'Success', description: language === 'fr' ? 'Fichier partagé !' : 'File shared!' });
-                    setShowShareModal(false);
-                    setShareEmail('');
-                    setShareFile(null);
-                  } else {
-                    toast({ title: language === 'fr' ? 'Erreur' : 'Error', description: data.message || 'Failed to share file', variant: 'destructive' });
-                  }
-                } catch (err) {
-                  toast({ title: language === 'fr' ? 'Erreur' : 'Error', description: 'Failed to share file', variant: 'destructive' });
-                } finally {
-                  setShareLoading(false);
-                }
-              }}
-              disabled={shareLoading || !shareEmail}
-            >
-              {shareLoading ? (language === 'fr' ? 'Partage...' : 'Sharing...') : (language === 'fr' ? 'Partager' : 'Share')}
-            </Button>
-            <Button variant="outline" onClick={() => setShowShareModal(false)}>
-              {language === 'fr' ? 'Annuler' : 'Cancel'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Enhanced Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => {
+          setShowShareModal(false);
+          setShareEmail('');
+          setShareFile(null);
+        }}
+        file={shareFile}
+        email={shareEmail}
+        message={shareMessage}
+        onEmailChange={setShareEmail}
+        onMessageChange={setShareMessage}
+        onShare={async () => {
+          if (!shareEmail || !shareFile?.id) return;
+          setShareLoading(true);
+          try {
+            const res = await fetch('/api/file-uploads/share', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                fileId: shareFile.id,
+                recipientEmail: shareEmail,
+                message: shareMessage,
+              }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              toast({
+                title: language === 'fr' ? 'Succès' : 'Success',
+                description:
+                  language === 'fr'
+                    ? 'Fichier partagé avec succès !'
+                    : 'File shared successfully!',
+              });
+              setShowShareModal(false);
+              setShareEmail('');
+              setShareMessage('');
+              setShareFile(null);
+            } else {
+              toast({
+                title: language === 'fr' ? 'Erreur' : 'Error',
+                description: data.message || 'Failed to share file',
+                variant: 'destructive',
+              });
+            }
+          } catch (err) {
+            toast({
+              title: language === 'fr' ? 'Erreur' : 'Error',
+              description: 'Failed to share file',
+              variant: 'destructive',
+            });
+          } finally {
+            setShareLoading(false);
+          }
+        }}
+        isLoading={shareLoading}
+        t={t}
+        language={language}
+      />
     </div>
   );
 };

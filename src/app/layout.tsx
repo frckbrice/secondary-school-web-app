@@ -64,7 +64,9 @@ export const metadata: Metadata = {
     'Form 6',
     'Form 7',
   ],
-  authors: [{ name: 'GBHS Bafia', url: 'https://gbhs-bafia-web-site.vercel.app' }],
+  authors: [
+    { name: 'GBHS Bafia', url: 'https://gbhs-bafia-web-site.vercel.app' },
+  ],
   creator: 'GBHS Bafia',
   publisher: 'GBHS Bafia',
   formatDetection: {

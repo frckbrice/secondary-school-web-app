@@ -1225,13 +1225,13 @@
 //         <h1>GOVERNMENT BILINGUAL HIGH SCHOOL BAFIA</h1>
 //         <h2>GRADE REPORT</h2>
 //     </div>
-    
+
 //     <div class="school-info">
 //         <p><strong>Academic Year:</strong> ${report.academicYear}</p>
 //         <p><strong>Term:</strong> ${report.term}</p>
 //         <p><strong>Grading Period:</strong> ${report.gradingPeriod}</p>
 //     </div>
-    
+
 //     <div class="report-info">
 //         <div>
 //             <p><strong>Class:</strong> ${report.className}</p>
@@ -1242,7 +1242,7 @@
 //             <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
 //         </div>
 //     </div>
-    
+
 //     <table class="students-table">
 //         <thead>
 //             <tr>
@@ -1271,7 +1271,7 @@
 //               .join('')}
 //         </tbody>
 //     </table>
-    
+
 //     <div class="statistics">
 //         <h3>Grade Statistics</h3>
 //         <div class="stats-grid">
@@ -1291,7 +1291,7 @@
 //             </div>
 //         </div>
 //     </div>
-    
+
 //     <div class="signature-section">
 //         <div class="signature-box">
 //             <div class="signature-line"></div>

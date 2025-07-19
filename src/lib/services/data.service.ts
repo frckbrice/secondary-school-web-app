@@ -1955,7 +1955,9 @@ export class DataService {
     }
   }
 
-  static async getFileUploadById(id: string): Promise<ServiceResult<FileUpload>> {
+  static async getFileUploadById(
+    id: string
+  ): Promise<ServiceResult<FileUpload>> {
     try {
       const fileUpload = await db.query.fileUploads.findFirst({
         where: eq(fileUploads.id, id),

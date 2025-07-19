@@ -3,8 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import type {
@@ -45,13 +58,17 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
       // Note: gradeReportId is not in the current StudentGrade interface
       // This would need to be added to the interface if needed
       // For now, we'll filter by other criteria
-      filtered = filtered.filter(grade => grade.id && grade.id.includes(selectedReport));
+      filtered = filtered.filter(
+        grade => grade.id && grade.id.includes(selectedReport)
+      );
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(grade =>
-        grade.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (grade.matricule && grade.matricule.toLowerCase().includes(searchTerm.toLowerCase()))
+      filtered = filtered.filter(
+        grade =>
+          grade.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (grade.matricule &&
+            grade.matricule.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -84,18 +101,22 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
       }
 
       const updatedGrade = await response.json();
-      setGrades(prev => prev.map(g => g.id === gradeId ? updatedGrade : g));
+      setGrades(prev => prev.map(g => (g.id === gradeId ? updatedGrade : g)));
       setEditingGrade(null);
       setEditForm({});
 
       toast({
         title: language === 'fr' ? 'Succès' : 'Success',
-        description: language === 'fr' ? 'Note mise à jour' : 'Grade updated successfully',
+        description:
+          language === 'fr' ? 'Note mise à jour' : 'Grade updated successfully',
       });
     } catch (error) {
       toast({
         title: language === 'fr' ? 'Erreur' : 'Error',
-        description: language === 'fr' ? 'Échec de la mise à jour' : 'Failed to update grade',
+        description:
+          language === 'fr'
+            ? 'Échec de la mise à jour'
+            : 'Failed to update grade',
         variant: 'destructive',
       });
     }
@@ -104,7 +125,13 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
   const handleDeleteGrade = async (gradeId: string) => {
     if (!gradeId) return;
 
-    if (!confirm(language === 'fr' ? 'Êtes-vous sûr de vouloir supprimer cette note ?' : 'Are you sure you want to delete this grade?')) {
+    if (
+      !confirm(
+        language === 'fr'
+          ? 'Êtes-vous sûr de vouloir supprimer cette note ?'
+          : 'Are you sure you want to delete this grade?'
+      )
+    ) {
       return;
     }
 
@@ -121,12 +148,16 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
 
       toast({
         title: language === 'fr' ? 'Succès' : 'Success',
-        description: language === 'fr' ? 'Note supprimée' : 'Grade deleted successfully',
+        description:
+          language === 'fr' ? 'Note supprimée' : 'Grade deleted successfully',
       });
     } catch (error) {
       toast({
         title: language === 'fr' ? 'Erreur' : 'Error',
-        description: language === 'fr' ? 'Échec de la suppression' : 'Failed to delete grade',
+        description:
+          language === 'fr'
+            ? 'Échec de la suppression'
+            : 'Failed to delete grade',
         variant: 'destructive',
       });
     }
@@ -148,13 +179,23 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="report-filter">{t('studentGrades.reportFilter') || 'Grade Report'}</Label>
+              <Label htmlFor="report-filter">
+                {t('studentGrades.reportFilter') || 'Grade Report'}
+              </Label>
               <Select value={selectedReport} onValueChange={setSelectedReport}>
                 <SelectTrigger>
-                  <SelectValue placeholder={language === 'fr' ? 'Sélectionner un rapport' : 'Select a report'} />
+                  <SelectValue
+                    placeholder={
+                      language === 'fr'
+                        ? 'Sélectionner un rapport'
+                        : 'Select a report'
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{language === 'fr' ? 'Tous les rapports' : 'All Reports'}</SelectItem>
+                  <SelectItem value="all">
+                    {language === 'fr' ? 'Tous les rapports' : 'All Reports'}
+                  </SelectItem>
                   {gradeReports.map(report => (
                     <SelectItem key={report.id} value={report.id || 'temp-id'}>
                       {report.className} - {report.subject} ({report.term})
@@ -165,12 +206,18 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
             </div>
 
             <div>
-              <Label htmlFor="search">{t('studentGrades.search') || 'Search Students'}</Label>
+              <Label htmlFor="search">
+                {t('studentGrades.search') || 'Search Students'}
+              </Label>
               <Input
                 id="search"
-                placeholder={language === 'fr' ? 'Rechercher par nom ou matricule...' : 'Search by name or matricule...'}
+                placeholder={
+                  language === 'fr'
+                    ? 'Rechercher par nom ou matricule...'
+                    : 'Search by name or matricule...'
+                }
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
 
@@ -191,26 +238,42 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="p-4">
-                <div className="text-2xl font-bold">{filteredGrades.length}</div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'Étudiants' : 'Students'}</div>
+                <div className="text-2xl font-bold">
+                  {filteredGrades.length}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'Étudiants' : 'Students'}
+                </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-2xl font-bold">{statistics.averageGrade?.toFixed(2) || 'N/A'}</div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'Moyenne' : 'Average'}</div>
+                <div className="text-2xl font-bold">
+                  {statistics.averageGrade?.toFixed(2) || 'N/A'}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'Moyenne' : 'Average'}
+                </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-2xl font-bold">{statistics.passRate?.toFixed(1) || 'N/A'}%</div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'Taux de réussite' : 'Pass Rate'}</div>
+                <div className="text-2xl font-bold">
+                  {statistics.passRate?.toFixed(1) || 'N/A'}%
+                </div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'Taux de réussite' : 'Pass Rate'}
+                </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-2xl font-bold">{statistics.averageGrade?.toFixed(1) || 'N/A'}</div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'Note moyenne' : 'Average Grade'}</div>
+                <div className="text-2xl font-bold">
+                  {statistics.averageGrade?.toFixed(1) || 'N/A'}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'Note moyenne' : 'Average Grade'}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -220,22 +283,44 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{language === 'fr' ? 'Étudiant' : 'Student'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Matricule' : 'Matricule'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Genre' : 'Gender'}</TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Étudiant' : 'Student'}
+                  </TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Matricule' : 'Matricule'}
+                  </TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Genre' : 'Gender'}
+                  </TableHead>
                   <TableHead>{language === 'fr' ? 'Note' : 'Grade'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Remarques' : 'Remarks'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Actions' : 'Actions'}</TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Remarques' : 'Remarks'}
+                  </TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Actions' : 'Actions'}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredGrades.map(grade => (
                   <TableRow key={grade.id || 'temp-id'}>
-                    <TableCell className="font-medium">{grade.studentName}</TableCell>
+                    <TableCell className="font-medium">
+                      {grade.studentName}
+                    </TableCell>
                     <TableCell>{grade.matricule || '-'}</TableCell>
                     <TableCell>
-                      <Badge variant={grade.gender === 'male' ? 'default' : 'secondary'}>
-                        {grade.gender === 'male' ? (language === 'fr' ? 'Masculin' : 'Male') : (language === 'fr' ? 'Féminin' : 'Female')}
+                      <Badge
+                        variant={
+                          grade.gender === 'male' ? 'default' : 'secondary'
+                        }
+                      >
+                        {grade.gender === 'male'
+                          ? language === 'fr'
+                            ? 'Masculin'
+                            : 'Male'
+                          : language === 'fr'
+                            ? 'Féminin'
+                            : 'Female'}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -245,7 +330,12 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
                           min="0"
                           max="20"
                           value={editForm.grade || ''}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, grade: parseInt(e.target.value) }))}
+                          onChange={e =>
+                            setEditForm(prev => ({
+                              ...prev,
+                              grade: parseInt(e.target.value),
+                            }))
+                          }
                           className="w-20"
                         />
                       ) : (
@@ -258,11 +348,20 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
                       {editingGrade === grade.id ? (
                         <Input
                           value={editForm.remarks || ''}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, remarks: e.target.value }))}
-                          placeholder={language === 'fr' ? 'Remarques...' : 'Remarks...'}
+                          onChange={e =>
+                            setEditForm(prev => ({
+                              ...prev,
+                              remarks: e.target.value,
+                            }))
+                          }
+                          placeholder={
+                            language === 'fr' ? 'Remarques...' : 'Remarks...'
+                          }
                         />
                       ) : (
-                        <span className="text-sm text-gray-600">{grade.remarks || '-'}</span>
+                        <span className="text-sm text-gray-600">
+                          {grade.remarks || '-'}
+                        </span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -271,7 +370,9 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
                           <>
                             <Button
                               size="sm"
-                              onClick={() => grade.id && handleSaveGrade(grade.id)}
+                              onClick={() =>
+                                grade.id && handleSaveGrade(grade.id)
+                              }
                             >
                               {language === 'fr' ? 'Sauvegarder' : 'Save'}
                             </Button>
@@ -291,14 +392,18 @@ const StudentGradesManagement: React.FC<StudentGradesManagementProps> = ({
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => grade.id && handleEditGrade(grade.id)}
+                              onClick={() =>
+                                grade.id && handleEditGrade(grade.id)
+                              }
                             >
                               {language === 'fr' ? 'Modifier' : 'Edit'}
                             </Button>
                             <Button
                               size="sm"
                               variant="destructive"
-                              onClick={() => grade.id && handleDeleteGrade(grade.id)}
+                              onClick={() =>
+                                grade.id && handleDeleteGrade(grade.id)
+                              }
                             >
                               {language === 'fr' ? 'Supprimer' : 'Delete'}
                             </Button>

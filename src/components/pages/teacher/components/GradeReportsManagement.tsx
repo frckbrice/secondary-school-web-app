@@ -3,8 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import type { GradeReport, GradeReportFormData } from '../api/constants';
@@ -37,9 +50,10 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
     let filtered = reports;
 
     if (searchTerm) {
-      filtered = filtered.filter(report =>
-        report.className.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.subject.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        report =>
+          report.className.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          report.subject.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -83,18 +97,26 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
       }
 
       const updatedReport = await response.json();
-      setReports(prev => prev.map(r => r.id === reportId ? updatedReport : r));
+      setReports(prev =>
+        prev.map(r => (r.id === reportId ? updatedReport : r))
+      );
       setEditingReport(null);
       setEditForm({});
 
       toast({
         title: language === 'fr' ? 'Succès' : 'Success',
-        description: language === 'fr' ? 'Rapport mis à jour' : 'Grade report updated successfully',
+        description:
+          language === 'fr'
+            ? 'Rapport mis à jour'
+            : 'Grade report updated successfully',
       });
     } catch (error) {
       toast({
         title: language === 'fr' ? 'Erreur' : 'Error',
-        description: language === 'fr' ? 'Échec de la mise à jour' : 'Failed to update grade report',
+        description:
+          language === 'fr'
+            ? 'Échec de la mise à jour'
+            : 'Failed to update grade report',
         variant: 'destructive',
       });
     }
@@ -103,7 +125,13 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
   const handleDeleteReport = async (reportId: string) => {
     if (!reportId) return;
 
-    if (!confirm(language === 'fr' ? 'Êtes-vous sûr de vouloir supprimer ce rapport ?' : 'Are you sure you want to delete this report?')) {
+    if (
+      !confirm(
+        language === 'fr'
+          ? 'Êtes-vous sûr de vouloir supprimer ce rapport ?'
+          : 'Are you sure you want to delete this report?'
+      )
+    ) {
       return;
     }
 
@@ -120,12 +148,18 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
 
       toast({
         title: language === 'fr' ? 'Succès' : 'Success',
-        description: language === 'fr' ? 'Rapport supprimé' : 'Grade report deleted successfully',
+        description:
+          language === 'fr'
+            ? 'Rapport supprimé'
+            : 'Grade report deleted successfully',
       });
     } catch (error) {
       toast({
         title: language === 'fr' ? 'Erreur' : 'Error',
-        description: language === 'fr' ? 'Échec de la suppression' : 'Failed to delete grade report',
+        description:
+          language === 'fr'
+            ? 'Échec de la suppression'
+            : 'Failed to delete grade report',
         variant: 'destructive',
       });
     }
@@ -144,16 +178,24 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
       }
 
       const finalizedReport = await response.json();
-      setReports(prev => prev.map(r => r.id === reportId ? finalizedReport : r));
+      setReports(prev =>
+        prev.map(r => (r.id === reportId ? finalizedReport : r))
+      );
 
       toast({
         title: language === 'fr' ? 'Succès' : 'Success',
-        description: language === 'fr' ? 'Rapport finalisé' : 'Grade report finalized successfully',
+        description:
+          language === 'fr'
+            ? 'Rapport finalisé'
+            : 'Grade report finalized successfully',
       });
     } catch (error) {
       toast({
         title: language === 'fr' ? 'Erreur' : 'Error',
-        description: language === 'fr' ? 'Échec de la finalisation' : 'Failed to finalize grade report',
+        description:
+          language === 'fr'
+            ? 'Échec de la finalisation'
+            : 'Failed to finalize grade report',
         variant: 'destructive',
       });
     }
@@ -183,23 +225,40 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <Label htmlFor="search">{t('gradeReports.search') || 'Search Reports'}</Label>
+              <Label htmlFor="search">
+                {t('gradeReports.search') || 'Search Reports'}
+              </Label>
               <Input
                 id="search"
-                placeholder={language === 'fr' ? 'Rechercher par classe ou sujet...' : 'Search by class or subject...'}
+                placeholder={
+                  language === 'fr'
+                    ? 'Rechercher par classe ou sujet...'
+                    : 'Search by class or subject...'
+                }
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
 
             <div>
-              <Label htmlFor="subject-filter">{t('gradeReports.subjectFilter') || 'Subject'}</Label>
-              <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+              <Label htmlFor="subject-filter">
+                {t('gradeReports.subjectFilter') || 'Subject'}
+              </Label>
+              <Select
+                value={selectedSubject}
+                onValueChange={setSelectedSubject}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder={language === 'fr' ? 'Tous les sujets' : 'All Subjects'} />
+                  <SelectValue
+                    placeholder={
+                      language === 'fr' ? 'Tous les sujets' : 'All Subjects'
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{language === 'fr' ? 'Tous les sujets' : 'All Subjects'}</SelectItem>
+                  <SelectItem value="all">
+                    {language === 'fr' ? 'Tous les sujets' : 'All Subjects'}
+                  </SelectItem>
                   {getUniqueSubjects().map(subject => (
                     <SelectItem key={subject} value={subject}>
                       {subject}
@@ -210,13 +269,21 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
             </div>
 
             <div>
-              <Label htmlFor="term-filter">{t('gradeReports.termFilter') || 'Term'}</Label>
+              <Label htmlFor="term-filter">
+                {t('gradeReports.termFilter') || 'Term'}
+              </Label>
               <Select value={selectedTerm} onValueChange={setSelectedTerm}>
                 <SelectTrigger>
-                  <SelectValue placeholder={language === 'fr' ? 'Tous les termes' : 'All Terms'} />
+                  <SelectValue
+                    placeholder={
+                      language === 'fr' ? 'Tous les termes' : 'All Terms'
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{language === 'fr' ? 'Tous les termes' : 'All Terms'}</SelectItem>
+                  <SelectItem value="all">
+                    {language === 'fr' ? 'Tous les termes' : 'All Terms'}
+                  </SelectItem>
                   {getUniqueTerms().map(term => (
                     <SelectItem key={term} value={term}>
                       {term}
@@ -244,8 +311,12 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card>
               <CardContent className="p-4">
-                <div className="text-2xl font-bold">{filteredReports.length}</div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'Rapports' : 'Reports'}</div>
+                <div className="text-2xl font-bold">
+                  {filteredReports.length}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'Rapports' : 'Reports'}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -253,7 +324,9 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
                 <div className="text-2xl font-bold">
                   {filteredReports.filter(r => r.isFinalized).length}
                 </div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'Finalisés' : 'Finalized'}</div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'Finalisés' : 'Finalized'}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -261,13 +334,19 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
                 <div className="text-2xl font-bold">
                   {filteredReports.filter(r => !r.isFinalized).length}
                 </div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'En cours' : 'In Progress'}</div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'En cours' : 'In Progress'}
+                </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
-                <div className="text-2xl font-bold">{getUniqueSubjects().length}</div>
-                <div className="text-sm text-gray-600">{language === 'fr' ? 'Sujets' : 'Subjects'}</div>
+                <div className="text-2xl font-bold">
+                  {getUniqueSubjects().length}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {language === 'fr' ? 'Sujets' : 'Subjects'}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -277,24 +356,44 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{language === 'fr' ? 'Classe' : 'Class'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Sujet' : 'Subject'}</TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Classe' : 'Class'}
+                  </TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Sujet' : 'Subject'}
+                  </TableHead>
                   <TableHead>{language === 'fr' ? 'Terme' : 'Term'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Période' : 'Period'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Statut' : 'Status'}</TableHead>
-                  <TableHead>{language === 'fr' ? 'Actions' : 'Actions'}</TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Période' : 'Period'}
+                  </TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Statut' : 'Status'}
+                  </TableHead>
+                  <TableHead>
+                    {language === 'fr' ? 'Actions' : 'Actions'}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredReports.map(report => (
                   <TableRow key={report.id || 'temp-id'}>
-                    <TableCell className="font-medium">{report.className}</TableCell>
+                    <TableCell className="font-medium">
+                      {report.className}
+                    </TableCell>
                     <TableCell>{report.subject}</TableCell>
                     <TableCell>{report.term}</TableCell>
                     <TableCell>{report.gradingPeriod}</TableCell>
                     <TableCell>
-                      <Badge variant={report.isFinalized ? 'default' : 'secondary'}>
-                        {report.isFinalized ? (language === 'fr' ? 'Finalisé' : 'Finalized') : (language === 'fr' ? 'En cours' : 'In Progress')}
+                      <Badge
+                        variant={report.isFinalized ? 'default' : 'secondary'}
+                      >
+                        {report.isFinalized
+                          ? language === 'fr'
+                            ? 'Finalisé'
+                            : 'Finalized'
+                          : language === 'fr'
+                            ? 'En cours'
+                            : 'In Progress'}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -303,7 +402,9 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
                           <>
                             <Button
                               size="sm"
-                              onClick={() => report.id && handleSaveReport(report.id)}
+                              onClick={() =>
+                                report.id && handleSaveReport(report.id)
+                              }
                             >
                               {language === 'fr' ? 'Sauvegarder' : 'Save'}
                             </Button>
@@ -323,7 +424,9 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => report.id && handleEditReport(report.id)}
+                              onClick={() =>
+                                report.id && handleEditReport(report.id)
+                              }
                             >
                               {language === 'fr' ? 'Modifier' : 'Edit'}
                             </Button>
@@ -331,7 +434,9 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
                               <Button
                                 size="sm"
                                 variant="default"
-                                onClick={() => report.id && handleFinalizeReport(report.id)}
+                                onClick={() =>
+                                  report.id && handleFinalizeReport(report.id)
+                                }
                               >
                                 {language === 'fr' ? 'Finaliser' : 'Finalize'}
                               </Button>
@@ -339,7 +444,9 @@ const GradeReportsManagement: React.FC<GradeReportsManagementProps> = ({
                             <Button
                               size="sm"
                               variant="destructive"
-                              onClick={() => report.id && handleDeleteReport(report.id)}
+                              onClick={() =>
+                                report.id && handleDeleteReport(report.id)
+                              }
                             >
                               {language === 'fr' ? 'Supprimer' : 'Delete'}
                             </Button>

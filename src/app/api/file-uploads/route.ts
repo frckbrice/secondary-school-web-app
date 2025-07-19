@@ -72,7 +72,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Save file to disk
-    const uploadDir = join(process.cwd(), 'uploads', 'teacher-grades', uploadedBy);
+    const uploadDir = join(
+      process.cwd(),
+      'uploads',
+      'teacher-grades',
+      uploadedBy
+    );
     const fileName = `${Date.now()}-${file.name}`;
     const filePath = join(uploadDir, fileName);
 
