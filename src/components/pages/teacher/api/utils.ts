@@ -108,4 +108,65 @@ export const parseCSVContent = (content: string) => {
   return students;
 };
 
+/**
+ * Parses a grading Excel file (either from app or matching template) and returns normalized data for preview.
+ * @param {ArrayBuffer} arrayBuffer - The file data as ArrayBuffer
+ * @param {string} [fileName] - Optional file name for format detection
+ * @returns {Promise<{ tableData: any[][], allRowsData: any[][] }>} Parsed data for preview
+ */
+export async function parseGradingFile(arrayBuffer: ArrayBuffer, fileName?: string): Promise<{ tableData: any[][], allRowsData: any[][] }> {
+  // Dynamic import for performance
+  let XLSX;
+  try {
+    const xlsxModule = await import('xlsx');
+    XLSX = xlsxModule.default || xlsxModule;
+  } catch (importError) {
+    throw new Error('Failed to load Excel processing library');
+  }
+  if (!XLSX || typeof XLSX.read !== 'function') {
+    throw new Error('XLSX library not properly loaded');
+  }
+
+  const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  const allRowsData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+
+  // Try to detect if file is from app (has known header structure)
+  const appHeader = ['Ide', 'NOM ET PRENOM', 'NOTE 1', 'NOTE 2'];
+  const firstRow = allRowsData[0]?.map(cell => String(cell).trim().toUpperCase());
+  const isAppFile = firstRow && appHeader.every((h, i) => firstRow[i]?.toUpperCase() === h);
+
+  if (isAppFile) {
+    // App-generated file: use as-is for preview
+    return { tableData: allRowsData, allRowsData };
+  }
+
+  // Otherwise, try to parse as template (robust logic)
+  // Table header
+  const tableHeader = ['Ide', 'NOM ET PRENOM', 'NOTE 1', 'NOTE 2'];
+  // Extract rows: NOM ET PRENOM from col E (index 4), NOTE 1-6 from cols F-K (5-10), from row 4 (index 3)
+  const filteredRows = allRowsData
+    .slice(3)
+    .map(row => [
+      row[4] || '',
+      row[5] || '',
+      row[6] || '',
+      row[7] || '',
+      row[8] || '',
+      row[9] || '',
+      row[10] || '',
+    ])
+    .filter(row => row[0] && String(row[0]).trim() !== ''); // Only rows with non-empty NOM ET PRENOM
+  // Build tableRows with Ide as running number (idx+1)
+  const tableRows = filteredRows.map((row, idx) => [
+    idx + 1,
+    row[0],
+    row[1],
+    row[2],
+  ]);
+  const tableData = [tableHeader, ...tableRows];
+  return { tableData, allRowsData };
+}
+
 // Add other utility functions (parseStudentList, parseCSVContent, etc.) as needed.
