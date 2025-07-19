@@ -21,7 +21,20 @@ import { Button } from '../../../../../../ui/button';
 import { Input } from '../../../../../../ui/input';
 import { useToast } from '../../../../../../../hooks/use-toast';
 import { useAuth } from '../../../../../../../hooks/use-auth';
-import { FileText, Users, Upload, Trash2 } from 'lucide-react';
+import {
+  FileText,
+  Users,
+  Upload,
+  Trash2,
+  MoreVertical,
+  Share2,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '../../../../../../ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import ShareModal from '@/components/pages/teacher/modals/ShareModal';
 
@@ -963,75 +976,94 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           <ul className="space-y-2">
             {uploadedFiles.map(file => (
               <li key={file.id} className="flex items-center gap-2">
-                <span>{file.name}</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="p-1 rounded-full hover:bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      aria-label={language === 'fr' ? 'Options' : 'Options'}
+                    >
+                      <MoreVertical className="w-5 h-5" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    sideOffset={4}
+                    className="min-w-[140px]"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setShareFile(file);
+                        setShowShareModal(true);
+                      }}
+                      className="flex items-center gap-2 text-blue-600 hover:bg-blue-50"
+                    >
+                      <Share2 className="w-4 h-4 mr-2" />
+                      {language === 'fr' ? 'Partager' : 'Share'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={async () => {
+                        if (
+                          !window.confirm(
+                            language === 'fr'
+                              ? 'Voulez-vous vraiment supprimer ce fichier ?'
+                              : 'Are you sure you want to delete this file?'
+                          )
+                        )
+                          return;
+                        try {
+                          const res = await fetch(
+                            `/api/file-uploads/${file.id}`,
+                            { method: 'DELETE' }
+                          );
+                          const data = await res.json();
+                          if (data.success) {
+                            setUploadedFiles(prev =>
+                              prev.filter(f => f.id !== file.id)
+                            );
+                            toast({
+                              title: language === 'fr' ? 'Supprimé' : 'Deleted',
+                              description:
+                                language === 'fr'
+                                  ? 'Fichier supprimé avec succès.'
+                                  : 'File deleted successfully.',
+                            });
+                          } else {
+                            toast({
+                              title: language === 'fr' ? 'Erreur' : 'Error',
+                              description:
+                                data.message ||
+                                (language === 'fr'
+                                  ? 'Échec de la suppression.'
+                                  : 'Failed to delete.'),
+                              variant: 'destructive',
+                            });
+                          }
+                        } catch (err) {
+                          toast({
+                            title: language === 'fr' ? 'Erreur' : 'Error',
+                            description:
+                              language === 'fr'
+                                ? 'Échec de la suppression.'
+                                : 'Failed to delete.',
+                            variant: 'destructive',
+                          });
+                        }
+                      }}
+                      className="flex items-center gap-2 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {language === 'fr' ? 'Supprimer' : 'Delete'}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <span className="flex-1 truncate">{file.name}</span>
                 <a
                   href={`/api${file.url}`}
                   download
-                  className="text-blue-600 underline text-sm"
+                  className="text-blue-600 underline text-sm ml-2"
                 >
                   {language === 'fr' ? 'Télécharger' : 'Download'}
                 </a>
-                <button
-                  className="ml-2 px-2 py-1 bg-purple-500 text-white rounded text-xs"
-                  onClick={() => {
-                    setShareFile(file);
-                    setShowShareModal(true);
-                  }}
-                >
-                  {language === 'fr' ? 'Partager' : 'Share'}
-                </button>
-                <button
-                  className="ml-2 px-2 py-1 bg-red-500 text-white rounded text-xs"
-                  onClick={async () => {
-                    if (
-                      !window.confirm(
-                        language === 'fr'
-                          ? 'Voulez-vous vraiment supprimer ce fichier ?'
-                          : 'Are you sure you want to delete this file?'
-                      )
-                    )
-                      return;
-                    try {
-                      const res = await fetch(`/api/file-uploads/${file.id}`, {
-                        method: 'DELETE',
-                      });
-                      const data = await res.json();
-                      if (data.success) {
-                        setUploadedFiles(prev =>
-                          prev.filter(f => f.id !== file.id)
-                        );
-                        toast({
-                          title: language === 'fr' ? 'Supprimé' : 'Deleted',
-                          description:
-                            language === 'fr'
-                              ? 'Fichier supprimé avec succès.'
-                              : 'File deleted successfully.',
-                        });
-                      } else {
-                        toast({
-                          title: language === 'fr' ? 'Erreur' : 'Error',
-                          description:
-                            data.message ||
-                            (language === 'fr'
-                              ? 'Échec de la suppression.'
-                              : 'Failed to delete.'),
-                          variant: 'destructive',
-                        });
-                      }
-                    } catch (err) {
-                      toast({
-                        title: language === 'fr' ? 'Erreur' : 'Error',
-                        description:
-                          language === 'fr'
-                            ? 'Échec de la suppression.'
-                            : 'Failed to delete.',
-                        variant: 'destructive',
-                      });
-                    }
-                  }}
-                >
-                  {language === 'fr' ? 'Supprimer' : 'Delete'}
-                </button>
               </li>
             ))}
           </ul>
