@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from '../../../components/ui/card';
 import { FileText, Users, Upload, ArrowLeft } from 'lucide-react';
-import * as XLSX from 'xlsx';
+// XLSX will be imported dynamically when needed
 
 export default function GradeEditorFullPage() {
   const router = useRouter();
@@ -178,6 +178,10 @@ export default function GradeEditorFullPage() {
     });
 
     try {
+      // Dynamic import of XLSX
+      const xlsxModule = await import('xlsx');
+      const XLSX = xlsxModule.default || xlsxModule;
+
       // Convert editorData back to Excel file
       const ws = XLSX.utils.aoa_to_sheet(editorData);
       const wb = XLSX.utils.book_new();
