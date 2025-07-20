@@ -24,7 +24,10 @@ import {
   FormLabel,
   FormMessage,
 } from '../../../ui/form';
-import { insertApplicationSchema, type InsertApplication } from '../../../../schema';
+import {
+  insertApplicationSchema,
+  type InsertApplication,
+} from '../../../../schema';
 import { apiRequest } from '../../../../lib/queryClient';
 import { useToast } from '../../../../hooks/use-toast';
 import { useLanguage } from '../../../../hooks/use-language';
@@ -47,7 +50,7 @@ interface UploadedDocument {
 }
 
 export default function AdmissionsSection() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedDocuments, setUploadedDocuments] = useState<
@@ -190,10 +193,10 @@ export default function AdmissionsSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {t('admissions.title')}
+            {language === 'fr' ? 'Admissions' : 'Admissions'}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            {t('admissions.subtitle')}
+            {language === 'fr' ? 'Admissions' : 'Admissions'}
           </p>
         </div>
 
@@ -201,7 +204,7 @@ export default function AdmissionsSection() {
           <div className="space-y-8">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                {t('admissions.requirements')}
+                {language === 'fr' ? 'Admissions' : 'Admissions'}
               </h3>
 
               <div className="space-y-6">
@@ -213,7 +216,9 @@ export default function AdmissionsSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">
-                      Academic Prerequisites
+                      {language === 'fr'
+                        ? 'Prérequis Académiques'
+                        : 'Academic Prerequisites'}
                     </h4>
                     <p className="text-muted-foreground">
                       Completed primary education certificate or equivalent
@@ -230,7 +235,9 @@ export default function AdmissionsSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">
-                      Application Documents
+                      {language === 'fr'
+                        ? 'Documents de Candidature'
+                        : 'Application Documents'}
                     </h4>
                     <p className="text-muted-foreground">
                       Birth certificate, academic transcripts, medical
@@ -247,7 +254,9 @@ export default function AdmissionsSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">
-                      Entrance Assessment
+                      {language === 'fr'
+                        ? 'Entrée au Collège'
+                        : 'Entrance Assessment'}
                     </h4>
                     <p className="text-muted-foreground">
                       Placement test in Mathematics, English, and French for
@@ -260,7 +269,9 @@ export default function AdmissionsSection() {
               <div className="mt-8 p-6 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800">
                 <h4 className="font-semibold text-orange-800 dark:text-orange-200 mb-2 flex items-center">
                   <CheckCircle className="w-5 h-5 mr-2" />
-                  Application Deadline
+                  {language === 'fr'
+                    ? 'Date Limite de Candidature'
+                    : 'Application Deadline'}
                 </h4>
                 <p className="text-orange-700 dark:text-orange-300">
                   Applications for the 2025/2026 academic year close on{' '}
@@ -273,7 +284,9 @@ export default function AdmissionsSection() {
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-foreground">
-                {t('admissions.onlineApp')}
+                {language === 'fr'
+                  ? 'Candidature en Ligne'
+                  : 'Online Application'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -288,7 +301,9 @@ export default function AdmissionsSection() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('admissions.firstName')} *</FormLabel>
+                          <FormLabel>
+                            {language === 'fr' ? 'Prénom' : 'First Name'} *
+                          </FormLabel>
                           <FormControl>
                             <Input placeholder="Enter first name" {...field} />
                           </FormControl>
@@ -301,7 +316,9 @@ export default function AdmissionsSection() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('admissions.lastName')} *</FormLabel>
+                          <FormLabel>
+                            {language === 'fr' ? 'Nom' : 'Last Name'} *
+                          </FormLabel>
                           <FormControl>
                             <Input placeholder="Enter last name" {...field} />
                           </FormControl>
@@ -316,7 +333,9 @@ export default function AdmissionsSection() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('admissions.email')} *</FormLabel>
+                        <FormLabel>
+                          {language === 'fr' ? 'Email' : 'Email'} *
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="email"
@@ -334,7 +353,9 @@ export default function AdmissionsSection() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('admissions.phone')} *</FormLabel>
+                        <FormLabel>
+                          {language === 'fr' ? 'Téléphone' : 'Phone'} *
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="tel"
@@ -352,7 +373,9 @@ export default function AdmissionsSection() {
                     name="form"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('admissions.form')} *</FormLabel>
+                        <FormLabel>
+                          {language === 'fr' ? 'Formule' : 'Form'} *
+                        </FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
@@ -380,7 +403,7 @@ export default function AdmissionsSection() {
                   {/* Document Upload Section */}
                   <div className="space-y-4">
                     <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                      {t('admissions.documents')} *
+                      {language === 'fr' ? 'Documents' : 'Documents'} *
                     </Label>
 
                     {/* Upload Area */}
@@ -397,7 +420,9 @@ export default function AdmissionsSection() {
                         <div className="flex flex-col items-center space-y-2">
                           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
                           <p className="text-gray-600">
-                            Uploading documents...
+                            {language === 'fr'
+                              ? 'Téléchargement des documents...'
+                              : 'Uploading documents...'}
                           </p>
                         </div>
                       ) : (
@@ -405,12 +430,17 @@ export default function AdmissionsSection() {
                           <Upload className="w-8 h-8 text-gray-400" />
                           <p className="text-gray-600">
                             {isDragActive
-                              ? 'Drop documents here'
-                              : 'Click to upload documents or drag and drop'}
+                              ? language === 'fr'
+                                ? 'Déposer les documents ici'
+                                : 'Drop documents here'
+                              : language === 'fr'
+                                ? 'Cliquer pour télécharger les documents ou glisser-déposer'
+                                : 'Click to upload documents or drag and drop'}
                           </p>
                           <p className="text-sm text-gray-500">
-                            Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max 5MB
-                            each)
+                            {language === 'fr'
+                              ? 'Formats acceptés : PDF, JPG, PNG, DOC, DOCX (Max 5MB chacun)'
+                              : 'Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max 5MB each)'}
                           </p>
                         </div>
                       )}
@@ -420,7 +450,10 @@ export default function AdmissionsSection() {
                     {uploadedDocuments.length > 0 && (
                       <div className="space-y-2">
                         <Label className="text-sm font-medium text-gray-700">
-                          Uploaded Documents ({uploadedDocuments.length})
+                          {language === 'fr'
+                            ? 'Documents Téléchargés'
+                            : 'Uploaded Documents'}{' '}
+                          ({uploadedDocuments.length})
                         </Label>
                         <div className="space-y-2 max-h-40 overflow-y-auto">
                           {uploadedDocuments.map(doc => (
@@ -472,7 +505,7 @@ export default function AdmissionsSection() {
                     {isSubmitting && (
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     )}
-                    {t('admissions.submit')}
+                    {language === 'fr' ? 'Soumettre' : 'Submit'}
                   </Button>
                 </form>
               </Form>

@@ -3,30 +3,23 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { Separator } from '../ui/separator';
-import { useLanguage } from '../../hooks/use-language';
-import { type News } from '../../schema';
+} from '../../ui/select';
+import { Separator } from '../../ui/separator';
+import { useLanguage } from '../../../hooks/use-language';
+import { type News } from '../../../schema';
 import {
   Calendar,
   Clock,
-  User,
   Search,
   Filter,
   ChevronRight,
@@ -39,7 +32,7 @@ import {
   GraduationCap,
   Megaphone,
 } from 'lucide-react';
-import { getApiUrl } from '../../lib/utils';
+import { getApiUrl } from '../../../lib/utils';
 
 interface NewsResponse {
   success: boolean;
@@ -47,7 +40,7 @@ interface NewsResponse {
 }
 
 export default function NewsBlog() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState('recent');

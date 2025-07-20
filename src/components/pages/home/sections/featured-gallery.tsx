@@ -16,7 +16,7 @@ interface GalleryResponse {
 }
 
 export default function FeaturedGallery() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   const {
     data: galleryResponse,
@@ -43,10 +43,10 @@ export default function FeaturedGallery() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-              {t('gallery.title')}
+              {language === 'fr' ? 'Galerie' : 'Gallery'}
             </h2>
             <p className="text-xl text-muted-foreground">
-              {t('gallery.subtitle')}
+              {language === 'fr' ? 'Galerie' : 'Gallery'}
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -113,10 +113,10 @@ export default function FeaturedGallery() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-            {t('gallery.title')}
+            {language === 'fr' ? 'Galerie' : 'Gallery'}
           </h2>
           <p className="text-xl text-muted-foreground">
-            {t('gallery.subtitle')}
+            {language === 'fr' ? 'Galerie' : 'Gallery'}
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export default function FeaturedGallery() {
           <Link href="/gallery">
             <Button className="inline-flex items-center bg-blue-600 text-white hover:bg-blue-700">
               <Images className="w-5 h-5 mr-2" />
-              {t('gallery.viewFull')}
+              {language === 'fr' ? 'Voir la Galerie' : 'View Gallery'}
             </Button>
           </Link>
         </div>

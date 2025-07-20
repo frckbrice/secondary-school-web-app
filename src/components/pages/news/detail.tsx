@@ -2,23 +2,20 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
-import { useLanguage } from '../../hooks/use-language';
-import { type News } from '../../schema';
+import { Card, CardContent } from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { useLanguage } from '../../../hooks/use-language';
+import { type News } from '../../../schema';
 import {
   Calendar,
   Clock,
   User,
   ArrowLeft,
-  Share2,
   BookmarkPlus,
   Facebook,
   Twitter,
   Mail,
-  ChevronRight,
   Tag,
 } from 'lucide-react';
 
@@ -27,7 +24,7 @@ interface NewsDetailProps {
 }
 
 export default function NewsDetail({ news }: NewsDetailProps) {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   const formatDate = (dateString: string | null) => {

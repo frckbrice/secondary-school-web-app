@@ -15,7 +15,13 @@ interface ApprovalModalProps {
   title?: string;
   approveButtonText?: string;
   cancelButtonText?: string;
-  approveButtonVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  approveButtonVariant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   isLoading?: boolean;
   t: (key: string) => string;
   language: string;

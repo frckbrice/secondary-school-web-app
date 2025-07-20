@@ -18,7 +18,7 @@ interface NewsResponse {
 }
 
 export default function NewsAnnouncements() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   const {
     data: newsResponse,
@@ -74,10 +74,10 @@ export default function NewsAnnouncements() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-              {t('news.title')}
+              {language === 'fr' ? 'Actualités' : 'News'}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t('news.subtitle')}
+              {language === 'fr' ? 'Actualités' : 'News'}
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -122,10 +122,10 @@ export default function NewsAnnouncements() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-            {t('news.title')}
+            {language === 'fr' ? 'Actualités' : 'News'}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {t('news.subtitle')}
+            {language === 'fr' ? 'Actualités' : 'News'}
           </p>
         </div>
 
@@ -176,7 +176,7 @@ export default function NewsAnnouncements() {
                       variant="ghost"
                       className="text-blue-600 hover:text-blue-700 p-0"
                     >
-                      {t('news.readMore')}
+                      {language === 'fr' ? 'Lire la suite' : 'Read More'}
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
                   </Link>
@@ -192,7 +192,9 @@ export default function NewsAnnouncements() {
               variant="outline"
               className="inline-flex items-center text-blue-600 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
             >
-              {t('news.viewAll')}
+              {language === 'fr'
+                ? 'Voir toutes les actualités'
+                : 'View All News'}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </Link>

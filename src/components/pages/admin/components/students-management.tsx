@@ -108,6 +108,8 @@ export default function StudentsManagement() {
       if (!response.ok) throw new Error('Failed to fetch students');
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const students = studentsData?.data?.students || studentsData?.students || [];

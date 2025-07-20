@@ -115,6 +115,8 @@ export default function AchievementDetailPage({
       }
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Fetch all achievements for the sidebar
@@ -128,6 +130,8 @@ export default function AchievementDetailPage({
         }
         return response.json() as Promise<AchievementsResponse>;
       },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
     });
 
   const achievement = achievementResponse?.achievement as Achievement;

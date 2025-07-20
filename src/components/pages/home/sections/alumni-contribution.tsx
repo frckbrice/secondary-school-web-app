@@ -8,18 +8,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
+} from '../../../ui/card';
+import { Button } from '../../../ui/button';
+import { Input } from '../../../ui/input';
+import { Label } from '../../../ui/label';
+import { Textarea } from '../../../ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../../ui/select';
 import {
   Dialog,
   DialogContent,
@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
+} from '../../../ui/dialog';
 import {
   Form,
   FormControl,
@@ -35,16 +35,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
+} from '../../../ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
   Heart,
   Smartphone,
-  CreditCard,
   Users,
-  Target,
   TrendingUp,
   Gift,
   School,
@@ -53,9 +51,9 @@ import {
   Trophy,
   Star,
 } from 'lucide-react';
-import { apiRequest } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
-import { useLanguage } from '../../hooks/use-language';
+import { apiRequest } from '../../../../lib/queryClient';
+import { useToast } from '../../../../hooks/use-toast';
+import { useLanguage } from '../../../../hooks/use-language';
 
 const contributionSchema = z.object({
   contributorName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -87,11 +85,10 @@ const subscriptionSchema = z.object({
 type SubscriptionFormData = z.infer<typeof subscriptionSchema>;
 
 export default function AlumniContribution() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const { toast } = useToast();
   const [isContributionOpen, setIsContributionOpen] = useState(false);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
-  const [selectedPurpose, setSelectedPurpose] = useState('');
 
   const contributionForm = useForm<ContributionFormData>({
     resolver: zodResolver(contributionSchema),

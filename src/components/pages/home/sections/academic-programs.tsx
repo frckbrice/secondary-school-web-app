@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent } from '../ui/card';
+import { Card, CardContent } from '../../../ui/card';
 import {
   CheckCircle,
   Lightbulb,
@@ -8,11 +8,11 @@ import {
   BarChart3,
   BookOpen,
 } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
+import { useLanguage } from '../../../../hooks/use-language';
 import React from 'react';
 
 export default function AcademicPrograms() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
     <section
@@ -39,7 +39,7 @@ export default function AcademicPrograms() {
                 </div>
                 <div>
                   <h3 className="font-bold text-2xl text-foreground">
-                    {t('academics.firstCycle')}
+                    {language === 'fr' ? 'Première Cycle' : 'First Cycle'}
                   </h3>
                   <p className="text-blue-600 dark:text-blue-400">
                     Forms 1 - 5
@@ -50,20 +50,25 @@ export default function AcademicPrograms() {
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
                   <p className="text-muted-foreground">
-                    Foundation in core subjects: Mathematics, English, French,
-                    Sciences
+                    {language === 'fr'
+                      ? 'Fondation dans les matières de base : Mathématiques, Anglais, Français, Sciences'
+                      : 'Foundation in core subjects: Mathematics, English, French, Sciences'}
                   </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
                   <p className="text-muted-foreground">
-                    Bilingual instruction in English and French
+                    {language === 'fr'
+                      ? 'Enseignement bilingue en Anglais et Français'
+                      : 'Bilingual instruction in English and French'}
                   </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
                   <p className="text-muted-foreground">
-                    Preparation for GCE Ordinary Level and BEPC examinations
+                    {language === 'fr'
+                      ? 'Préparation pour les examens du GCE Ordinary Level et BEPC'
+                      : 'Preparation for GCE Ordinary Level and BEPC examinations'}
                   </p>
                 </div>
               </div>
@@ -79,7 +84,7 @@ export default function AcademicPrograms() {
                 </div>
                 <div>
                   <h3 className="font-bold text-2xl text-foreground">
-                    {t('academics.secondCycle')}
+                    {language === 'fr' ? 'Deuxième Cycle' : 'Second Cycle'}
                   </h3>
                   <p className="text-green-600 dark:text-green-400">
                     Lower & Upper Sixth
@@ -90,19 +95,25 @@ export default function AcademicPrograms() {
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
                   <p className="text-muted-foreground">
-                    Specialized tracks: Arts, Sciences, Commercial subjects
+                    {language === 'fr'
+                      ? 'Spécialisations : Arts, Sciences, Matières Commerciales'
+                      : 'Specialized tracks: Arts, Sciences, Commercial subjects'}
                   </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
                   <p className="text-muted-foreground">
-                    University preparation and career guidance
+                    {language === 'fr'
+                      ? "Préparation pour l'université et orientation professionnelle"
+                      : 'University preparation and career guidance'}
                   </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
                   <p className="text-muted-foreground">
-                    Preparation for GCE Advanced Level and Baccalauréat
+                    {language === 'fr'
+                      ? 'Préparation pour le GCE Advanced Level et le Baccalauréat'
+                      : 'Preparation for GCE Advanced Level and Baccalauréat'}
                   </p>
                 </div>
               </div>
@@ -118,10 +129,12 @@ export default function AcademicPrograms() {
                 <Lightbulb className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="font-semibold text-lg text-foreground mb-2">
-                {t('academics.sciences')}
+                {language === 'fr' ? 'Sciences' : 'Sciences'}
               </h3>
               <p className="text-muted-foreground">
-                Physics, Chemistry, Biology, Mathematics
+                {language === 'fr'
+                  ? 'Physique, Chimie, Biologie, Mathématiques'
+                  : 'Physics, Chemistry, Biology, Mathematics'}
               </p>
             </CardContent>
           </Card>
@@ -132,10 +145,12 @@ export default function AcademicPrograms() {
                 <Globe className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="font-semibold text-lg text-foreground mb-2">
-                {t('academics.languages')}
+                {language === 'fr' ? 'Langues' : 'Languages'}
               </h3>
               <p className="text-muted-foreground">
-                English, French, Literature, Communication
+                {language === 'fr'
+                  ? 'Anglais, Français, Littérature, Communication'
+                  : 'English, French, Literature, Communication'}
               </p>
             </CardContent>
           </Card>
@@ -146,10 +161,12 @@ export default function AcademicPrograms() {
                 <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="font-semibold text-lg text-foreground mb-2">
-                {t('academics.commercial')}
+                {language === 'fr' ? 'Commercial' : 'Commercial'}
               </h3>
               <p className="text-muted-foreground">
-                Accounting, Economics, Business Studies
+                {language === 'fr'
+                  ? 'Comptabilité, Économie, Études Commerciales'
+                  : 'Accounting, Economics, Business Studies'}
               </p>
             </CardContent>
           </Card>
@@ -160,10 +177,12 @@ export default function AcademicPrograms() {
                 <BookOpen className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
               <h3 className="font-semibold text-lg text-foreground mb-2">
-                {t('academics.arts')}
+                {language === 'fr' ? 'Arts' : 'Arts'}
               </h3>
               <p className="text-muted-foreground">
-                History, Geography, Philosophy, Arts
+                {language === 'fr'
+                  ? 'Histoire, Géographie, Philosophie, Arts'
+                  : 'History, Geography, Philosophy, Arts'}
               </p>
             </CardContent>
           </Card>

@@ -142,6 +142,8 @@ export default function FacilitiesManagement() {
       }
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const fetchFacilities = async () => {

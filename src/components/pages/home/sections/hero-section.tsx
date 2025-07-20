@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '../ui/button';
-import { useLanguage } from '../../hooks/use-language';
+import { Button } from '../../../ui/button';
+import { useLanguage } from '../../../../hooks/use-language';
 import { useTheme } from 'next-themes';
 
 export default function HeroSection() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -45,34 +45,28 @@ export default function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left">
             <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl mb-6 leading-tight">
-              {t('hero.title')
-                .split(' ')
-                .map((word, index) =>
-                  word === 'Bilingual' || word === 'Bilingue' ? (
-                    <span key={index} className="text-orange-400">
-                      {word}{' '}
-                    </span>
-                  ) : (
-                    <span key={index}>{word} </span>
-                  )
-                )}
+              {language === 'fr'
+                ? 'Lycée Bilingue de Bafia'
+                : 'Government Bilingual High School Bafia'}
             </h1>
             <p className="text-xl sm:text-2xl mb-8 text-blue-100 leading-relaxed">
-              {t('hero.subtitle')}
+              {language === 'fr'
+                ? 'Lycée Bilingue de Bafia'
+                : 'Government Bilingual High School Bafia'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
                 onClick={() => scrollToSection('admissions')}
                 className="bg-orange-500 text-white px-8 py-4 text-lg font-semibold hover:bg-orange-600 transition-colors shadow-lg"
               >
-                {t('hero.applyButton')}
+                {language === 'fr' ? 'Candidature' : 'Apply'}
               </Button>
               <Button
                 onClick={() => (window.location.href = '/gbhs-history')}
                 variant="outline"
                 className="border-2 border-orange-400 text-orange-400 bg-white bg-opacity-10 backdrop-blur-sm px-8 py-4 text-lg font-semibold hover:bg-orange-400 hover:text-white transition-colors"
               >
-                {t('hero.learnMore')}
+                {language === 'fr' ? 'En savoir plus' : 'Learn More'}
               </Button>
             </div>
           </div>
@@ -83,17 +77,25 @@ export default function HeroSection() {
               <div className="text-3xl font-bold text-orange-400 mb-2">
                 1,500+
               </div>
-              <div className="text-blue-100">{t('hero.studentsEnrolled')}</div>
+              <div className="text-blue-100">
+                {language === 'fr' ? 'Élèves inscrits' : 'Students Enrolled'}
+              </div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm p-6 rounded-lg text-center border border-white border-opacity-20">
               <div className="text-3xl font-bold text-orange-400 mb-2">95%</div>
-              <div className="text-blue-100">{t('hero.passRate')}</div>
+              <div className="text-blue-100">
+                {language === 'fr' ? 'Taux de réussite' : 'Pass Rate'}
+              </div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm p-6 rounded-lg text-center border border-white border-opacity-20">
               <div className="text-3xl font-bold text-orange-400 mb-2">
                 100+
               </div>
-              <div className="text-blue-100">{t('hero.qualifiedTeachers')}</div>
+              <div className="text-blue-100">
+                {language === 'fr'
+                  ? 'Enseignants qualifiés'
+                  : 'Qualified Teachers'}
+              </div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm p-6 rounded-lg text-center border border-white border-opacity-20">
               <div className="text-3xl font-bold text-orange-400 mb-2">45+</div>

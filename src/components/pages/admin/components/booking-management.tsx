@@ -137,6 +137,9 @@ export default function BookingManagement() {
       }
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+
+    refetchOnWindowFocus: false,
   });
 
   // Create booking mutation

@@ -50,6 +50,8 @@ export default function ContributionsManagement() {
       }
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const formatCurrency = (amount: string, currency: string) => {

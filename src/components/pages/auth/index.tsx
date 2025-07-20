@@ -14,7 +14,16 @@ import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
-import { Loader2, School, User, Mail, Phone, EyeOff, Eye, Shield } from 'lucide-react';
+import {
+  Loader2,
+  School,
+  User,
+  Mail,
+  Phone,
+  EyeOff,
+  Eye,
+  Shield,
+} from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -229,7 +238,11 @@ export default function AuthPage() {
 
         <Card className="shadow-xl">
           <CardHeader>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">
                   {language === 'fr' ? 'Connexion' : 'Login'}
@@ -241,7 +254,9 @@ export default function AuthPage() {
 
               <TabsContent value="login" className="space-y-4">
                 <div className="space-y-2">
-                  <Label>{language === 'fr' ? 'Type de Compte' : 'Account Type'}</Label>
+                  <Label>
+                    {language === 'fr' ? 'Type de Compte' : 'Account Type'}
+                  </Label>
                   <Select value={selectedRole} onValueChange={handleRoleChange}>
                     <SelectTrigger>
                       <SelectValue />
@@ -276,14 +291,19 @@ export default function AuthPage() {
                 </div>
 
                 <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+                  <form
+                    onSubmit={loginForm.handleSubmit(onLogin)}
+                    className="space-y-4"
+                  >
                     <FormField
                       control={loginForm.control}
                       name="username"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            {language === 'fr' ? "Nom d'utilisateur" : 'Username'}
+                            {language === 'fr'
+                              ? "Nom d'utilisateur"
+                              : 'Username'}
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -324,7 +344,9 @@ export default function AuthPage() {
                                 variant="ghost"
                                 size="sm"
                                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                                onClick={() =>
+                                  setIsPasswordVisible(!isPasswordVisible)
+                                }
                               >
                                 {isPasswordVisible ? (
                                   <EyeOff className="h-4 w-4" />
@@ -349,15 +371,18 @@ export default function AuthPage() {
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                           {language === 'fr' ? 'Connexion...' : 'Signing in...'}
                         </>
+                      ) : language === 'fr' ? (
+                        'Se Connecter'
                       ) : (
-                        language === 'fr' ? 'Se Connecter' : 'Sign In'
+                        'Sign In'
                       )}
                     </Button>
                   </form>
                 </Form>
 
                 {/* Demo Credentials */}
-                {(selectedRole === 'admin' || selectedRole === 'super_admin') && (
+                {(selectedRole === 'admin' ||
+                  selectedRole === 'super_admin') && (
                   <Alert>
                     <AlertDescription className="text-sm">
                       <strong>Demo Credentials:</strong>
@@ -372,7 +397,9 @@ export default function AuthPage() {
 
               <TabsContent value="register" className="space-y-4">
                 <div className="space-y-2">
-                  <Label>{language === 'fr' ? 'Type de Compte' : 'Account Type'}</Label>
+                  <Label>
+                    {language === 'fr' ? 'Type de Compte' : 'Account Type'}
+                  </Label>
                   <Select value={selectedRole} onValueChange={handleRoleChange}>
                     <SelectTrigger>
                       <SelectValue />
@@ -395,7 +422,10 @@ export default function AuthPage() {
                 </div>
 
                 <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
+                  <form
+                    onSubmit={registerForm.handleSubmit(onRegister)}
+                    className="space-y-4"
+                  >
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={registerForm.control}
@@ -403,7 +433,9 @@ export default function AuthPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              {language === 'fr' ? "Nom d'utilisateur" : 'Username'}
+                              {language === 'fr'
+                                ? "Nom d'utilisateur"
+                                : 'Username'}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -519,7 +551,9 @@ export default function AuthPage() {
                                   variant="ghost"
                                   size="sm"
                                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                  onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                                  onClick={() =>
+                                    setIsPasswordVisible(!isPasswordVisible)
+                                  }
                                 >
                                   {isPasswordVisible ? (
                                     <EyeOff className="h-4 w-4" />
@@ -567,10 +601,14 @@ export default function AuthPage() {
                       {registerMutation.isPending ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          {language === 'fr' ? 'Inscription...' : 'Registering...'}
+                          {language === 'fr'
+                            ? 'Inscription...'
+                            : 'Registering...'}
                         </>
+                      ) : language === 'fr' ? (
+                        "S'inscrire"
                       ) : (
-                        language === 'fr' ? "S'inscrire" : 'Register'
+                        'Register'
                       )}
                     </Button>
                   </form>

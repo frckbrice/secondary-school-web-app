@@ -2,17 +2,17 @@
 
 import React from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../ui/card';
+import { Button } from '../../../ui/button';
+import { Input } from '../../../ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { Textarea } from '../ui/textarea';
+} from '../../../ui/select';
+import { Textarea } from '../../../ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -22,15 +22,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { insertContactSchema, type InsertContact } from '../../schema';
-import { apiRequest } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../../ui/form';
+import { insertContactSchema, type InsertContact } from '../../../../schema';
+import { apiRequest } from '../../../../lib/queryClient';
+import { useToast } from '../../../../hooks/use-toast';
+import { useLanguage } from '../../../../hooks/use-language';
 import { MapPin, Phone, Mail, Clock, Loader2 } from 'lucide-react';
 
 export default function ContactSection() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const { toast } = useToast();
 
   const form = useForm<InsertContact>({
@@ -79,10 +79,10 @@ export default function ContactSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-            {t('contact.title')}
+            {language === 'fr' ? 'Contact' : 'Contact'}
           </h2>
           <p className="text-xl text-muted-foreground">
-            {t('contact.subtitle')}
+            {language === 'fr' ? 'Contact' : 'Contact'}
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function ContactSection() {
             <Card className="shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-foreground">
-                  {t('contact.info')}
+                  {language === 'fr' ? 'Contact' : 'Contact'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -102,14 +102,18 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">
-                      {t('contact.address')}
+                      {language === 'fr' ? 'Adresse' : 'Address'}
                     </h4>
                     <p className="text-muted-foreground">
-                      Government Bilingual High School
+                      {language === 'fr'
+                        ? 'Lycée Bilingue de Bafia'
+                        : 'Government Bilingual High School'}
                       <br />
-                      Bafia, Centre Region
+                      {language === 'fr'
+                        ? 'Bafia, Centre Region'
+                        : 'Bafia, Centre Region'}
                       <br />
-                      Cameroon
+                      {language === 'fr' ? 'Cameroun' : 'Cameroon'}
                     </p>
                   </div>
                 </div>
@@ -120,7 +124,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">
-                      {t('contact.phone')}
+                      {language === 'fr' ? 'Téléphone' : 'Phone'}
                     </h4>
                     <p className="text-muted-foreground">+237 222 175 175</p>
                   </div>
@@ -132,7 +136,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">
-                      {t('contact.email')}
+                      {language === 'fr' ? 'Email' : 'Email'}
                     </h4>
                     <p className="text-muted-foreground">
                       lyceebilinguebafia@gmail.com
@@ -158,12 +162,16 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">
-                      {t('contact.hours')}
+                      {language === 'fr' ? 'Horaires' : 'Hours'}
                     </h4>
                     <p className="text-muted-foreground">
-                      Mon - Fri: 7:00 AM - 15:30 PM
+                      {language === 'fr'
+                        ? 'Lun - Ven: 7:00 AM - 15:30 PM'
+                        : 'Mon - Fri: 7:00 AM - 15:30 PM'}
                       <br />
-                      Sat: Book an appointment
+                      {language === 'fr'
+                        ? 'Sam: Réserver un rendez-vous'
+                        : 'Sat: Book an appointment'}
                     </p>
                   </div>
                 </div>
@@ -176,7 +184,7 @@ export default function ContactSection() {
             <Card className="shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-foreground">
-                  {t('contact.sendMessage')}
+                  {language === 'fr' ? 'Envoyer un Message' : 'Send Message'}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -191,7 +199,10 @@ export default function ContactSection() {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t('contact.fullName')} *</FormLabel>
+                            <FormLabel>
+                              {language === 'fr' ? 'Nom Complet' : 'Full Name'}{' '}
+                              *
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="Enter your full name"
@@ -207,7 +218,9 @@ export default function ContactSection() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t('contact.email')} *</FormLabel>
+                            <FormLabel>
+                              {language === 'fr' ? 'Email' : 'Email'} *
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="email"
@@ -226,7 +239,11 @@ export default function ContactSection() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel>
+                            {language === 'fr'
+                              ? 'Numéro de Téléphone'
+                              : 'Phone Number'}
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type="tel"
@@ -245,7 +262,12 @@ export default function ContactSection() {
                       name="inquiryType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('contact.inquiryType')} *</FormLabel>
+                          <FormLabel>
+                            {language === 'fr'
+                              ? 'Type de Requête'
+                              : 'Inquiry Type'}{' '}
+                            *
+                          </FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
@@ -283,7 +305,9 @@ export default function ContactSection() {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('contact.message')} *</FormLabel>
+                          <FormLabel>
+                            {language === 'fr' ? 'Message' : 'Message'} *
+                          </FormLabel>
                           <FormControl>
                             <Textarea
                               rows={5}
@@ -305,7 +329,7 @@ export default function ContactSection() {
                       {submitContact.isPending && (
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       )}
-                      {t('contact.send')}
+                      {language === 'fr' ? 'Envoyer' : 'Send'}
                     </Button>
                   </form>
                 </Form>

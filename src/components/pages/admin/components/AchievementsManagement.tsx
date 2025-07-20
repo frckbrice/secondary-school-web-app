@@ -44,7 +44,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-  import { DataTable } from '../../../ui/data-table';
+import { DataTable } from '../../../ui/data-table';
 import { Pagination } from '../../../ui/pagination';
 import { getApiUrl } from '../../../../lib/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -146,6 +146,8 @@ export default function AchievementsManagement() {
       }
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const fetchAchievements = async () => {

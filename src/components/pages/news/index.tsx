@@ -2,44 +2,43 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useInfiniteQueryData } from '../../hooks/use-infinite-query';
-import { useInfiniteScroll } from '../../hooks/use-infinite-scroll';
+import { useInfiniteQueryData } from '../../../hooks/use-infinite-query';
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+} from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { useLanguage } from '../../hooks/use-language';
-import { type News } from '../../schema';
+} from '../../ui/select';
+import { useLanguage } from '../../../hooks/use-language';
+import { type News } from '../../../schema';
 import {
   Calendar,
   Clock,
   User,
   Search,
   Filter,
-  ChevronRight,
   ArrowLeft,
   Newspaper,
   Eye,
 } from 'lucide-react';
 import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 
 export default function NewsPage() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState<News | null>(null);

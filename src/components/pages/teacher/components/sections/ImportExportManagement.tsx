@@ -509,9 +509,10 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       if (data.success) {
         toast({
           title: language === 'fr' ? 'Succès' : 'Success',
-          description: language === 'fr'
-            ? 'Fichier téléchargé avec succès'
-            : 'File uploaded successfully',
+          description:
+            language === 'fr'
+              ? 'Fichier téléchargé avec succès'
+              : 'File uploaded successfully',
         });
 
         // Refresh uploaded files immediately
@@ -527,9 +528,9 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       } else {
         toast({
           title: language === 'fr' ? 'Erreur' : 'Error',
-          description: data.message || (language === 'fr'
-            ? 'Échec du téléchargement'
-            : 'Upload failed'),
+          description:
+            data.message ||
+            (language === 'fr' ? 'Échec du téléchargement' : 'Upload failed'),
           variant: 'destructive',
         });
       }
@@ -537,9 +538,8 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       console.error('Upload error:', err);
       toast({
         title: language === 'fr' ? 'Erreur' : 'Error',
-        description: language === 'fr'
-          ? 'Échec du téléchargement'
-          : 'Upload failed',
+        description:
+          language === 'fr' ? 'Échec du téléchargement' : 'Upload failed',
         variant: 'destructive',
       });
     } finally {
@@ -752,25 +752,27 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         setUploadedFiles(prev => prev.filter(f => f.id !== fileToDelete.id));
         toast({
           title: language === 'fr' ? 'Supprimé' : 'Deleted',
-          description: language === 'fr'
-            ? 'Fichier supprimé avec succès.'
-            : 'File deleted successfully.',
+          description:
+            language === 'fr'
+              ? 'Fichier supprimé avec succès.'
+              : 'File deleted successfully.',
         });
       } else {
         toast({
           title: language === 'fr' ? 'Erreur' : 'Error',
-          description: data.message || (language === 'fr'
-            ? 'Échec de la suppression.'
-            : 'Failed to delete.'),
+          description:
+            data.message ||
+            (language === 'fr'
+              ? 'Échec de la suppression.'
+              : 'Failed to delete.'),
           variant: 'destructive',
         });
       }
     } catch (err) {
       toast({
         title: language === 'fr' ? 'Erreur' : 'Error',
-        description: language === 'fr'
-          ? 'Échec de la suppression.'
-          : 'Failed to delete.',
+        description:
+          language === 'fr' ? 'Échec de la suppression.' : 'Failed to delete.',
         variant: 'destructive',
       });
     } finally {
@@ -841,8 +843,18 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           ) : templates.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-gray-400 mb-2">
-                <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <svg
+                  className="w-12 h-12 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
               </div>
               <p className="text-gray-500">
@@ -855,12 +867,18 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {templates.map(file => {
                 // Extract subject name from filename (remove .xlsx extension)
-                const subjectName = file.replace('.xlsx', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                const subjectName = file
+                  .replace('.xlsx', '')
+                  .replace(/_/g, ' ')
+                  .replace(/\b\w/g, l => l.toUpperCase());
 
                 // Get subject icon based on subject name
                 const getSubjectIcon = (subject: string) => {
                   const lowerSubject = subject.toLowerCase();
-                  if (lowerSubject.includes('math') || lowerSubject.includes('mathematics')) {
+                  if (
+                    lowerSubject.includes('math') ||
+                    lowerSubject.includes('mathematics')
+                  ) {
                     return '∑'; // Math symbol
                   } else if (lowerSubject.includes('physics')) {
                     return '⚡'; // Lightning bolt
@@ -868,7 +886,10 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                     return '⚗️'; // Test tube
                   } else if (lowerSubject.includes('english')) {
                     return '📚'; // Book
-                  } else if (lowerSubject.includes('informatique') || lowerSubject.includes('computer')) {
+                  } else if (
+                    lowerSubject.includes('informatique') ||
+                    lowerSubject.includes('computer')
+                  ) {
                     return '💻'; // Computer
                   } else {
                     return '📝'; // Default document
@@ -890,7 +911,9 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                             {subjectName}
                           </h4>
                           <p className="text-sm text-gray-500">
-                            {language === 'fr' ? 'Modèle Excel' : 'Excel Template'}
+                            {language === 'fr'
+                              ? 'Modèle Excel'
+                              : 'Excel Template'}
                           </p>
                         </div>
                       </div>
@@ -915,8 +938,18 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                         download
                         className="w-full text-center px-4 py-2 border border-gray-300 hover:border-blue-400 text-gray-700 hover:text-blue-700 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
                         </svg>
                         {language === 'fr' ? 'Télécharger' : 'Download'}
                       </a>
@@ -1002,9 +1035,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           onClose={() => setShowApprovalModal(false)}
           onApprove={handleUploadApproval}
           title={
-            language === 'fr'
-              ? 'Confirmer le téléchargement'
-              : 'Confirm Upload'
+            language === 'fr' ? 'Confirmer le téléchargement' : 'Confirm Upload'
           }
           message={
             language === 'fr'
@@ -1012,9 +1043,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
               : 'Do you really want to approve and upload this filled grading file?'
           }
           approveButtonText={
-            language === 'fr'
-              ? 'Approuver et Télécharger'
-              : 'Approve & Upload'
+            language === 'fr' ? 'Approuver et Télécharger' : 'Approve & Upload'
           }
           approveButtonVariant="default"
           isLoading={approvalLoading}
@@ -1121,9 +1150,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         }}
         onApprove={handleDeleteFile}
         title={
-          language === 'fr'
-            ? 'Confirmer la suppression'
-            : 'Confirm Deletion'
+          language === 'fr' ? 'Confirmer la suppression' : 'Confirm Deletion'
         }
         message={
           language === 'fr'
@@ -1131,9 +1158,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
             : `Are you sure you want to delete "${fileToDelete?.name}" from your uploaded files? This action cannot be undone.`
         }
         approveButtonText={
-          language === 'fr'
-            ? 'Supprimer définitivement'
-            : 'Delete Permanently'
+          language === 'fr' ? 'Supprimer définitivement' : 'Delete Permanently'
         }
         approveButtonVariant="destructive"
         isLoading={false}
@@ -1273,12 +1298,13 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                           {editorData[0].map((cell, colIdx) => (
                             <th
                               key={colIdx}
-                              className={`px-4 py-3 text-left font-semibold text-gray-700 border-b border-gray-200 ${colIdx === 0
+                              className={`px-4 py-3 text-left font-semibold text-gray-700 border-b border-gray-200 ${
+                                colIdx === 0
                                   ? 'w-16'
                                   : colIdx === 1
                                     ? 'min-w-[200px]'
                                     : 'w-24 text-center'
-                                }`}
+                              }`}
                             >
                               {cell}
                             </th>
@@ -1308,18 +1334,20 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                           return (
                             <tr
                               key={rowIdx}
-                              className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                                }`}
+                              className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${
+                                rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                              }`}
                             >
                               {row.map((cell, colIdx) => (
                                 <td
                                   key={colIdx}
-                                  className={`px-4 py-3 border-r border-gray-100 last:border-r-0 ${colIdx === 0
+                                  className={`px-4 py-3 border-r border-gray-100 last:border-r-0 ${
+                                    colIdx === 0
                                       ? 'text-center font-medium text-gray-600 bg-gray-50'
                                       : colIdx === 1
                                         ? 'font-medium text-gray-800'
                                         : 'text-center'
-                                    }`}
+                                  }`}
                                 >
                                   {colIdx === 2 || colIdx === 3 ? (
                                     <Input

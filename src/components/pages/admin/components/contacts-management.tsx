@@ -121,6 +121,8 @@ export default function ContactsManagement() {
       }
       return response.json();
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Create contact mutation

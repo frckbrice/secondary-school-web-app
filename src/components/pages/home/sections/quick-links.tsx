@@ -1,30 +1,10 @@
 'use client';
 
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../../ui/card';
-import { Button } from '../../../ui/button';
+import { Card, CardContent } from '../../../ui/card';
 import { useLanguage } from '../../../../hooks/use-language';
 import { useRouter } from 'next/navigation';
-import {
-  GraduationCap,
-  Calendar,
-  Phone,
-  Mail,
-  MapPin,
-  Users,
-  BookOpen,
-  Award,
-  ArrowRight,
-  User,
-  FileText,
-  Image,
-} from 'lucide-react';
+import { GraduationCap, Calendar, Mail, BookOpen, User } from 'lucide-react';
 import { useAuth } from '../../../../hooks/use-auth';
 import {
   Dialog,
@@ -35,9 +15,9 @@ import {
 import { useState } from 'react';
 
 export default function QuickLinks() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [accessMessage, setAccessMessage] = useState<string | null>(null);
 
@@ -71,8 +51,8 @@ export default function QuickLinks() {
   const quickLinks = [
     {
       icon: BookOpen,
-      title: t('quickLinks.admissions'),
-      description: t('quickLinks.admissionsDesc'),
+      title: language === 'fr' ? 'Admissions' : 'Admissions',
+      description: language === 'fr' ? 'Admissions' : 'Admissions',
       action: () => scrollToSection('admissions'),
       bgColor: 'bg-blue-100',
       iconColor: 'text-blue-600',
@@ -80,8 +60,8 @@ export default function QuickLinks() {
     },
     {
       icon: Calendar,
-      title: t('quickLinks.calendar'),
-      description: t('quickLinks.calendarDesc'),
+      title: language === 'fr' ? 'Calendrier' : 'Calendar',
+      description: language === 'fr' ? 'Calendrier' : 'Calendar',
       action: () => setCalendarOpen(true),
       bgColor: 'bg-green-100',
       iconColor: 'text-green-600',
@@ -89,8 +69,8 @@ export default function QuickLinks() {
     },
     {
       icon: User,
-      title: t('quickLinks.portal'),
-      description: t('quickLinks.portalDesc'),
+      title: language === 'fr' ? 'Portail' : 'Portal',
+      description: language === 'fr' ? 'Portail' : 'Portal',
       action: handleStudentPortal,
       bgColor: 'bg-orange-100',
       iconColor: 'text-orange-600',
@@ -98,8 +78,8 @@ export default function QuickLinks() {
     },
     {
       icon: GraduationCap,
-      title: t('quickLinks.teacher'),
-      description: t('quickLinks.teacherDesc'),
+      title: language === 'fr' ? 'Enseignant' : 'Teacher',
+      description: language === 'fr' ? 'Enseignant' : 'Teacher',
       action: handleTeacherPortal,
       bgColor: 'bg-purple-100',
       iconColor: 'text-purple-600',
@@ -107,8 +87,8 @@ export default function QuickLinks() {
     },
     {
       icon: Mail,
-      title: t('quickLinks.contact'),
-      description: t('quickLinks.contactDesc'),
+      title: language === 'fr' ? 'Contact' : 'Contact',
+      description: language === 'fr' ? 'Contact' : 'Contact',
       action: () => scrollToSection('contact'),
       bgColor: 'bg-gray-100',
       iconColor: 'text-gray-600',
@@ -152,10 +132,10 @@ export default function QuickLinks() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-            {t('quickLinks.title')}
+            {language === 'fr' ? 'Liens Rapides' : 'Quick Links'}
           </h2>
           <p className="text-xl text-muted-foreground">
-            {t('quickLinks.subtitle')}
+            {language === 'fr' ? 'Liens Rapides' : 'Quick Links'}
           </p>
         </div>
 

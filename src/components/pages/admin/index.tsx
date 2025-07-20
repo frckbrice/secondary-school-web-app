@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAuth } from '../../hooks/use-auth';
-import { useLanguage } from '../../hooks/use-language';
+import { useAuth } from '../../../hooks/use-auth';
+import { useLanguage } from '../../../hooks/use-language';
 import { useTheme } from 'next-themes';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -11,9 +11,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+} from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
 import {
   School,
   Users,
@@ -43,8 +43,8 @@ import AchievementsManagement from './components/AchievementsManagement';
 import StudentsManagement from './components/students-management';
 import TeachersManagement from './components/teachers-management';
 import { useRouter } from 'next/navigation';
-import { AdminSidebar } from '../ui/admin-sidebar';
-import { apiRequest } from '../../lib/queryClient';
+import { AdminSidebar } from '../../ui/admin-sidebar';
+import { apiRequest } from '../../../lib/queryClient';
 
 interface DashboardStats {
   totalStudents: number;
