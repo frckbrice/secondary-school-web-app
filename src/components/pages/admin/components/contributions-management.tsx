@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable } from '../ui/data-table';
-import { Badge } from '../ui/badge';
+import { DataTable } from '../../../ui/data-table';
+import { Badge } from '../../../ui/badge';
 import { Eye, Download } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
+import { useLanguage } from '../../../../hooks/use-language';
 
 interface Contribution {
   id: string;

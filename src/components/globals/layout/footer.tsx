@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useLanguage } from '../../hooks/use-language';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   MapPin,
   Phone,
@@ -23,7 +23,7 @@ interface FooterProps {
 }
 
 export function Footer({ showStats = false }: FooterProps) {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   return (
     <footer className="bg-gray-900 text-white">

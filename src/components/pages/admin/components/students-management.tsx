@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { DataTable } from '../ui/data-table';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
+import { DataTable } from '../../../ui/data-table';
+import { Button } from '../../../ui/button';
+import { Badge } from '../../../ui/badge';
 import {
   Plus,
   Users,
@@ -16,25 +16,25 @@ import {
   Edit,
   Trash2,
 } from 'lucide-react';
-import { apiRequest } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
-import { useLanguage } from '../../hooks/use-language';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Input } from '../ui/input';
+import { apiRequest } from '../../../../lib/queryClient';
+import { useToast } from '../../../../hooks/use-toast';
+import { useLanguage } from '../../../../hooks/use-language';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../ui/card';
+import { Input } from '../../../ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../../ui/select';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
+} from '../../../ui/dialog';
 
 interface Student {
   id: string;

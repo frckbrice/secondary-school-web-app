@@ -13,8 +13,13 @@ import ContactSection from './sections/contact-section';
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip Link for Accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
       <Header />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <HeroSection />
         <NewsAnnouncements />
         <QuickLinks />

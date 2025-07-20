@@ -6,6 +6,8 @@ import { AuthProvider } from '../components/providers/auth-provider';
 import { QueryClientProvider } from '../components/providers/query-provider';
 import { ThemeProvider } from '../components/providers/theme-provider';
 import { LanguageProvider } from '../hooks/use-language';
+import { AccessibilityProvider } from '../components/accessibility/accessibility-provider';
+import { AccessibilitySettings } from '../components/ui/accessibility-settings';
 import { Toaster } from '../components/ui/toaster';
 
 const inter = Inter({
@@ -369,7 +371,12 @@ export default function RootLayout({
         <QueryClientProvider>
           <AuthProvider>
             <ThemeProvider>
-              <LanguageProvider>{children}</LanguageProvider>
+              <LanguageProvider>
+                <AccessibilityProvider>
+                  <AccessibilitySettings />
+                  {children}
+                </AccessibilityProvider>
+              </LanguageProvider>
             </ThemeProvider>
           </AuthProvider>
           <Toaster />

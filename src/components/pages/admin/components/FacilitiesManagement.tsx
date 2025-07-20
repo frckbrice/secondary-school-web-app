@@ -7,11 +7,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
+} from '../../../ui/card';
+import { Button } from '../../../ui/button';
+import { Input } from '../../../ui/input';
+import { Label } from '../../../ui/label';
+import { Textarea } from '../../../ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -19,17 +19,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
+} from '../../../ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { Badge } from '../ui/badge';
-import { useToast } from '../../hooks/use-toast';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../../ui/select';
+import { Badge } from '../../../ui/badge';
+import { useToast } from '../../../../hooks/use-toast';
+import { useLanguage } from '../../../../hooks/use-language';
 import {
   Plus,
   Edit,
@@ -41,9 +41,9 @@ import {
   Save,
   X,
 } from 'lucide-react';
-import { DataTable } from '../ui/data-table';
-import { Pagination } from '../ui/pagination';
-import { getApiUrl } from '../../lib/utils';
+import { DataTable } from '../../../ui/data-table';
+import { Pagination } from '../../../ui/pagination';
+import { getApiUrl } from '../../../../lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import {
   AlertDialog,
@@ -55,7 +55,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
   AlertDialogTrigger,
-} from '../ui/alert-dialog';
+} from '../../../ui/alert-dialog';
 
 interface Facility {
   id: string;

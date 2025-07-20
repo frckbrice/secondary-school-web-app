@@ -14,7 +14,7 @@ import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
-import { Loader2, School, User, Mail, Phone, EyeOff, Eye } from 'lucide-react';
+import { Loader2, School, User, Mail, Phone, EyeOff, Eye, Shield } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,6 +40,7 @@ import {
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
+  role: z.string().min(1, 'Role is required'),
 });
 
 const registerSchema = z
@@ -50,7 +51,7 @@ const registerSchema = z
     phone: z.string().min(10, 'Phone number is required'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
-    role: z.string().default('user'),
+    role: z.string().default('student'),
   })
   .refine(data => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -63,17 +64,19 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function AuthPage() {
   const { toast } = useToast();
   const { user, loginMutation, registerMutation } = useAuth();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState('login');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('student');
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: '',
       password: '',
+      role: 'student',
     },
   });
 
@@ -86,19 +89,27 @@ export default function AuthPage() {
       phone: '',
       password: '',
       confirmPassword: '',
-      role: 'user',
+      role: 'student',
     },
   });
 
-  // Set active tab based on URL parameter
+  // Set active tab and role based on URL parameter
   useEffect(() => {
     const mode = searchParams.get('mode');
+    const role = searchParams.get('role');
+
     if (mode === 'register') {
       setActiveTab('register');
     } else {
       setActiveTab('login');
     }
-  }, [searchParams]);
+
+    if (role) {
+      setSelectedRole(role);
+      loginForm.setValue('role', role);
+      registerForm.setValue('role', role);
+    }
+  }, [searchParams, loginForm, registerForm]);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -109,6 +120,8 @@ export default function AuthPage() {
         router.push('/super-admin');
       } else if (user.role === 'admin') {
         router.push('/admin');
+      } else if (user.role === 'student') {
+        router.push('/student-portal');
       } else {
         router.push('/');
       }
@@ -133,6 +146,8 @@ export default function AuthPage() {
           router.push('/super-admin');
         } else if (user.role === 'admin') {
           router.push('/admin');
+        } else if (user.role === 'student') {
+          router.push('/student-portal');
         } else {
           router.push('/');
         }
@@ -170,6 +185,8 @@ export default function AuthPage() {
           router.push('/super-admin');
         } else if (user.role === 'admin') {
           router.push('/admin');
+        } else if (user.role === 'student') {
+          router.push('/student-portal');
         } else {
           router.push('/');
         }
@@ -189,6 +206,12 @@ export default function AuthPage() {
     });
   };
 
+  const handleRoleChange = (role: string) => {
+    setSelectedRole(role);
+    loginForm.setValue('role', role);
+    registerForm.setValue('role', role);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -200,27 +223,13 @@ export default function AuthPage() {
             GBHS Bafia
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            {language === 'fr' ? "Portail d'accès" : 'Access Portal'}
+            {language === 'fr' ? 'Portail de Connexion' : 'Login Portal'}
           </p>
         </div>
 
         <Card className="shadow-xl">
           <CardHeader>
-            <CardTitle className="text-center">
-              {language === 'fr' ? 'Authentification' : 'Authentication'}
-            </CardTitle>
-            <CardDescription className="text-center">
-              {language === 'fr'
-                ? 'Connectez-vous ou créez un compte pour accéder à nos services'
-                : 'Sign in or create an account to access our services'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">
                   {language === 'fr' ? 'Connexion' : 'Login'}
@@ -231,20 +240,50 @@ export default function AuthPage() {
               </TabsList>
 
               <TabsContent value="login" className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{language === 'fr' ? 'Type de Compte' : 'Account Type'}</Label>
+                  <Select value={selectedRole} onValueChange={handleRoleChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="student">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          {language === 'fr' ? 'Étudiant' : 'Student'}
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="teacher">
+                        <div className="flex items-center gap-2">
+                          <School className="w-4 h-4" />
+                          {language === 'fr' ? 'Enseignant' : 'Teacher'}
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="admin">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4" />
+                          {language === 'fr' ? 'Administrateur' : 'Admin'}
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="super_admin">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4" />
+                          {language === 'fr' ? 'Super Admin' : 'Super Admin'}
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Form {...loginForm}>
-                  <form
-                    onSubmit={loginForm.handleSubmit(onLogin)}
-                    className="space-y-4"
-                  >
+                  <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
                     <FormField
                       control={loginForm.control}
                       name="username"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            {language === 'fr'
-                              ? "Nom d'utilisateur"
-                              : 'Username'}
+                            {language === 'fr' ? "Nom d'utilisateur" : 'Username'}
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -269,8 +308,8 @@ export default function AuthPage() {
                           <FormLabel>
                             {language === 'fr' ? 'Mot de passe' : 'Password'}
                           </FormLabel>
-                          <div className="relative">
-                            <FormControl>
+                          <FormControl>
+                            <div className="relative">
                               <Input
                                 type={isPasswordVisible ? 'text' : 'password'}
                                 placeholder={
@@ -280,23 +319,21 @@ export default function AuthPage() {
                                 }
                                 {...field}
                               />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                              onClick={() =>
-                                setIsPasswordVisible(!isPasswordVisible)
-                              }
-                            >
-                              {isPasswordVisible ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                              >
+                                {isPasswordVisible ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -307,254 +344,241 @@ export default function AuthPage() {
                       className="w-full"
                       disabled={loginMutation.isPending}
                     >
-                      {loginMutation.isPending && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {loginMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {language === 'fr' ? 'Connexion...' : 'Signing in...'}
+                        </>
+                      ) : (
+                        language === 'fr' ? 'Se Connecter' : 'Sign In'
                       )}
-                      {language === 'fr' ? 'Se connecter' : 'Sign In'}
                     </Button>
                   </form>
                 </Form>
+
+                {/* Demo Credentials */}
+                {(selectedRole === 'admin' || selectedRole === 'super_admin') && (
+                  <Alert>
+                    <AlertDescription className="text-sm">
+                      <strong>Demo Credentials:</strong>
+                      <br />
+                      <strong>Super Admin:</strong> super_admin / admin123
+                      <br />
+                      <strong>Admin:</strong> admin_user / admin123
+                    </AlertDescription>
+                  </Alert>
+                )}
               </TabsContent>
 
               <TabsContent value="register" className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{language === 'fr' ? 'Type de Compte' : 'Account Type'}</Label>
+                  <Select value={selectedRole} onValueChange={handleRoleChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="student">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          {language === 'fr' ? 'Étudiant' : 'Student'}
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="teacher">
+                        <div className="flex items-center gap-2">
+                          <School className="w-4 h-4" />
+                          {language === 'fr' ? 'Enseignant' : 'Teacher'}
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Form {...registerForm}>
-                  <form
-                    onSubmit={registerForm.handleSubmit(onRegister)}
-                    className="space-y-4"
-                  >
-                    <FormField
-                      control={registerForm.control}
-                      name="fullName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'fr' ? 'Nom complet' : 'Full Name'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder={
-                                language === 'fr'
-                                  ? 'Entrez votre nom complet'
-                                  : 'Enter your full name'
-                              }
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'fr'
-                              ? "Nom d'utilisateur"
-                              : 'Username'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder={
-                                language === 'fr'
-                                  ? "Choisissez un nom d'utilisateur"
-                                  : 'Choose a username'
-                              }
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'fr' ? 'Email' : 'Email'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                              placeholder={
-                                language === 'fr'
-                                  ? 'Entrez votre email'
-                                  : 'Enter your email'
-                              }
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'fr' ? 'Téléphone' : 'Phone'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder={
-                                language === 'fr'
-                                  ? 'Entrez votre numéro de téléphone'
-                                  : 'Enter your phone number'
-                              }
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'fr' ? 'Mot de passe' : 'Password'}
-                          </FormLabel>
-                          <div className="relative">
+                  <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {language === 'fr' ? "Nom d'utilisateur" : 'Username'}
+                            </FormLabel>
                             <FormControl>
                               <Input
-                                type={isPasswordVisible ? 'text' : 'password'}
                                 placeholder={
                                   language === 'fr'
-                                    ? 'Choisissez un mot de passe'
-                                    : 'Choose a password'
+                                    ? "Entrez votre nom d'utilisateur"
+                                    : 'Enter your username'
                                 }
                                 {...field}
                               />
                             </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                              onClick={() =>
-                                setIsPasswordVisible(!isPasswordVisible)
-                              }
-                            >
-                              {isPasswordVisible ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={registerForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'fr'
-                              ? 'Confirmer le mot de passe'
-                              : 'Confirm Password'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="password"
-                              placeholder={
-                                language === 'fr'
-                                  ? 'Confirmez votre mot de passe'
-                                  : 'Confirm your password'
-                              }
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="role"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {language === 'fr' ? 'Rôle' : 'Role'}
-                          </FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
+                      <FormField
+                        control={registerForm.control}
+                        name="fullName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {language === 'fr' ? 'Nom Complet' : 'Full Name'}
+                            </FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue
+                              <Input
+                                placeholder={
+                                  language === 'fr'
+                                    ? 'Entrez votre nom complet'
+                                    : 'Enter your full name'
+                                }
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {language === 'fr' ? 'Email' : 'Email'}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="email"
+                                placeholder={
+                                  language === 'fr'
+                                    ? 'Entrez votre email'
+                                    : 'Enter your email'
+                                }
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={registerForm.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {language === 'fr' ? 'Téléphone' : 'Phone'}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="tel"
+                                placeholder={
+                                  language === 'fr'
+                                    ? 'Entrez votre téléphone'
+                                    : 'Enter your phone'
+                                }
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {language === 'fr' ? 'Mot de passe' : 'Password'}
+                            </FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <Input
+                                  type={isPasswordVisible ? 'text' : 'password'}
                                   placeholder={
                                     language === 'fr'
-                                      ? 'Sélectionnez un rôle'
-                                      : 'Select a role'
+                                      ? 'Entrez votre mot de passe'
+                                      : 'Enter your password'
                                   }
+                                  {...field}
                                 />
-                              </SelectTrigger>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                  onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                                >
+                                  {isPasswordVisible ? (
+                                    <EyeOff className="h-4 w-4" />
+                                  ) : (
+                                    <Eye className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </div>
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="user">
-                                {language === 'fr' ? 'Utilisateur' : 'User'}
-                              </SelectItem>
-                              <SelectItem value="student">
-                                {language === 'fr' ? 'Étudiant' : 'Student'}
-                              </SelectItem>
-                              <SelectItem value="teacher">
-                                {language === 'fr' ? 'Enseignant' : 'Teacher'}
-                              </SelectItem>
-                              <SelectItem value="admin">
-                                {language === 'fr'
-                                  ? 'Administrateur'
-                                  : 'Administrator'}
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={registerForm.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {language === 'fr' ? 'Confirmer' : 'Confirm'}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder={
+                                  language === 'fr'
+                                    ? 'Confirmez votre mot de passe'
+                                    : 'Confirm your password'
+                                }
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     <Button
                       type="submit"
                       className="w-full"
                       disabled={registerMutation.isPending}
                     >
-                      {registerMutation.isPending && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {registerMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {language === 'fr' ? 'Inscription...' : 'Registering...'}
+                        </>
+                      ) : (
+                        language === 'fr' ? "S'inscrire" : 'Register'
                       )}
-                      {language === 'fr' ? 'Créer un compte' : 'Create Account'}
                     </Button>
                   </form>
                 </Form>
               </TabsContent>
             </Tabs>
-          </CardContent>
+          </CardHeader>
         </Card>
-
-        <div className="text-center mt-6">
-          <Button
-            variant="ghost"
-            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-            onClick={() => router.push('/')}
-          >
-            ← {language === 'fr' ? 'Retour au site' : 'Back to Website'}
-          </Button>
-        </div>
       </div>
     </div>
   );

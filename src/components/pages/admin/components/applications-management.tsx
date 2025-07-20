@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { DataTable } from '../ui/data-table';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
+import { DataTable } from '../../../ui/data-table';
+import { Button } from '../../../ui/button';
+import { Badge } from '../../../ui/badge';
 import {
   Eye,
   Check,
@@ -25,26 +25,26 @@ import {
   AlertCircle,
   Download,
 } from 'lucide-react';
-import { apiRequest } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
-import { useLanguage } from '../../hooks/use-language';
+import { apiRequest } from '../../../../lib/queryClient';
+import { useToast } from '../../../../hooks/use-toast';
+import { useLanguage } from '../../../../hooks/use-language';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
+} from '../../../ui/card';
+import { Input } from '../../../ui/input';
+import { Label } from '../../../ui/label';
+import { Textarea } from '../../../ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../../ui/select';
 import {
   Dialog,
   DialogContent,
@@ -52,7 +52,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
+} from '../../../ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -63,8 +63,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../ui/alert-dialog';
-import { Separator } from '../ui/separator';
+} from '../../../ui/alert-dialog';
 
 interface Application {
   id: string;

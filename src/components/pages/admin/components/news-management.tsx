@@ -8,11 +8,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { Badge } from '../ui/badge';
+} from '../../../ui/card';
+import { Button } from '../../../ui/button';
+import { Input } from '../../../ui/input';
+import { Textarea } from '../../../ui/textarea';
+import { Badge } from '../../../ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
+} from '../../../ui/dialog';
 import {
   Form,
   FormControl,
@@ -28,7 +28,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
+} from '../../../ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -44,17 +44,17 @@ import {
   ChevronRight,
   FileText,
 } from 'lucide-react';
-import { SingleImageUpload } from '../ui/image-upload';
-import { useLanguage } from '../../hooks/use-language';
-import { useToast } from '../../hooks/use-toast';
-import { type News } from '../../schema';
+import { SingleImageUpload } from '../../../ui/image-upload';
+import { useLanguage } from '../../../../hooks/use-language';
+import { useToast } from '../../../../hooks/use-toast';
+import { type News } from '../../../../schema';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../../ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -65,7 +65,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../ui/alert-dialog';
+} from '../../../ui/alert-dialog';
 
 export default function NewsManagement() {
   const { language } = useLanguage();

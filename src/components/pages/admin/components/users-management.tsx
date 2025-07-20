@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { DataTable } from '../ui/data-table';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
+import { DataTable } from '../../../ui/data-table';
+import { Button } from '../../../ui/button';
+import { Badge } from '../../../ui/badge';
 import { Eye, Edit, Trash2, UserPlus } from 'lucide-react';
-import { apiRequest } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
-import { useLanguage } from '../../hooks/use-language';
+import { apiRequest } from '../../../../lib/queryClient';
+import { useToast } from '../../../../hooks/use-toast';
+import { useLanguage } from '../../../../hooks/use-language';
 
 interface User {
   id: string;

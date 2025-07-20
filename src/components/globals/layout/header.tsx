@@ -13,7 +13,6 @@ import {
   Moon,
   Globe,
   School,
-  ChevronDown,
   User,
   LogOut,
   Settings,
