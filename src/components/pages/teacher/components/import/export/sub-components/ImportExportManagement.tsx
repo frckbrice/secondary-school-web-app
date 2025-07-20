@@ -21,8 +21,23 @@ import { Button } from '../../../../../../ui/button';
 import { Input } from '../../../../../../ui/input';
 import { Textarea } from '../../../../../../ui/textarea';
 import { useToast } from '../../../../../../../hooks/use-toast';
-import { FileText, Users, Upload } from 'lucide-react';
+import {
+  FileText,
+  Users,
+  Upload,
+  Trash2,
+  MoreVertical,
+  Share2,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '../../../../../../ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
+import ShareModal from '@/components/pages/teacher/modals/ShareModal';
+import { useAuth } from '../../../../../../../hooks/use-auth';
 
 export interface ImportExportManagementProps {
   classList: string[];
@@ -61,6 +76,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   // ...other injected dependencies
 }) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const router = useRouter();
   const [selectedClass, setSelectedClass] = useState('');
   const [templates, setTemplates] = useState<string[]>([]);
@@ -81,6 +97,13 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [successMessage, setSuccessMessage] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [showGradePreview, setShowGradePreview] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareFile, setShareFile] = useState<any>(null);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
+  const [shareLoading, setShareLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<any>(null);
 
   useEffect(() => {
     if (!selectedClass) return;
@@ -95,18 +118,25 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       .catch(() => setTemplates([]));
   }, [selectedClass, classFolderMap]);
 
-  // Simulate fetching uploaded files (replace with real API call)
+  // Fetch uploaded files
   useEffect(() => {
-    setUploadedFiles([
-      // Example stub
-      {
-        id: '1',
-        name: 'grades-math-2024.xlsx',
-        url: '/uploads/teacher-grades/teacher1/2024-06-01/grades-math-2024.xlsx',
-        uploadedAt: '2024-06-01',
-      },
-    ]);
-  }, []);
+    if (!user?.id) return;
+
+    fetch(`/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setUploadedFiles(data.fileUploads || []);
+        } else {
+          console.error('Failed to fetch uploaded files:', data.message);
+          setUploadedFiles([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching uploaded files:', error);
+        setUploadedFiles([]);
+      });
+  }, [user?.id]);
 
   // Handler for Fill Grades Online
   const handleFillOnline = async (templateFile: string) => {
@@ -398,19 +428,6 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       return;
     }
 
-    let compCoords = null;
-    let statsCoords = null;
-    for (let i = 0; i < allRows.length; i++) {
-      for (let j = 0; j < allRows[i].length; j++) {
-        if (allRows[i][j] === 'COMPETENCES TRIMESTRIELLES VISEES') {
-          compCoords = { row: i, col: j };
-        }
-        if (allRows[i][j] === 'STATISTIQUES ANNUELLES DE CONSEIL') {
-          statsCoords = { row: i, col: j };
-        }
-      }
-    }
-
     const reader = new FileReader();
     reader.onload = e => {
       try {
@@ -432,6 +449,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
             (language === 'fr'
               ? 'Erreur lors de la lecture du fichier'
               : 'Error reading file'),
+          description: err instanceof Error ? err.message : 'Unknown error',
           variant: 'destructive',
         });
       }
@@ -445,32 +463,57 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   };
 
   const handleUploadApproval = async () => {
-    if (!uploadPreviewFile) return;
+    if (!uploadPreviewFile || !user?.id) {
+      console.error('Missing file or user ID');
+      return;
+    }
     setApprovalLoading(true);
     try {
-      // Simulate upload (replace with real API call)
-      await new Promise(res => setTimeout(res, 1000));
-      setSuccessMessage(
-        t('uploadSuccess') ||
-        (language === 'fr'
-          ? 'Fichier téléchargé avec succès !'
-          : 'File uploaded successfully!')
-      );
-      setShowUploadPreview(false);
-      setUploadPreviewFile(null);
-      setUploadPreviewData([]);
+      const formData = new FormData();
+      formData.append('file', uploadPreviewFile);
+      formData.append('relatedType', 'grading');
+      formData.append('relatedId', `${user.id}-${Date.now()}`);
+      formData.append('uploadedBy', user.id);
+
+      const res = await fetch('/api/file-uploads', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast({
+          title: 'Success',
+          description: 'File uploaded successfully',
+        });
+
+        // Refresh uploaded files immediately
+        const refreshRes = await fetch(
+          `/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`
+        );
+        const refreshData = await refreshRes.json();
+        setUploadedFiles(refreshData.fileUploads || []);
+
+        setShowUploadPreview(false);
+        setUploadPreviewFile(null);
+        setUploadPreviewData([]);
+      } else {
+        toast({
+          title: 'Error',
+          description: data.message || 'Upload failed',
+          variant: 'destructive',
+        });
+      }
     } catch (err) {
+      console.error('Upload error:', err);
       toast({
-        title:
-          t('uploadError') ||
-          (language === 'fr'
-            ? 'Erreur lors du téléchargement.'
-            : 'Upload error.'),
+        title: 'Error',
+        description: 'Upload failed',
         variant: 'destructive',
       });
     } finally {
       setApprovalLoading(false);
-      setShowApprovalModal(false);
     }
   };
 
@@ -665,6 +708,46 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
     }
   };
 
+  const handleDeleteFile = async () => {
+    if (!fileToDelete?.id || !user?.id) return;
+
+    try {
+      const res = await fetch(`/api/file-uploads/${fileToDelete.id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setUploadedFiles(prev => prev.filter(f => f.id !== fileToDelete.id));
+        toast({
+          title: language === 'fr' ? 'Supprimé' : 'Deleted',
+          description: language === 'fr'
+            ? 'Fichier supprimé avec succès.'
+            : 'File deleted successfully.',
+        });
+      } else {
+        toast({
+          title: language === 'fr' ? 'Erreur' : 'Error',
+          description: data.message || (language === 'fr'
+            ? 'Échec de la suppression.'
+            : 'Failed to delete.'),
+          variant: 'destructive',
+        });
+      }
+    } catch (err) {
+      toast({
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description: language === 'fr'
+          ? 'Échec de la suppression.'
+          : 'Failed to delete.',
+        variant: 'destructive',
+      });
+    } finally {
+      setShowDeleteModal(false);
+      setFileToDelete(null);
+    }
+  };
+
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">
@@ -829,6 +912,25 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           disabled={uploading || showUploadPreview}
           className="mb-2"
         />
+        {uploadPreviewFile && (
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-gray-700 text-sm">
+              {uploadPreviewFile.name}
+            </span>
+            <button
+              type="button"
+              className="p-1 rounded hover:bg-red-100 text-red-600 transition-colors"
+              aria-label={language === 'fr' ? 'Supprimer' : 'Remove'}
+              onClick={() => {
+                setUploadPreviewFile(null);
+                setUploadPreviewData([]);
+                setShowUploadPreview(false);
+              }}
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
+        )}
         {uploading && (
           <span className="text-blue-600 ml-2">
             {language === 'fr' ? 'Téléchargement...' : 'Uploading...'}
@@ -888,11 +990,27 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       {/* Uploaded Files List */}
       <div className="my-6 border-t border-gray-400" />
       <div className="bg-slate-50 rounded-xl shadow-sm border p-6 mb-6">
-        <h3 className="font-semibold mb-2">
-          {language === 'fr'
-            ? 'Vos Fichiers Téléchargés'
-            : 'Your Uploaded Files'}
-        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold">
+            {language === 'fr'
+              ? 'Vos Fichiers Téléchargés'
+              : 'Your Uploaded Files'}
+          </h3>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={async () => {
+              if (!user?.id) return;
+              const res = await fetch(
+                `/api/file-uploads?uploadedBy=${user.id}&relatedType=grading`
+              );
+              const data = await res.json();
+              setUploadedFiles(data.fileUploads || []);
+            }}
+          >
+            {language === 'fr' ? 'Actualiser' : 'Refresh'}
+          </Button>
+        </div>
         {uploadedFiles.length === 0 ? (
           <div className="text-gray-500">
             {language === 'fr'
@@ -903,26 +1021,50 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           <ul className="space-y-2">
             {uploadedFiles.map(file => (
               <li key={file.id} className="flex items-center gap-2">
-                <span>{file.name}</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="p-1 rounded-full hover:bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      aria-label={language === 'fr' ? 'Options' : 'Options'}
+                    >
+                      <MoreVertical className="w-5 h-5" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    sideOffset={4}
+                    className="min-w-[140px]"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setShareFile(file);
+                        setShowShareModal(true);
+                      }}
+                      className="flex items-center gap-2 text-blue-600 hover:bg-blue-50"
+                    >
+                      <Share2 className="w-4 h-4 mr-2" />
+                      {language === 'fr' ? 'Partager' : 'Share'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setFileToDelete(file);
+                        setShowDeleteModal(true);
+                      }}
+                      className="flex items-center gap-2 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {language === 'fr' ? 'Supprimer' : 'Delete'}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <span className="flex-1 truncate">{file.name}</span>
                 <a
-                  href={file.url}
+                  href={`/api${file.url}`}
                   download
-                  className="text-blue-600 underline text-sm"
+                  className="text-blue-600 underline text-sm ml-2"
                 >
                   {language === 'fr' ? 'Télécharger' : 'Download'}
                 </a>
-                <button
-                  className="ml-2 px-2 py-1 bg-purple-500 text-white rounded text-xs"
-                  onClick={() =>
-                    alert(
-                      language === 'fr'
-                        ? 'Partage non implémenté.'
-                        : 'Share not implemented.'
-                    )
-                  }
-                >
-                  {language === 'fr' ? 'Partager' : 'Share'}
-                </button>
               </li>
             ))}
           </ul>
