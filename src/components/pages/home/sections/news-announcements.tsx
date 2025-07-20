@@ -2,15 +2,15 @@
 
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
+import { Card, CardContent } from '../../../ui/card';
+import { Button } from '../../../ui/button';
+import { Badge } from '../../../ui/badge';
 import React from 'react';
 import { ArrowRight, Calendar, Clock } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
-import { News } from '../../schema';
+import { useLanguage } from '../../../../hooks/use-language';
+import { News } from '../../../../schema';
 import Link from 'next/link';
-import { getApiUrl } from '../../lib/utils';
+import { getApiUrl } from '../../../../lib/utils';
 
 interface NewsResponse {
   success: boolean;

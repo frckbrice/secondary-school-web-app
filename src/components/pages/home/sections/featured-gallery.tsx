@@ -1,14 +1,14 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '../ui/button';
+import { Button } from '../../../ui/button';
 import React from 'react';
 import { Images } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
-import { Gallery } from '../../schema';
+import { useLanguage } from '../../../../hooks/use-language';
+import { Gallery } from '../../../../schema';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getApiUrl } from '../../lib/utils';
+import { getApiUrl } from '../../../../lib/utils';
 
 interface GalleryResponse {
   success: boolean;

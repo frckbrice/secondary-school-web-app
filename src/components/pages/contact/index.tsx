@@ -2,17 +2,17 @@
 
 import React from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { Textarea } from '../ui/textarea';
+} from '../../ui/select';
+import { Textarea } from '../../ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -22,11 +22,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { insertContactSchema, type InsertContact } from '../../schema';
-import { apiRequest } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../ui/form';
+import { insertContactSchema, type InsertContact } from '../../../schema';
+import { apiRequest } from '../../../lib/queryClient';
+import { useToast } from '../../../hooks/use-toast';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   MapPin,
   Phone,
@@ -38,11 +38,11 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 
 export default function ContactPage() {
-  const { t, language } = useLanguage();
+  const { language, t } = useLanguage();
   const { toast } = useToast();
 
   const form = useForm<InsertContact>({

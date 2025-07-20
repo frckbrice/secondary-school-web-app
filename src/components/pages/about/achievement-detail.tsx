@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   ArrowLeft,
   Calendar,
@@ -27,12 +27,12 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { type News } from '../../schema';
+import { type News } from '../../../schema';
 
 interface AchievementDetailPageProps {
   achievementId: string;
@@ -98,7 +98,7 @@ const getCategoryColor = (category: string) => {
 export default function AchievementDetailPage({
   achievementId,
 }: AchievementDetailPageProps) {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const router = useRouter();
 
   // Fetch achievement data from API

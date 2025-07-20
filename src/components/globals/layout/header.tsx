@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '../ui/button';
-import { useLanguage } from '../../hooks/use-language';
+import { Button } from '../../ui/button';
+import { useLanguage } from '../../../hooks/use-language';
 import { useTheme } from 'next-themes';
-import { useAuth } from '../../hooks/use-auth';
+import { useAuth } from '../../../hooks/use-auth';
 import {
   Menu,
   X,
@@ -24,8 +24,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '../ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+} from '../../ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar';
 
 export function Header() {
   const { language, setLanguage } = useLanguage();

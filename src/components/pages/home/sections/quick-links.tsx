@@ -7,9 +7,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../../ui/card';
+import { Button } from '../../../ui/button';
+import { useLanguage } from '../../../../hooks/use-language';
 import { useRouter } from 'next/navigation';
 import {
   GraduationCap,
@@ -25,9 +25,13 @@ import {
   FileText,
   Image,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useAuth } from '../../hooks/use-auth';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { useAuth } from '../../../../hooks/use-auth';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../../../ui/dialog';
 import { useState } from 'react';
 
 export default function QuickLinks() {

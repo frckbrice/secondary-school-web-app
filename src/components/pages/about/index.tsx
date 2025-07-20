@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   MapPin,
   Phone,
@@ -32,12 +32,12 @@ import {
   Utensils,
 } from 'lucide-react';
 import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
-import { News, Facility, Achievement } from '../../schema';
-import { getApiUrl } from '../../lib/utils';
+import { News, Facility, Achievement } from '../../../schema';
+import { getApiUrl } from '../../../lib/utils';
 
 interface NewsResponse {
   success: boolean;
@@ -57,7 +57,7 @@ interface AchievementsResponse {
 }
 
 export default function AboutPage() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   // Query for news items related to achievements
   const { data: newsResponse } = useQuery<NewsResponse>({

@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   ArrowLeft,
   MapPin,
@@ -29,8 +29,8 @@ import {
   Star,
 } from 'lucide-react';
 import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -94,7 +94,7 @@ const getCategoryColor = (category: string) => {
 export default function FacilityDetailPage({
   facilityId,
 }: FacilityDetailPageProps) {
-  const { t, language } = useLanguage();
+    const { t, language } = useLanguage();
   const router = useRouter();
 
   // Fetch facility data from API

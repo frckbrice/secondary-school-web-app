@@ -4,13 +4,12 @@ import React from 'react';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { useLanguage } from '../../hooks/use-language';
+} from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   MapPin,
   Calendar,
@@ -19,14 +18,12 @@ import {
   Award,
   Building,
   ArrowLeft,
-  Clock,
-  Star,
   Trophy,
   Quote,
 } from 'lucide-react';
 import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 
 export default function GBHSHistory() {
   const { language } = useLanguage();

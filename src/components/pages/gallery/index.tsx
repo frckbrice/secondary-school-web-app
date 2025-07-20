@@ -1,26 +1,25 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useInfiniteQueryData } from '../../hooks/use-infinite-query';
-import { useInfiniteScroll } from '../../hooks/use-infinite-scroll';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Input } from '../ui/input';
+import { useInfiniteQueryData } from '../../../hooks/use-infinite-query';
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
+import { Card, CardContent } from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Badge } from '../../ui/badge';
+import { Input } from '../../ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../ui/select';
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
   DialogTitle,
   DialogDescription,
-} from '../ui/dialog';
+} from '../../ui/dialog';
 import {
   Search,
   Filter,
@@ -30,22 +29,19 @@ import {
   ChevronRight,
   Download,
   Share2,
-  ArrowLeft,
   Camera,
   Instagram,
   Facebook,
   MessageCircle,
-  ExternalLink,
 } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
-import { Gallery } from '../../schema';
-import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { useLanguage } from '../../../hooks/use-language';
+import { Gallery } from '../../../schema';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 import Image from 'next/image';
 
 export default function GalleryPage() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

@@ -1,19 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/use-auth';
-import { useLanguage } from '../../hooks/use-language';
+import { useAuth } from '../../../hooks/use-auth';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+} from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
 import { Loader2, School, User, Mail, Phone, EyeOff, Eye } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -26,16 +26,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Alert, AlertDescription } from '../ui/alert';
-import { toast } from '../../hooks/use-toast';
+} from '../../ui/form';
+import { Alert, AlertDescription } from '../../ui/alert';
+import { useToast } from '../../../hooks/use-toast';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../ui/select';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -61,8 +61,9 @@ type LoginFormData = z.infer<typeof loginSchema>;
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
+  const { toast } = useToast();
   const { user, loginMutation, registerMutation } = useAuth();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState('login');
