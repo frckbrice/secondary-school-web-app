@@ -8,19 +8,19 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+} from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { useAuth } from '../../hooks/use-auth';
-import { apiRequest } from '../../lib/queryClient';
+} from '../../ui/select';
+import { useAuth } from '../../../hooks/use-auth';
+import { apiRequest } from '../../../lib/queryClient';
 import { useRouter } from 'next/navigation';
 import {
   BarChart,
@@ -56,14 +56,14 @@ import {
   PieChart as PieChartIcon,
   LogOut,
 } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
-import ContributionsManagement from '../admin/contributions-management';
-import UsersManagement from '../admin/users-management';
-import StudentsManagement from '../admin/students-management';
+import { useLanguage } from '../../../hooks/use-language';
+import ContributionsManagement from '../admin/components/contributions-management';
+import UsersManagement from '../admin/components/users-management';
+import StudentsManagement from '../admin/components/students-management';
 
 export default function SuperAdminDashboard() {
   const { user, logoutMutation } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const [timeRange, setTimeRange] = useState('30d');
   const [selectedMetric, setSelectedMetric] = useState('applications');
@@ -160,7 +160,9 @@ export default function SuperAdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Super Admin Dashboard
+                {language === 'fr'
+                  ? 'Tableau de bord Super Admin'
+                  : 'Super Admin Dashboard'}
               </h1>
               <p className="text-gray-600">
                 GBHS Bafia - Comprehensive Analytics & Management
@@ -172,14 +174,23 @@ export default function SuperAdminDashboard() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="7d">Last 7 days</SelectItem>
-                  <SelectItem value="30d">Last 30 days</SelectItem>
-                  <SelectItem value="90d">Last 3 months</SelectItem>
-                  <SelectItem value="1y">Last year</SelectItem>
+                  <SelectItem value="7d">
+                    {language === 'fr' ? 'Derniers 7 jours' : 'Last 7 days'}
+                  </SelectItem>
+                  <SelectItem value="30d">
+                    {language === 'fr' ? 'Derniers 30 jours' : 'Last 30 days'}
+                  </SelectItem>
+                  <SelectItem value="90d">
+                    {language === 'fr' ? 'Derniers 3 mois' : 'Last 3 months'}
+                  </SelectItem>
+                  <SelectItem value="1y">
+                    {language === 'fr' ? 'Dernier année' : 'Last year'}
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <Badge variant="outline" className="px-3 py-1">
-                Super Admin: {user?.username}
+                {language === 'fr' ? 'Super Admin' : 'Super Admin'}:{' '}
+                {user?.username}
               </Badge>
               <Button
                 variant="outline"
@@ -187,7 +198,7 @@ export default function SuperAdminDashboard() {
                 disabled={logoutMutation.isPending}
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                {language === 'fr' ? 'Déconnexion' : 'Logout'}
               </Button>
             </div>
           </div>
@@ -200,7 +211,9 @@ export default function SuperAdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Total Applications
+                    {language === 'fr'
+                      ? 'Total Applications'
+                      : 'Total Applications'}
                   </p>
                   <p className="text-3xl font-bold text-gray-900">
                     {formatNumber(stats.totalApplications)}
@@ -208,7 +221,9 @@ export default function SuperAdminDashboard() {
                   <div className="flex items-center mt-2">
                     <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
                     <span className="text-sm text-green-500">
-                      +12.5% vs last month
+                      {language === 'fr'
+                        ? '+12.5% vs mois dernier'
+                        : '+12.5% vs last month'}
                     </span>
                   </div>
                 </div>
@@ -224,7 +239,7 @@ export default function SuperAdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Total Revenue
+                    {language === 'fr' ? 'Revenu Total ' : 'Total Revenue'}
                   </p>
                   <p className="text-3xl font-bold text-gray-900">
                     {formatCurrency(stats.totalRevenue)}
@@ -232,7 +247,9 @@ export default function SuperAdminDashboard() {
                   <div className="flex items-center mt-2">
                     <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
                     <span className="text-sm text-green-500">
-                      +8.2% vs last month
+                      {language === 'fr'
+                        ? '+8.2% vs mois dernier'
+                        : '+8.2% vs last month'}
                     </span>
                   </div>
                 </div>
@@ -248,7 +265,7 @@ export default function SuperAdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Active Students
+                    {language === 'fr' ? 'Étudiants Actifs' : 'Active Students'}
                   </p>
                   <p className="text-3xl font-bold text-gray-900">
                     {formatNumber(stats.totalStudents)}
@@ -256,7 +273,9 @@ export default function SuperAdminDashboard() {
                   <div className="flex items-center mt-2">
                     <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
                     <span className="text-sm text-green-500">
-                      +5.8% vs last year
+                      {language === 'fr'
+                        ? '+5.8% vs année dernière'
+                        : '+5.8% vs last year'}
                     </span>
                   </div>
                 </div>
@@ -272,7 +291,9 @@ export default function SuperAdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Alumni Network
+                    {language === 'fr'
+                      ? 'Réseau des Anciens'
+                      : 'Alumni Network'}
                   </p>
                   <p className="text-3xl font-bold text-gray-900">
                     {formatNumber(stats.activeAlumni)}
@@ -280,7 +301,9 @@ export default function SuperAdminDashboard() {
                   <div className="flex items-center mt-2">
                     <TrendingUp className="w-4 h-4 text-blue-500 mr-1" />
                     <span className="text-sm text-blue-500">
-                      +15.3% engagement
+                      {language === 'fr'
+                        ? '+15.3% engagement'
+                        : '+15.3% engagement'}
                     </span>
                   </div>
                 </div>
@@ -299,14 +322,30 @@ export default function SuperAdminDashboard() {
           className="space-y-6"
         >
           <TabsList className="grid w-full grid-cols-8">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="applications">Applications</TabsTrigger>
-            <TabsTrigger value="revenue">Revenue</TabsTrigger>
-            <TabsTrigger value="payments">Payment Methods</TabsTrigger>
-            <TabsTrigger value="alumni">Alumni Network</TabsTrigger>
-            <TabsTrigger value="contributions">Contributions</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="students">Students</TabsTrigger>
+            <TabsTrigger value="overview">
+              {language === 'fr' ? 'Aperçu' : 'Overview'}
+            </TabsTrigger>
+            <TabsTrigger value="applications">
+              {language === 'fr' ? 'Applications' : 'Applications'}
+            </TabsTrigger>
+            <TabsTrigger value="revenue">
+              {language === 'fr' ? 'Revenue' : 'Revenue'}
+            </TabsTrigger>
+            <TabsTrigger value="payments">
+              {language === 'fr' ? 'Méthodes de Paiement' : 'Payment Methods'}
+            </TabsTrigger>
+            <TabsTrigger value="alumni">
+              {language === 'fr' ? 'Réseau des Anciens' : 'Alumni Network'}
+            </TabsTrigger>
+            <TabsTrigger value="contributions">
+              {language === 'fr' ? 'Contributions' : 'Contributions'}
+            </TabsTrigger>
+            <TabsTrigger value="users">
+              {language === 'fr' ? 'Utilisateurs' : 'Users'}
+            </TabsTrigger>
+            <TabsTrigger value="students">
+              {language === 'fr' ? 'Étudiants' : 'Students'}
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -314,9 +353,15 @@ export default function SuperAdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Application Trends</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Tendances des Applications'
+                      : 'Application Trends'}
+                  </CardTitle>
                   <CardDescription>
-                    Monthly application statistics
+                    {language === 'fr'
+                      ? 'Statistiques mensuelles des applications'
+                      : 'Monthly application statistics'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -347,8 +392,16 @@ export default function SuperAdminDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Revenue Overview</CardTitle>
-                  <CardDescription>Monthly revenue breakdown</CardDescription>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Aperçu des Revenus'
+                      : 'Revenue Overview'}
+                  </CardTitle>
+                  <CardDescription>
+                    {language === 'fr'
+                      ? 'Répartition mensuelle des revenus'
+                      : 'Monthly revenue breakdown'}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -370,9 +423,13 @@ export default function SuperAdminDashboard() {
             {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+                <CardTitle>
+                  {language === 'fr' ? 'Actions Rapides' : 'Quick Actions'}
+                </CardTitle>
                 <CardDescription>
-                  Frequently used administrative tasks
+                  {language === 'fr'
+                    ? 'Tâches administratives fréquemment utilisées'
+                    : 'Frequently used administrative tasks'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -383,7 +440,9 @@ export default function SuperAdminDashboard() {
                     onClick={() => setActiveTab('revenue')}
                   >
                     <FileText className="w-6 h-6 mb-2" />
-                    Generate Reports
+                    {language === 'fr'
+                      ? 'Générer des Rapports'
+                      : 'Generate Reports'}
                   </Button>
                   <Button
                     variant="outline"
@@ -391,7 +450,9 @@ export default function SuperAdminDashboard() {
                     onClick={() => setActiveTab('applications')}
                   >
                     <Users className="w-6 h-6 mb-2" />
-                    Manage Users
+                    {language === 'fr'
+                      ? 'Gérer les Utilisateurs'
+                      : 'Manage Users'}
                   </Button>
                   <Button
                     variant="outline"
@@ -399,7 +460,9 @@ export default function SuperAdminDashboard() {
                     onClick={() => setActiveTab('alumni')}
                   >
                     <School className="w-6 h-6 mb-2" />
-                    Academic Settings
+                    {language === 'fr'
+                      ? 'Paramètres Académiques'
+                      : 'Academic Settings'}
                   </Button>
                 </div>
               </CardContent>
@@ -411,13 +474,19 @@ export default function SuperAdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Application Status</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Statut des Applications'
+                      : 'Application Status'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">
-                        Pending Review
+                        {language === 'fr'
+                          ? 'En attente de Revue'
+                          : 'Pending Review'}
                       </span>
                       <div className="flex items-center">
                         <Badge variant="secondary">
@@ -427,7 +496,9 @@ export default function SuperAdminDashboard() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Accepted</span>
+                      <span className="text-sm font-medium">
+                        {language === 'fr' ? 'Accepté' : 'Accepted'}
+                      </span>
                       <div className="flex items-center">
                         <Badge className="bg-green-100 text-green-800">
                           {stats.acceptedApplications}
@@ -436,7 +507,9 @@ export default function SuperAdminDashboard() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Rejected</span>
+                      <span className="text-sm font-medium">
+                        {language === 'fr' ? 'Rejeté' : 'Rejected'}
+                      </span>
                       <Badge variant="destructive">
                         {stats.rejectedApplications}
                       </Badge>
@@ -447,9 +520,15 @@ export default function SuperAdminDashboard() {
 
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>Application Processing Rate</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Taux de Traitement des Applications'
+                      : 'Application Processing Rate'}
+                  </CardTitle>
                   <CardDescription>
-                    Weekly application processing metrics
+                    {language === 'fr'
+                      ? 'Métriques hebdomadaires de traitement des applications'
+                      : 'Weekly application processing metrics'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -483,7 +562,11 @@ export default function SuperAdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Revenue Breakdown</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Répartition des Revenus'
+                      : 'Revenue Breakdown'}
+                  </CardTitle>
                   <CardDescription>
                     Total: {formatCurrency(stats.totalRevenue)}
                   </CardDescription>
@@ -492,9 +575,15 @@ export default function SuperAdminDashboard() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
                       <div>
-                        <p className="font-semibold">Tuition Fees</p>
+                        <p className="font-semibold">
+                          {language === 'fr'
+                            ? 'Frais de Scolarité'
+                            : 'Tuition Fees'}
+                        </p>
                         <p className="text-sm text-gray-600">
-                          85% of total revenue
+                          {language === 'fr'
+                            ? '85% du revenu total'
+                            : '85% of total revenue'}
                         </p>
                       </div>
                       <span className="text-xl font-bold">
@@ -503,9 +592,15 @@ export default function SuperAdminDashboard() {
                     </div>
                     <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
                       <div>
-                        <p className="font-semibold">Alumni Subscriptions</p>
+                        <p className="font-semibold">
+                          {language === 'fr'
+                            ? 'Abonnements des Anciens'
+                            : 'Alumni Subscriptions'}
+                        </p>
                         <p className="text-sm text-gray-600">
-                          2% of total revenue
+                          {language === 'fr'
+                            ? '2% du revenu total'
+                            : '2% of total revenue'}
                         </p>
                       </div>
                       <span className="text-xl font-bold">
@@ -514,9 +609,15 @@ export default function SuperAdminDashboard() {
                     </div>
                     <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
                       <div>
-                        <p className="font-semibold">Other Income</p>
+                        <p className="font-semibold">
+                          {language === 'fr'
+                            ? 'Autres Revenus'
+                            : 'Other Income'}
+                        </p>
                         <p className="text-sm text-gray-600">
-                          13% of total revenue
+                          {language === 'fr'
+                            ? '13% du revenu total'
+                            : '13% of total revenue'}
                         </p>
                       </div>
                       <span className="text-xl font-bold">
@@ -529,7 +630,11 @@ export default function SuperAdminDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Monthly Trends</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Tendances Mensuelles'
+                      : 'Monthly Trends'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -559,8 +664,16 @@ export default function SuperAdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Payment Distribution</CardTitle>
-                  <CardDescription>Preferred payment methods</CardDescription>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Distribution des Paiements'
+                      : 'Payment Distribution'}
+                  </CardTitle>
+                  <CardDescription>
+                    {language === 'fr'
+                      ? 'Méthodes de paiement préférées'
+                      : 'Preferred payment methods'}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -589,9 +702,15 @@ export default function SuperAdminDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Mobile Money Integration</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Intégration Mobile Money'
+                      : 'Mobile Money Integration'}
+                  </CardTitle>
                   <CardDescription>
-                    MTN & Orange Money statistics
+                    {language === 'fr'
+                      ? 'Statistiques MTN & Orange Money'
+                      : 'MTN & Orange Money statistics'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -600,9 +719,15 @@ export default function SuperAdminDashboard() {
                       <div className="flex items-center">
                         <Phone className="w-8 h-8 text-yellow-600 mr-3" />
                         <div>
-                          <p className="font-semibold">MTN Mobile Money</p>
+                          <p className="font-semibold">
+                            {language === 'fr'
+                              ? 'MTN Mobile Money'
+                              : 'MTN Mobile Money'}
+                          </p>
                           <p className="text-sm text-gray-600">
-                            45% of payments
+                            {language === 'fr'
+                              ? '45% des paiements'
+                              : '45% of payments'}
                           </p>
                         </div>
                       </div>
@@ -611,7 +736,9 @@ export default function SuperAdminDashboard() {
                           {formatCurrency(paymentMethods[0].amount)}
                         </p>
                         <p className="text-sm text-green-600">
-                          +12% this month
+                          {language === 'fr'
+                            ? '+12% ce mois-ci'
+                            : '+12% this month'}
                         </p>
                       </div>
                     </div>
@@ -620,9 +747,15 @@ export default function SuperAdminDashboard() {
                       <div className="flex items-center">
                         <CreditCard className="w-8 h-8 text-orange-600 mr-3" />
                         <div>
-                          <p className="font-semibold">Orange Money</p>
+                          <p className="font-semibold">
+                            {language === 'fr'
+                              ? 'Orange Money'
+                              : 'Orange Money'}
+                          </p>
                           <p className="text-sm text-gray-600">
-                            35% of payments
+                            {language === 'fr'
+                              ? '35% des paiements'
+                              : '35% of payments'}
                           </p>
                         </div>
                       </div>
@@ -630,19 +763,45 @@ export default function SuperAdminDashboard() {
                         <p className="text-lg font-bold">
                           {formatCurrency(paymentMethods[1].amount)}
                         </p>
-                        <p className="text-sm text-green-600">+8% this month</p>
+                        <p className="text-sm text-green-600">
+                          {language === 'fr'
+                            ? '+8% ce mois-ci'
+                            : '+8% this month'}
+                        </p>
                       </div>
                     </div>
 
                     <div className="p-4 bg-blue-50 rounded-lg">
                       <h4 className="font-semibold mb-2">
-                        Mobile Money Benefits
+                        {language === 'fr'
+                          ? 'Avantages Mobile Money'
+                          : 'Mobile Money Benefits'}
                       </h4>
                       <ul className="text-sm text-gray-600 space-y-1">
-                        <li>• 80% of payments processed via mobile money</li>
-                        <li>• 95% faster transaction processing</li>
-                        <li>• Reduced cash handling costs</li>
-                        <li>• Better payment tracking</li>
+                        <li>
+                          •{' '}
+                          {language === 'fr'
+                            ? '80% des paiements traités via Mobile Money'
+                            : '80% of payments processed via mobile money'}
+                        </li>
+                        <li>
+                          •{' '}
+                          {language === 'fr'
+                            ? 'Traitement des transactions plus rapide de 95%'
+                            : '95% faster transaction processing'}
+                        </li>
+                        <li>
+                          •{' '}
+                          {language === 'fr'
+                            ? 'Réduction des coûts de gestion des espèces'
+                            : 'Reduced cash handling costs'}
+                        </li>
+                        <li>
+                          •{' '}
+                          {language === 'fr'
+                            ? 'Meilleur suivi des paiements'
+                            : 'Better payment tracking'}
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -656,9 +815,15 @@ export default function SuperAdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Alumni Subscriptions</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Abonnements des Anciens'
+                      : 'Alumni Subscriptions'}
+                  </CardTitle>
                   <CardDescription>
-                    Network engagement and revenue
+                    {language === 'fr'
+                      ? 'Engagement et revenu du réseau'
+                      : 'Network engagement and revenue'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -676,9 +841,15 @@ export default function SuperAdminDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Subscription Revenue</CardTitle>
+                  <CardTitle>
+                    {language === 'fr'
+                      ? 'Revenus des Abonnements'
+                      : 'Subscription Revenue'}
+                  </CardTitle>
                   <CardDescription>
-                    Monthly recurring revenue from alumni
+                    {language === 'fr'
+                      ? 'Revenus récurrents mensuels des anciens'
+                      : 'Monthly recurring revenue from alumni'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -701,7 +872,11 @@ export default function SuperAdminDashboard() {
                     ))}
                     <div className="border-t pt-4">
                       <div className="flex justify-between font-bold">
-                        <span>Total Monthly Revenue</span>
+                        <span>
+                          {language === 'fr'
+                            ? 'Revenus Mensuels Total'
+                            : 'Total Monthly Revenue'}
+                        </span>
                         <span>{formatCurrency(stats.subscriptionRevenue)}</span>
                       </div>
                     </div>
@@ -712,25 +887,41 @@ export default function SuperAdminDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Alumni Engagement Metrics</CardTitle>
+                <CardTitle>
+                  {language === 'fr'
+                    ? "Métriques d'Engagement des Anciens"
+                    : 'Alumni Engagement Metrics'}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <p className="text-2xl font-bold text-blue-600">3,420</p>
-                    <p className="text-sm text-gray-600">Total Alumni</p>
+                    <p className="text-sm text-gray-600">
+                      {language === 'fr' ? 'Total Anciens' : 'Total Alumni'}
+                    </p>
                   </div>
                   <div className="text-center p-4 bg-green-50 rounded-lg">
                     <p className="text-2xl font-bold text-green-600">2,420</p>
-                    <p className="text-sm text-gray-600">Active Members</p>
+                    <p className="text-sm text-gray-600">
+                      {language === 'fr' ? 'Membres Actifs' : 'Active Members'}
+                    </p>
                   </div>
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <p className="text-2xl font-bold text-purple-600">1,250</p>
-                    <p className="text-sm text-gray-600">Monthly Active</p>
+                    <p className="text-sm text-gray-600">
+                      {language === 'fr'
+                        ? 'Mensuellement Actif'
+                        : 'Monthly Active'}
+                    </p>
                   </div>
                   <div className="text-center p-4 bg-orange-50 rounded-lg">
                     <p className="text-2xl font-bold text-orange-600">68%</p>
-                    <p className="text-sm text-gray-600">Engagement Rate</p>
+                    <p className="text-sm text-gray-600">
+                      {language === 'fr'
+                        ? "Taux d'Engagement"
+                        : 'Engagement Rate'}
+                    </p>
                   </div>
                 </div>
               </CardContent>

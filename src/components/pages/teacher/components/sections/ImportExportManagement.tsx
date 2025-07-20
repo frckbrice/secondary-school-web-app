@@ -795,7 +795,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
             {englishClasses.map(cls => (
               <button
                 key={cls}
-                className={`rounded-lg px-4 py-2 font-medium border transition-colors shadow-sm text-sm ${selectedClass === cls ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50'}`}
+                className={`rounded-lg px-4 py-2 font-medium border transition-colors shadow-sm text-sm ${selectedClass === cls ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900 dark:hover:text-white dark:hover:border-blue-700'}`}
                 onClick={() => setSelectedClass(cls)}
               >
                 {cls}
@@ -811,7 +811,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
             {frenchClasses.map(cls => (
               <button
                 key={cls}
-                className={`rounded-lg px-4 py-2 font-medium border transition-colors shadow-sm text-sm ${selectedClass === cls ? 'bg-green-600 text-white border-green-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-green-50'}`}
+                className={`rounded-lg px-4 py-2 font-medium border transition-colors shadow-sm text-sm ${selectedClass === cls ? 'bg-green-600 text-white border-green-700' : 'bg-white text-gray-700 border-gray-300 hover:bg-green-50 dark:hover:bg-green-900 dark:hover:text-white dark:hover:border-green-700'}`}
                 onClick={() => setSelectedClass(cls)}
               >
                 {cls}
@@ -824,8 +824,8 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       <div className="my-6 h-[14px]  border-t border-gray-400 shadow-xl shadow-black/10" />
       {/* Template List */}
       {selectedClass && (
-        <div className="bg-slate-50 rounded-xl shadow-sm border p-6 mb-6">
-          <h3 className="font-semibold mb-4 text-lg">
+        <div className="rounded-xl shadow-sm dark:shadow-sm dark:shadow-gray-400 border p-6 mb-6 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
+          <h3 className="font-semibold mb-4 text-lg ">
             {language === 'fr'
               ? 'Modèles de Notes Disponibles'
               : 'Available Grade Templates'}{' '}
@@ -963,7 +963,8 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       )}
 
       {/* File Upload */}
-      <div className="bg-slate-50 rounded-xl shadow-sm border p-6 mb-6">
+      <div className="my-6 border-t border-gray-400 dark:border-gray-600" />
+      <div className="rounded-xl shadow-sm dark:shadow-sm dark:shadow-gray-400 border p-6 mb-6 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
         <h3 className="font-semibold mb-2">
           {language === 'fr'
             ? 'Télécharger le Fichier de Notes Rempli'
@@ -1059,8 +1060,8 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       )}
 
       {/* Uploaded Files List */}
-      <div className="my-6 border-t border-gray-400" />
-      <div className="bg-slate-50 rounded-xl shadow-sm border p-6 mb-6">
+      <div className="my-6 border-t border-gray-400 dark:border-gray-600" />
+      <div className="rounded-xl shadow-sm dark:shadow-sm dark:shadow-gray-400 border p-6 mb-6 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold">
             {language === 'fr'

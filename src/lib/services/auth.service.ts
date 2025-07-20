@@ -20,6 +20,7 @@ export interface UserData {
   email: string | null;
   role: string;
   teacherSubject: string | null;
+  profileImageUrl: string | null;
 }
 
 export class AuthService {
@@ -60,6 +61,7 @@ export class AuthService {
             email: user.email,
             role: user.role,
             teacherSubject: user.teacherSubject,
+            profileImageUrl: user.profileImageUrl,
           },
           token,
         };
@@ -94,6 +96,7 @@ export class AuthService {
             email: student.email,
             role: 'student',
             teacherSubject: null,
+            profileImageUrl: student.profileImageUrl,
           },
           token,
         };
@@ -170,6 +173,7 @@ export class AuthService {
           email: newUser.email,
           role: newUser.role,
           teacherSubject: newUser.teacherSubject,
+          profileImageUrl: newUser.profileImageUrl,
         },
         token,
       };
@@ -203,6 +207,7 @@ export class AuthService {
             email: user.email,
             role: user.role,
             teacherSubject: user.teacherSubject,
+            profileImageUrl: user.profileImageUrl,
           },
         };
       }
@@ -222,6 +227,7 @@ export class AuthService {
             email: student.email,
             role: 'student',
             teacherSubject: null,
+            profileImageUrl: student.profileImageUrl,
           },
         };
       }
@@ -256,6 +262,7 @@ export class AuthService {
           email: user.email,
           role: user.role,
           teacherSubject: user.teacherSubject,
+          profileImageUrl: user.profileImageUrl,
         };
       }
 
@@ -272,6 +279,7 @@ export class AuthService {
           email: student.email,
           role: 'student',
           teacherSubject: null,
+          profileImageUrl: student.profileImageUrl,
         };
       }
 
@@ -310,6 +318,7 @@ export class AuthService {
             email: updatedUser.email,
             role: updatedUser.role,
             teacherSubject: updatedUser.teacherSubject,
+            profileImageUrl: updatedUser.profileImageUrl,
           },
         };
       }
@@ -331,6 +340,7 @@ export class AuthService {
             email: updatedStudent.email,
             role: 'student',
             teacherSubject: null,
+            profileImageUrl: updatedStudent.profileImageUrl,
           },
         };
       }

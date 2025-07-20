@@ -24,7 +24,7 @@ interface Contribution {
 }
 
 export default function ContributionsManagement() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');

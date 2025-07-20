@@ -112,7 +112,6 @@ export default function FacilityDetailPage({
       return response.json();
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
   });
 
@@ -128,7 +127,6 @@ export default function FacilityDetailPage({
         return response.json() as Promise<FacilitiesResponse>;
       },
       staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 10 * 60 * 1000, // 10 minutes
       refetchOnWindowFocus: false,
     }
   );

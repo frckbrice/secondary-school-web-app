@@ -1,3 +1,4 @@
+import React from 'react';
 import ProtectedRoute from '../../lib/protected-route';
 import AdminDashboard from '../../components/pages/admin';
 

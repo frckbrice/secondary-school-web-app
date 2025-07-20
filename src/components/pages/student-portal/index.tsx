@@ -10,18 +10,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
+} from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import { Textarea } from '../../ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../ui/select';
 import {
   Form,
   FormControl,
@@ -29,10 +29,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Badge } from '../ui/badge';
-import { Progress } from '../ui/progress';
+} from '../../ui/form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
+import { Badge } from '../../ui/badge';
+import { Progress } from '../../ui/progress';
 import {
   Dialog,
   DialogContent,
@@ -40,8 +40,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+} from '../../ui/dialog';
+import { Alert, AlertDescription, AlertTitle } from '../../ui/alert';
 import {
   Table,
   TableBody,
@@ -49,7 +49,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
+} from '../../ui/table';
 import {
   BookOpen,
   Shield,
@@ -77,7 +77,7 @@ import {
   Plus,
   Filter,
 } from 'lucide-react';
-import { useLanguage } from '../../hooks/use-language';
+import { useLanguage } from '../../../hooks/use-language';
 import {
   insertBookingSchema,
   insertAnonymousReportSchema,
@@ -89,15 +89,15 @@ import {
   type StudentResult,
   type AnonymousReport,
   type Petition,
-} from '../../schema';
-import { apiRequest, queryClient } from '../../lib/queryClient';
-import { useToast } from '../../hooks/use-toast';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+} from '../../../schema';
+import { apiRequest, queryClient } from '../../../lib/queryClient';
+import { useToast } from '../../../hooks/use-toast';
+import { Header } from '../../globals/layout/header';
+import { Footer } from '../../globals/layout/footer';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../hooks/use-auth';
-import { getApiUrl } from '../../lib/utils';
+import { useAuth } from '../../../hooks/use-auth';
+import { getApiUrl } from '../../../lib/utils';
 
 // Form schemas
 const reportSchema = insertAnonymousReportSchema.extend({
@@ -110,7 +110,7 @@ type ReportFormData = z.infer<typeof reportSchema>;
 type PetitionFormData = z.infer<typeof petitionSchema>;
 
 export default function StudentPortal() {
-  const { t, language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const { toast } = useToast();
   const [selectedClass, setSelectedClass] = useState<string>('all');
   const [selectedTerm, setSelectedTerm] = useState<string>('Term 1');

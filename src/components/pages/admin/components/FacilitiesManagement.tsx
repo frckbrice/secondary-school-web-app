@@ -577,7 +577,9 @@ export default function FacilitiesManagement() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="imageUrl">Image URL</Label>
+                <Label htmlFor="imageUrl">
+                  {language === 'fr' ? "URL de l'image" : 'Image URL'}
+                </Label>
                 <Input
                   id="imageUrl"
                   value={formData.imageUrl}
@@ -587,7 +589,9 @@ export default function FacilitiesManagement() {
                 />
               </div>
               <div>
-                <Label htmlFor="category">Category</Label>
+                <Label htmlFor="category">
+                  {language === 'fr' ? 'Catégorie' : 'Category'}
+                </Label>
                 <Select
                   value={formData.category}
                   onValueChange={value =>
@@ -609,7 +613,11 @@ export default function FacilitiesManagement() {
 
               {/* Features Array */}
               <div>
-                <Label htmlFor="features">Features (Optional)</Label>
+                <Label htmlFor="features">
+                  {language === 'fr'
+                    ? 'Fonctionnalités (Optionnel)'
+                    : 'Features (Optional)'}
+                </Label>
                 <div className="space-y-2">
                   <div className="flex gap-2">
                     <Input
@@ -682,7 +690,11 @@ export default function FacilitiesManagement() {
 
               {/* Equipment Array */}
               <div>
-                <Label htmlFor="equipment">Equipment (Optional)</Label>
+                <Label htmlFor="equipment">
+                  {language === 'fr'
+                    ? 'Équipement (Optionnel)'
+                    : 'Equipment (Optional)'}
+                </Label>
                 <div className="space-y-2">
                   <div className="flex gap-2">
                     <Input
@@ -762,7 +774,9 @@ export default function FacilitiesManagement() {
                     setFormData({ ...formData, isPublished: e.target.checked })
                   }
                 />
-                <Label htmlFor="isPublished">Published</Label>
+                <Label htmlFor="isPublished">
+                  {language === 'fr' ? 'Publié' : 'Published'}
+                </Label>
               </div>
             </div>
             <div className="flex justify-end space-x-2">
@@ -800,7 +814,9 @@ export default function FacilitiesManagement() {
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
-              <Label htmlFor="search">Search</Label>
+              <Label htmlFor="search">
+                {language === 'fr' ? 'Rechercher' : 'Search'}
+              </Label>
               <Input
                 id="search"
                 placeholder={language === 'fr' ? 'Rechercher...' : 'Search...'}
@@ -809,16 +825,28 @@ export default function FacilitiesManagement() {
               />
             </div>
             <div className="w-full sm:w-48">
-              <Label htmlFor="category-filter">Category</Label>
+              <Label htmlFor="category-filter">
+                {language === 'fr' ? 'Catégorie' : 'Category'}
+              </Label>
               <Select
                 value={selectedCategory}
                 onValueChange={setSelectedCategory}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="All categories" />
+                  <SelectValue
+                    placeholder={
+                      language === 'fr'
+                        ? 'Toutes les catégories'
+                        : 'All categories'
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All categories</SelectItem>
+                  <SelectItem value="all">
+                    {language === 'fr'
+                      ? 'Toutes les catégories'
+                      : 'All categories'}
+                  </SelectItem>
                   {categories.map(category => (
                     <SelectItem key={category} value={category}>
                       {category.charAt(0).toUpperCase() + category.slice(1)}

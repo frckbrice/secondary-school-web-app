@@ -51,6 +51,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../../hooks/use-toast';
 import { apiRequest } from '../../../lib/queryClient';
+import { useLanguage } from '../../../hooks/use-language';
 
 interface Student {
   id: string;
@@ -88,6 +89,7 @@ interface FormData {
 
 export default function StudentsManagement() {
   const router = useRouter();
+  const { language } = useLanguage();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
@@ -134,11 +136,15 @@ export default function StudentsManagement() {
       return response.json();
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
   });
 
-  const students = studentsData?.students || [];
+  const students =
+    studentsData &&
+    'students' in studentsData &&
+    Array.isArray(studentsData.students)
+      ? studentsData.students
+      : [];
 
   // Create student mutation
   const createStudentMutation = useMutation({
@@ -344,15 +350,21 @@ export default function StudentsManagement() {
                 className="mr-2"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                {language == 'fr'
+                  ? 'Retour au Tableau de bord'
+                  : 'Back to Dashboard'}
               </Button>
               <GraduationCap className="w-8 h-8 text-blue-600" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  Students Management
+                  {language == 'fr'
+                    ? 'Gestion des étudiants'
+                    : 'Students Management'}
                 </h1>
                 <p className="text-sm text-gray-600">
-                  Manage student records and information
+                  {language == 'fr'
+                    ? 'Gérer les enregistrements et les informations des étudiants'
+                    : 'Manage student records and information'}
                 </p>
               </div>
             </div>
@@ -371,7 +383,9 @@ export default function StudentsManagement() {
                   <GraduationCap className="w-8 h-8 text-blue-600" />
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Total Students
+                      {language == 'fr'
+                        ? 'Total des étudiants'
+                        : 'Total Students'}
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
                       {students.length}
@@ -388,7 +402,9 @@ export default function StudentsManagement() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Active Students
+                      {language == 'fr'
+                        ? 'Étudiants actifs'
+                        : 'Active Students'}
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
                       {students.filter((s: Student) => s.isActive).length}
@@ -405,7 +421,9 @@ export default function StudentsManagement() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Male Students
+                      {language == 'fr'
+                        ? 'Étudiants masculins'
+                        : 'Male Students'}
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
                       {
@@ -425,7 +443,9 @@ export default function StudentsManagement() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Female Students
+                      {language == 'fr'
+                        ? 'Étudiantes féminines'
+                        : 'Female Students'}
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
                       {
@@ -444,14 +464,18 @@ export default function StudentsManagement() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Students</CardTitle>
+                  <CardTitle>
+                    {language == 'fr' ? 'Étudiants' : 'Students'}
+                  </CardTitle>
                   <CardDescription>
-                    Manage student records and information
+                    {language == 'fr'
+                      ? 'Gérer les enregistrements et les informations des étudiants'
+                      : 'Manage student records and information'}
                   </CardDescription>
                 </div>
                 <Button onClick={() => setIsDialogOpen(true)}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Student
+                  {language == 'fr' ? 'Ajouter un étudiant' : 'Add Student'}
                 </Button>
               </div>
             </CardHeader>
@@ -462,7 +486,11 @@ export default function StudentsManagement() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
-                      placeholder="Search students..."
+                      placeholder={
+                        language == 'fr'
+                          ? 'Rechercher des étudiants...'
+                          : 'Search students...'
+                      }
                       value={searchTerm}
                       onChange={e => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -474,10 +502,14 @@ export default function StudentsManagement() {
                   onValueChange={(value: string) => setClassFilter(value)}
                 >
                   <SelectTrigger className="w-full sm:w-40">
-                    <SelectValue placeholder="Class" />
+                    <SelectValue
+                      placeholder={language == 'fr' ? 'Classe' : 'Class'}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Classes</SelectItem>
+                    <SelectItem value="all">
+                      {language == 'fr' ? 'Toutes les classes' : 'All Classes'}
+                    </SelectItem>
                     {availableClasses.map(className => (
                       <SelectItem key={className} value={className}>
                         {className}
@@ -490,12 +522,18 @@ export default function StudentsManagement() {
                   onValueChange={(value: string) => setGenderFilter(value)}
                 >
                   <SelectTrigger className="w-full sm:w-40">
-                    <SelectValue placeholder="Gender" />
+                    <SelectValue
+                      placeholder={language == 'fr' ? 'Genre' : 'Gender'}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {/* <SelectItem value="all">All Genders</SelectItem> */}
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="male">
+                      {language == 'fr' ? 'Masculin' : 'Male'}
+                    </SelectItem>
+                    <SelectItem value="female">
+                      {language == 'fr' ? 'Féminin' : 'Female'}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <Select
@@ -503,12 +541,20 @@ export default function StudentsManagement() {
                   onValueChange={(value: string) => setStatusFilter(value)}
                 >
                   <SelectTrigger className="w-full sm:w-40">
-                    <SelectValue placeholder="Status" />
+                    <SelectValue
+                      placeholder={language == 'fr' ? 'Statut' : 'Status'}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="all">
+                      {language == 'fr' ? 'Tous les statuts' : 'All Status'}
+                    </SelectItem>
+                    <SelectItem value="active">
+                      {language == 'fr' ? 'Actif' : 'Active'}
+                    </SelectItem>
+                    <SelectItem value="inactive">
+                      {language == 'fr' ? 'Inactif' : 'Inactive'}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -518,13 +564,21 @@ export default function StudentsManagement() {
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
                     <DialogTitle>
-                      {editingStudent ? 'Edit Student' : 'Add New Student'}
+                      {editingStudent
+                        ? language == 'fr'
+                          ? "Modifier l'étudiant"
+                          : 'Edit Student'
+                        : language == 'fr'
+                          ? 'Ajouter un nouvel étudiant'
+                          : 'Add New Student'}
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="studentId">Student ID</Label>
+                        <Label htmlFor="studentId">
+                          {language == 'fr' ? "ID de l'étudiant" : 'Student ID'}
+                        </Label>
                         <Input
                           id="studentId"
                           value={formData.studentId}
@@ -537,7 +591,9 @@ export default function StudentsManagement() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="fullName">Full Name</Label>
+                        <Label htmlFor="fullName">
+                          {language == 'fr' ? 'Nom complet' : 'Full Name'}
+                        </Label>
                         <Input
                           id="fullName"
                           value={formData.fullName}
@@ -552,7 +608,9 @@ export default function StudentsManagement() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">
+                          {language == 'fr' ? 'Email' : 'Email'}
+                        </Label>
                         <Input
                           id="email"
                           type="email"
@@ -566,7 +624,9 @@ export default function StudentsManagement() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
+                        <Label htmlFor="phone">
+                          {language == 'fr' ? 'Téléphone' : 'Phone'}
+                        </Label>
                         <Input
                           id="phone"
                           value={formData.phone}
@@ -581,7 +641,9 @@ export default function StudentsManagement() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="className">Class</Label>
+                        <Label htmlFor="className">
+                          {language == 'fr' ? 'Classe' : 'Class'}
+                        </Label>
                         <Input
                           id="className"
                           value={formData.className}
@@ -594,7 +656,9 @@ export default function StudentsManagement() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="gender">Gender</Label>
+                        <Label htmlFor="gender">
+                          {language == 'fr' ? 'Genre' : 'Gender'}
+                        </Label>
                         <Select
                           value={formData.gender}
                           onValueChange={(value: 'male' | 'female') =>
@@ -605,14 +669,22 @@ export default function StudentsManagement() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="male">
+                              {language == 'fr' ? 'Masculin' : 'Male'}
+                            </SelectItem>
+                            <SelectItem value="female">
+                              {language == 'fr' ? 'Féminin' : 'Female'}
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                      <Label htmlFor="dateOfBirth">
+                        {language == 'fr'
+                          ? 'Date de naissance'
+                          : 'Date of Birth'}
+                      </Label>
                       <Input
                         id="dateOfBirth"
                         type="date"
@@ -626,7 +698,9 @@ export default function StudentsManagement() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="parentName">Parent Name</Label>
+                      <Label htmlFor="parentName">
+                        {language == 'fr' ? 'Nom du parent' : 'Parent Name'}
+                      </Label>
                       <Input
                         id="parentName"
                         value={formData.parentName}
@@ -640,7 +714,11 @@ export default function StudentsManagement() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="parentEmail">Parent Email</Label>
+                        <Label htmlFor="parentEmail">
+                          {language == 'fr'
+                            ? 'Email du parent'
+                            : 'Parent Email'}
+                        </Label>
                         <Input
                           id="parentEmail"
                           type="email"
@@ -654,7 +732,11 @@ export default function StudentsManagement() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="parentPhone">Parent Phone</Label>
+                        <Label htmlFor="parentPhone">
+                          {language == 'fr'
+                            ? 'Téléphone du parent'
+                            : 'Parent Phone'}
+                        </Label>
                         <Input
                           id="parentPhone"
                           value={formData.parentPhone}
@@ -668,7 +750,9 @@ export default function StudentsManagement() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="address">Address</Label>
+                      <Label htmlFor="address">
+                        {language == 'fr' ? 'Adresse' : 'Address'}
+                      </Label>
                       <Input
                         id="address"
                         value={formData.address}
@@ -682,7 +766,9 @@ export default function StudentsManagement() {
                     </div>
                     {!editingStudent && (
                       <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">
+                          {language == 'fr' ? 'Password' : 'Mot de passe'}
+                        </Label>
                         <Input
                           id="password"
                           type="password"
@@ -702,7 +788,7 @@ export default function StudentsManagement() {
                       variant="outline"
                       onClick={() => setIsDialogOpen(false)}
                     >
-                      Cancel
+                      {language == 'fr' ? 'Annuler' : 'Cancel'}
                     </Button>
                     <Button
                       onClick={
@@ -715,7 +801,13 @@ export default function StudentsManagement() {
                         updateStudentMutation.isPending
                       }
                     >
-                      {editingStudent ? 'Update' : 'Create'}
+                      {editingStudent
+                        ? language == 'fr'
+                          ? 'Mettre à jour'
+                          : 'Update'
+                        : language == 'fr'
+                          ? 'Créer'
+                          : 'Create'}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -724,9 +816,14 @@ export default function StudentsManagement() {
               {/* Students Table */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Students ({students.length})</CardTitle>
+                  <CardTitle>
+                    {language == 'fr' ? 'Étudiants' : 'Students'} (
+                    {students.length})
+                  </CardTitle>
                   <CardDescription>
-                    Manage student records and information
+                    {language == 'fr'
+                      ? 'Gérer les enregistrements et les informations des étudiants'
+                      : 'Manage student records and information'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -739,14 +836,26 @@ export default function StudentsManagement() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Student</TableHead>
-                            <TableHead>Contact</TableHead>
-                            <TableHead>Class</TableHead>
-                            <TableHead>Parent</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Created</TableHead>
+                            <TableHead>
+                              {language == 'fr' ? 'Étudiant' : 'Student'}
+                            </TableHead>
+                            <TableHead>
+                              {language == 'fr' ? 'Contact' : 'Contact'}
+                            </TableHead>
+                            <TableHead>
+                              {language == 'fr' ? 'Classe' : 'Class'}
+                            </TableHead>
+                            <TableHead>
+                              {language == 'fr' ? 'Parent' : 'Parent'}
+                            </TableHead>
+                            <TableHead>
+                              {language == 'fr' ? 'Statut' : 'Status'}
+                            </TableHead>
+                            <TableHead>
+                              {language == 'fr' ? 'Créé' : 'Created'}
+                            </TableHead>
                             <TableHead className="text-right">
-                              Actions
+                              {language == 'fr' ? 'Actions' : 'Actions'}
                             </TableHead>
                           </TableRow>
                         </TableHeader>
@@ -805,7 +914,13 @@ export default function StudentsManagement() {
                                     student.isActive
                                   )}
                                 >
-                                  {student.isActive ? 'Active' : 'Inactive'}
+                                  {student.isActive
+                                    ? language == 'fr'
+                                      ? 'Actif'
+                                      : 'Active'
+                                    : language == 'fr'
+                                      ? 'Inactif'
+                                      : 'Inactive'}
                                 </Badge>
                               </TableCell>
                               <TableCell>
@@ -836,8 +951,12 @@ export default function StudentsManagement() {
                                     disabled={toggleStatusMutation.isPending}
                                   >
                                     {student.isActive
-                                      ? 'Deactivate'
-                                      : 'Activate'}
+                                      ? language == 'fr'
+                                        ? 'Désactiver'
+                                        : 'Deactivate'
+                                      : language == 'fr'
+                                        ? 'Activer'
+                                        : 'Activate'}
                                   </Button>
                                   <Button
                                     size="sm"

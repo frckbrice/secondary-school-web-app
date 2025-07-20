@@ -18,18 +18,19 @@ export async function apiRequest(
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-
+  const isFormData =
+    typeof FormData !== 'undefined' && data instanceof FormData;
+  const headers: Record<string, string> = {};
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-
   const response = await fetch(url, {
     method,
-    headers,
-    body: data ? JSON.stringify(data) : undefined,
+    headers: Object.keys(headers).length > 0 ? headers : undefined,
+    body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
   });
 
   if (response.status === 401) {

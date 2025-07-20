@@ -4,7 +4,7 @@ import { apiRequest } from '../lib/queryClient';
 import { useToast } from './use-toast';
 
 interface UseProfileImageOptions {
-  userId: number;
+  userId: string; // cuid string
   onSuccess?: (data: any) => void;
   onError?: (error: Error) => void;
 }
@@ -21,9 +21,14 @@ export function useProfileImage({
 
   const uploadProfileImage = useMutation({
     mutationFn: async (imageFile: File) => {
+      if (!(imageFile instanceof File)) {
+        throw new Error(
+          'uploadProfileImage must be called with a File object, not a string or URL.'
+        );
+      }
       const formData = new FormData();
       formData.append('image', imageFile);
-      formData.append('userId', userId.toString());
+      formData.append('userId', userId); // cuid string
 
       const response = await apiRequest(
         'POST',

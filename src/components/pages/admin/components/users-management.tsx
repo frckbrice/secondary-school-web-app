@@ -38,7 +38,7 @@ interface UsersResponse {
 }
 
 export default function UsersManagement() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLimit, setCurrentLimit] = useState(10);
@@ -91,14 +91,17 @@ export default function UsersManagement() {
     },
     onSuccess: () => {
       toast({
-        title: t('Success'),
-        description: t('User deleted successfully'),
+        title: language === 'fr' ? 'Succès' : 'Success',
+        description:
+          language === 'fr'
+            ? 'Utilisateur supprimé avec succès'
+            : 'User deleted successfully',
       });
       refetch();
     },
     onError: (error: Error) => {
       toast({
-        title: t('Error'),
+        title: language === 'fr' ? 'Erreur' : 'Error',
         description: error.message,
         variant: 'destructive',
       });
@@ -136,16 +139,16 @@ export default function UsersManagement() {
   const columns = [
     {
       key: 'username',
-      label: t('Username'),
+      label: language === 'fr' ? "Nom d'utilisateur" : 'Username',
     },
     {
       key: 'fullName',
-      label: t('Full Name'),
+      label: language === 'fr' ? 'Nom complet' : 'Full Name',
       render: (value: string) => value || '-',
     },
     {
       key: 'role',
-      label: t('Role'),
+      label: language === 'fr' ? 'Rôle' : 'Role',
       render: (value: string) => (
         <Badge
           variant={
@@ -162,22 +165,22 @@ export default function UsersManagement() {
     },
     {
       key: 'email',
-      label: t('Email'),
+      label: language === 'fr' ? 'Email' : 'Email',
       render: (value: string) => value || '-',
     },
     {
       key: 'teacherSubject',
-      label: t('Subject'),
+      label: language === 'fr' ? 'Matière' : 'Subject',
       render: (value: string) => value || '-',
     },
     {
       key: 'createdAt',
-      label: t('Created'),
+      label: language === 'fr' ? 'Créé' : 'Created',
       render: (value: string) => new Date(value).toLocaleDateString(),
     },
     {
       key: 'actions',
-      label: t('Actions'),
+      label: language === 'fr' ? 'Actions' : 'Actions',
       render: (_: any, row: User) => (
         <div className="flex items-center gap-2">
           <Button
@@ -215,9 +218,9 @@ export default function UsersManagement() {
   const filterOptions = [
     {
       key: 'role',
-      label: t('Role'),
+      label: language === 'fr' ? 'Rôle' : 'Role',
       options: [
-        { value: 'user', label: t('User') },
+        { value: 'user', label: language === 'fr' ? 'Utilisateur' : 'User' },
         { value: 'admin', label: t('Admin') },
         { value: 'super_admin', label: t('Super Admin') },
         { value: 'teacher', label: t('Teacher') },
@@ -225,7 +228,7 @@ export default function UsersManagement() {
     },
     {
       key: 'teacherSubject',
-      label: t('Subject'),
+      label: language === 'fr' ? 'Matière' : 'Subject',
       options: [
         { value: 'Mathematics', label: t('Mathematics') },
         { value: 'Physics', label: t('Physics') },

@@ -1667,7 +1667,7 @@ export class DataService {
     term?: string;
   }): Promise<ServiceResult<StudentResult[]>> {
     try {
-      let whereCondition = undefined;
+      let whereCondition: any = undefined;
       if (filters.studentId && filters.academicYear && filters.term) {
         whereCondition = and(
           eq(studentResults.studentId, filters.studentId),
@@ -1735,7 +1735,7 @@ export class DataService {
     currentClass?: string;
   }): Promise<ServiceResult<StudentProgress[]>> {
     try {
-      let whereCondition = undefined;
+      let whereCondition: any = undefined;
 
       if (filters.studentId && filters.academicYear && filters.term) {
         whereCondition = and(
@@ -1987,7 +1987,7 @@ export class DataService {
   }): Promise<ServiceResult<StudentGrade[]>> {
     try {
       // Build conditions for studentGrades table
-      const studentGradeConditions = [];
+      const studentGradeConditions: ReturnType<typeof eq>[] = [];
       if (filters.studentId) {
         studentGradeConditions.push(
           eq(studentGrades.matricule, filters.studentId)
@@ -1995,7 +1995,7 @@ export class DataService {
       }
 
       // Build conditions for gradeReports table
-      const gradeReportConditions = [];
+      const gradeReportConditions: ReturnType<typeof eq>[] = [];
       if (filters.subject) {
         gradeReportConditions.push(eq(gradeReports.subject, filters.subject));
       }
@@ -2029,12 +2029,14 @@ export class DataService {
       }
 
       // Step 2: Get student grades with the relevant grade report IDs
-      const finalConditions = [...studentGradeConditions];
+      const finalConditions: ReturnType<typeof eq>[] = [
+        ...studentGradeConditions,
+      ];
 
       if (relevantGradeReportIds) {
         // Use 'in' operator to filter by grade report IDs
         finalConditions.push(
-          inArray(studentGrades.gradeReportId, relevantGradeReportIds)
+          inArray(studentGrades.gradeReportId, relevantGradeReportIds) as any
         );
       }
 

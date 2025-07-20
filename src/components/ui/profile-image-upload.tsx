@@ -8,7 +8,7 @@ import { Camera, X, Upload, User } from 'lucide-react';
 import { useLanguage } from '../../hooks/use-language';
 
 interface ProfileImageUploadProps {
-  userId: string;
+  userId: string; // cuid string only
   currentImageUrl?: string;
   userName?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -29,11 +29,18 @@ export function ProfileImageUpload({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  // Only clear preview when the modal is closed (when currentImageUrl changes back to initial or component unmounts)
+  React.useEffect(() => {
+    return () => {
+      setPreviewUrl(null);
+    };
+  }, []);
+
   const { uploadProfileImage, removeProfileImage, isUploading, isRemoving } =
     useProfileImage({
       userId,
       onSuccess: data => {
-        setPreviewUrl(null);
+        // Do not clear preview here; let the effect above handle it
         onImageChange?.(data.profileImageUrl);
       },
     });
@@ -75,12 +82,19 @@ export function ProfileImageUpload({
       // Create preview
       const reader = new FileReader();
       reader.onload = e => {
-        setPreviewUrl(e.target?.result as string);
+        const preview = e.target?.result as string;
+        setPreviewUrl(preview);
+        // Optimistically update parent state
+        onImageChange?.(preview);
       };
       reader.readAsDataURL(file);
 
       // Upload image
-      uploadProfileImage(file);
+      uploadProfileImage(file).catch(() => {
+        // Revert preview and parent state if upload fails
+        setPreviewUrl(null);
+        onImageChange?.(currentImageUrl || '');
+      });
     }
   };
 
