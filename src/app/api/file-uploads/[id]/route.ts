@@ -5,10 +5,11 @@ import path from 'path';
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
-) {
+    { params }: { params: Promise<{ id: string }> }
+) { 
     try {
-        const fileId = params.id;
+        const { id } = await params;
+        const fileId = id;
 
         if (!fileId) {
             return NextResponse.json(

@@ -508,8 +508,10 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
 
       if (data.success) {
         toast({
-          title: 'Success',
-          description: 'File uploaded successfully',
+          title: language === 'fr' ? 'Succès' : 'Success',
+          description: language === 'fr'
+            ? 'Fichier téléchargé avec succès'
+            : 'File uploaded successfully',
         });
 
         // Refresh uploaded files immediately
@@ -524,20 +526,25 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         setUploadPreviewData([]);
       } else {
         toast({
-          title: 'Error',
-          description: data.message || 'Upload failed',
+          title: language === 'fr' ? 'Erreur' : 'Error',
+          description: data.message || (language === 'fr'
+            ? 'Échec du téléchargement'
+            : 'Upload failed'),
           variant: 'destructive',
         });
       }
     } catch (err) {
       console.error('Upload error:', err);
       toast({
-        title: 'Error',
-        description: 'Upload failed',
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description: language === 'fr'
+          ? 'Échec du téléchargement'
+          : 'Upload failed',
         variant: 'destructive',
       });
     } finally {
       setApprovalLoading(false);
+      setShowApprovalModal(false);
     }
   };
 
