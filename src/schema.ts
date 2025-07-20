@@ -34,6 +34,7 @@ export const students = pgTable('students', {
   fullName: text('full_name').notNull(),
   email: text('email'),
   phone: text('phone'),
+  profileImageUrl: text('profile_image_url').default(''), // default profile image empty string
   className: text('class_name').notNull(), // Form1A, Form2B, etc.
   gender: text('gender').notNull(), // male, female
   dateOfBirth: timestamp('date_of_birth'),

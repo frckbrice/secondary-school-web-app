@@ -1,5 +1,7 @@
 # GBHS Bafia - Next.js Fullstack School Management System
 
+> **Note:** All project documentation files (API routes, testing guides, etc.) are now located in the `/docs/` directory. The main `README.md` remains at the root for quick reference.
+
 A modern, fullstack school management platform built with Next.js 15, TypeScript, PostgreSQL, Drizzle ORM, and Radix UI. Features robust authentication, real-time updates, admin/teacher/student dashboards, and a fully responsive, accessible UI.
 
 ## 🚀 Features

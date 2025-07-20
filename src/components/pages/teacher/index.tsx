@@ -1,3 +1,3 @@
-import TeacherDashboardPage from './components/TeacherDashboard';
+import TeacherDashboard from './components/TeacherDashboard';
 
-export default TeacherDashboardPage;
+export default TeacherDashboard;

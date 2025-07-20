@@ -12,8 +12,8 @@ import { Button } from '../ui/button';
 import { useLanguage } from '../../hooks/use-language';
 import { Home, Search, ArrowLeft, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { Header } from '../layout/header';
-import { Footer } from '../layout/footer';
+import { Header } from '../globals/layout/header';
+import { Footer } from '../globals/layout/footer';
 
 export default function NotFound() {
   return (

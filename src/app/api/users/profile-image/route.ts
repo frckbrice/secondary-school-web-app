@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DataService } from '../../../../lib/services/data.service';
+import { CloudinaryService } from '../../../../lib/cloudinary';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,13 +34,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For now, we'll just update the profile image URL to a placeholder
-    // TODO: Implement cloudinary upload when the service is available
-    const placeholderUrl = `/uploads/profile-${userId}-${Date.now()}.jpg`;
+    // Upload image to Cloudinary
+    const arrayBuffer = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64Data = `data:${imageFile.type};base64,${buffer.toString('base64')}`;
+
+    const uploadResult = await CloudinaryService.uploadImage(base64Data, {
+      folder: 'gbhs-bafia/profile-images',
+      public_id: `profile-${userId}-${Date.now()}`,
+      transformation: [
+        { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+        { quality: 'auto', fetch_format: 'auto' },
+      ],
+    });
+
+    const imageUrl = uploadResult.secure_url;
 
     // Update user profile image URL
     const result = await DataService.updateUser(userId, {
-      profileImageUrl: placeholderUrl,
+      profileImageUrl: imageUrl,
     });
 
     if (!result.success) {

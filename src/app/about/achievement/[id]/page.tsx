@@ -1,5 +1,5 @@
 import React from 'react';
-import AchievementDetailPage from '../../../../components/pages/achievement-detail-page';
+import AchievementDetailPage from '../../../../components/pages/about/achievement-detail';
 
 interface AchievementDetailProps {
   params: Promise<{ id: string }>;

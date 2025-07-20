@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import NewsDetail from '../../../components/pages/news-detail';
+import NewsDetail from '../../../components/pages/news/detail';
 import { getApiUrl } from '../../../lib/utils';
 
 async function getNewsById(id: string) {

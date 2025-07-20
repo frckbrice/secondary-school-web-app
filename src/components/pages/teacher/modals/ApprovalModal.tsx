@@ -12,6 +12,16 @@ interface ApprovalModalProps {
   onClose: () => void;
   onApprove: () => void;
   message?: string;
+  title?: string;
+  approveButtonText?: string;
+  cancelButtonText?: string;
+  approveButtonVariant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   isLoading?: boolean;
   t: (key: string) => string;
   language: string;
@@ -22,6 +32,10 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({
   onClose,
   onApprove,
   message,
+  title,
+  approveButtonText,
+  cancelButtonText,
+  approveButtonVariant = 'default',
   isLoading,
   t,
   language,
@@ -31,27 +45,28 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {t('importExport.confirmApproval') ||
+            {title ||
               (language === 'fr'
-                ? "Confirmer l'approbation"
-                : 'Confirm Approval')}
+                ? 'Confirmer la suppression'
+                : 'Confirm Deletion')}
           </DialogTitle>
         </DialogHeader>
         <div className="py-4">
           {message ||
-            t('importExport.confirmApprovalMessage') ||
             (language === 'fr'
-              ? 'Êtes-vous sûr de vouloir approuver cette action ?'
-              : 'Are you sure you want to approve this action?')}
+              ? 'Êtes-vous sûr de vouloir supprimer cet élément ?'
+              : 'Are you sure you want to delete this item?')}
         </div>
         <div className="flex justify-end mt-4 space-x-2">
           <Button onClick={onClose} variant="outline" disabled={isLoading}>
-            {t('importExport.cancel') ||
-              (language === 'fr' ? 'Annuler' : 'Cancel')}
+            {cancelButtonText || (language === 'fr' ? 'Annuler' : 'Cancel')}
           </Button>
-          <Button onClick={onApprove} disabled={isLoading}>
-            {t('importExport.approve') ||
-              (language === 'fr' ? 'Approuver' : 'Approve')}
+          <Button
+            onClick={onApprove}
+            disabled={isLoading}
+            variant={approveButtonVariant}
+          >
+            {approveButtonText || (language === 'fr' ? 'Supprimer' : 'Delete')}
           </Button>
         </div>
       </DialogContent>
