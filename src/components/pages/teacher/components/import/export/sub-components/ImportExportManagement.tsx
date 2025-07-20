@@ -435,12 +435,36 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         const workbook = XLSX.read(data, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const previewRows = XLSX.utils.sheet_to_json(worksheet, {
+        const allRowsData = XLSX.utils.sheet_to_json(worksheet, {
           header: 1,
         }) as any[][];
-        setUploadPreviewData(
-          previewRows.slice(0, 10).map(row => row.slice(0, 10))
-        );
+
+        // Use the same parsing algorithm as grade modal
+        // Table header
+        const tableHeader = ['Ide', 'NOM ET PRENOM', 'NOTE 1', 'NOTE 2'];
+        // Extract rows: NOM ET PRENOM from col E (index 4), NOTE 1-6 from cols F-K (5-10), from row 4 (index 3)
+        const filteredRows = allRowsData
+          .slice(3)
+          .map(row => [
+            row[4] || '',
+            row[5] || '',
+            row[6] || '',
+            row[7] || '',
+            row[8] || '',
+            row[9] || '',
+            row[10] || '',
+          ])
+          .filter(row => row[0] && String(row[0]).trim() !== ''); // Only rows with non-empty NOM ET PRENOM
+        // Build tableRows with Ide as running number (idx+1)
+        const tableRows = filteredRows.map((row, idx) => [
+          idx + 1,
+          row[0],
+          row[1],
+          row[2],
+        ]);
+        const tableData = [tableHeader, ...tableRows];
+
+        setUploadPreviewData(tableData);
         setShowUploadPreview(true);
       } catch (err) {
         toast({
@@ -1070,7 +1094,84 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           </ul>
         )}
       </div>
-      {/* */}
+      {/* Delete Confirmation Modal */}
+      <ApprovalModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setFileToDelete(null);
+        }}
+        onApprove={handleDeleteFile}
+        message={
+          language === 'fr'
+            ? 'Voulez-vous vraiment supprimer ce fichier ?'
+            : 'Are you sure you want to delete this file?'
+        }
+        isLoading={false}
+        t={t}
+        language={language}
+      />
+
+      {/* Enhanced Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => {
+          setShowShareModal(false);
+          setShareEmail('');
+          setShareFile(null);
+        }}
+        file={shareFile}
+        email={shareEmail}
+        message={shareMessage}
+        onEmailChange={setShareEmail}
+        onMessageChange={setShareMessage}
+        onShare={async () => {
+          if (!shareEmail || !shareFile?.id) return;
+          setShareLoading(true);
+          try {
+            const res = await fetch('/api/file-uploads/share', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                fileId: shareFile.id,
+                recipientEmail: shareEmail,
+                message: shareMessage,
+              }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              toast({
+                title: language === 'fr' ? 'Succès' : 'Success',
+                description:
+                  language === 'fr'
+                    ? 'Fichier partagé avec succès !'
+                    : 'File shared successfully!',
+              });
+              setShowShareModal(false);
+              setShareEmail('');
+              setShareMessage('');
+              setShareFile(null);
+            } else {
+              toast({
+                title: language === 'fr' ? 'Erreur' : 'Error',
+                description: data.message || 'Failed to share file',
+                variant: 'destructive',
+              });
+            }
+          } catch (err) {
+            toast({
+              title: language === 'fr' ? 'Erreur' : 'Error',
+              description: 'Failed to share file',
+              variant: 'destructive',
+            });
+          } finally {
+            setShareLoading(false);
+          }
+        }}
+        isLoading={shareLoading}
+        t={t}
+        language={language}
+      />
 
       {/* Comprehensive Grading Table Modal */}
       <Dialog open={showEditor} onOpenChange={setShowEditor}>
