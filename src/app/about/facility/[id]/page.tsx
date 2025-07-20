@@ -1,5 +1,5 @@
 import React from 'react';
-import FacilityDetailPage from '../../../../components/pages/facility-detail-page';
+import FacilityDetailPage from '../../../../components/pages/about/facility-detail';
 
 interface FacilityDetailProps {
   params: Promise<{ id: string }>;

@@ -1,5 +1,5 @@
 import ProtectedRoute from '../../lib/protected-route';
-import AdminDashboard from '../../components/pages/admin-dashboard';
+import AdminDashboard from '../../components/pages/admin';
 
 export default function AdminPage() {
   return (

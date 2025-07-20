@@ -8,8 +8,7 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) { 
     try {
-        const { id } = await params;
-        const fileId = id;
+        const { id: fileId } = await params;
 
         if (!fileId) {
             return NextResponse.json(

@@ -11,7 +11,7 @@ import StudentGradesManagement, {
 } from './StudentGradesManagement';
 import ImportExportManagement, {
   ImportExportManagementProps,
-} from './import/export/sub-components/ImportExportManagement';
+} from './sections/ImportExportManagement';
 // import StatisticsManagement from './StatisticsManagement';
 // import StudentsManagement from './StudentsManagement';
 // import CalendarManagement from './CalendarManagement';

@@ -34,14 +34,14 @@ import {
   Moon,
   Loader2,
 } from 'lucide-react';
-import NewsManagement from '../admin/news-management';
-import ApplicationsManagement from '../admin/applications-management';
-import BookingManagement from '../admin/booking-management';
-import ContactsManagement from '../admin/contacts-management';
-import FacilitiesManagement from '../admin/FacilitiesManagement';
-import AchievementsManagement from '../admin/AchievementsManagement';
-import StudentsManagement from '../admin/students-management';
-import TeachersManagement from '../admin/teachers-management';
+import NewsManagement from './components/news-management';
+import ApplicationsManagement from './components/applications-management';
+import BookingManagement from './components/booking-management';
+import ContactsManagement from './components/contacts-management';
+import FacilitiesManagement from './components/FacilitiesManagement';
+import AchievementsManagement from './components/AchievementsManagement';
+import StudentsManagement from './components/students-management';
+import TeachersManagement from './components/teachers-management';
 import { useRouter } from 'next/navigation';
 import { AdminSidebar } from '../ui/admin-sidebar';
 import { apiRequest } from '../../lib/queryClient';
