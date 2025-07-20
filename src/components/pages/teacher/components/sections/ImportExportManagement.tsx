@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import type { GradeReport, StudentGrade } from '../../api/constants';
-import type {
+import {
   calculateStatistics,
   calculateTermStatistics,
   parseStudentList,
   parseCSVContent,
+  fillTemplateWithGrades,
 } from '../../api/utils';
 import type ImportModal from '../../modals/ImportModal';
 import type PreviewModal from '../../modals/PreviewModal';
@@ -28,6 +29,7 @@ import {
   Trash2,
   MoreVertical,
   Share2,
+  Pencil,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -104,6 +106,10 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [shareLoading, setShareLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<any>(null);
+  // Store the original template ArrayBuffer when loading the template
+  const [originalTemplateArrayBuffer, setOriginalTemplateArrayBuffer] = useState<ArrayBuffer | null>(null);
+  const [teacherName, setTeacherName] = useState(user?.fullName || '');
+  const [editingTeacherName, setEditingTeacherName] = useState(false);
 
   useEffect(() => {
     if (!selectedClass) return;
@@ -151,6 +157,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       }
       const blob = await res.blob();
       const arrayBuffer = await blob.arrayBuffer();
+      setOriginalTemplateArrayBuffer(arrayBuffer);
 
       // Dynamic import of XLSX with proper error handling
       let XLSX;
@@ -288,30 +295,44 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
 
   // Handle finalize/upload
   const handleFinalizeUpload = async () => {
-    // Convert editorData back to Excel file
-    let XLSX;
-    try {
-      const xlsxModule = await import('xlsx');
-      XLSX = xlsxModule.default || xlsxModule;
-    } catch (importError) {
-      console.error('Failed to import XLSX library:', importError);
+    if (!originalTemplateArrayBuffer) {
       toast({
-        title:
-          t('errorLoadingLibrary') ||
-          (language === 'fr'
-            ? 'Erreur lors du chargement de la bibliothèque'
-            : 'Error loading library'),
-        description: 'Failed to load Excel processing library',
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description:
+          language === 'fr'
+            ? 'Modèle original introuvable pour l’export.'
+            : 'Original template not found for export.',
         variant: 'destructive',
       });
       return;
     }
 
-    const ws = XLSX.utils.aoa_to_sheet(editorData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    const outFile = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
-
+    if (!user?.id) {
+      toast({
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description: language === 'fr'
+          ? "Impossible d'uploader sans identifiant utilisateur."
+          : "Cannot upload without a user ID.",
+        variant: 'destructive',
+      });
+      setUploading(false);
+      return console.error('User ID is required to upload grades');
+    }
+    // Use the modular utility to fill the template with grades
+    let filledBlob;
+    try {
+      filledBlob = await fillTemplateWithGrades(originalTemplateArrayBuffer, editorData);
+    } catch (err) {
+      toast({
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description:
+          language === 'fr'
+            ? 'Échec du remplissage du modèle.'
+            : 'Failed to fill template.',
+        variant: 'destructive',
+      });
+      return;
+    }
     // Create filename with subject, term, and NOTE columns
     const subject = editorFileName.replace('.xlsx', '');
     const noteColumns =
@@ -320,7 +341,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         .filter(col => col && col.toString().includes('NOTE'))
         .join('|') || 'NOTE_1|NOTE_2';
     const originalName = `${subject}-${term || 'T1'}-${noteColumns}.xlsx`;
-    const file = new File([outFile], originalName, {
+    const file = new File([filledBlob], originalName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
 
@@ -329,7 +350,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
     formData.append('file', file);
     formData.append('relatedType', 'grading');
     formData.append('relatedId', `teacher-grades-${Date.now()}`);
-    formData.append('uploadedBy', 'teacher-user'); // Provide a valid user ID
+    formData.append('uploadedBy', user?.id); // Provide a valid user ID
 
     setUploading(true);
     try {
@@ -1276,7 +1297,30 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                   <span className="font-semibold text-gray-700">
                     {language === 'fr' ? 'ENSEIGNANT' : 'TEACHER'}:
                   </span>
-                  <span className="text-blue-600 font-medium">Teacher</span>
+                  {editingTeacherName ? (
+                    <Input
+                      value={teacherName}
+                      onChange={e => setTeacherName(e.target.value)}
+                      onBlur={() => setEditingTeacherName(false)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') setEditingTeacherName(false);
+                      }}
+                      className="w-40 h-8 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      autoFocus
+                    />
+                  ) : (
+                    <span className="text-blue-600 font-medium flex items-center gap-1">
+                      {teacherName}
+                      <button
+                        type="button"
+                        className="ml-1 p-1 rounded hover:bg-blue-100"
+                        onClick={() => setEditingTeacherName(true)}
+                        aria-label={language === 'fr' ? 'Modifier' : 'Edit'}
+                      >
+                        <Pencil className="w-4 h-4 text-blue-400" />
+                      </button>
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1398,13 +1442,13 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                   <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3">
                     <h4 className="text-sm font-semibold text-white">
-                      {language === 'fr' ? 'Statistiques' : 'Statistics'}
+                      {language === 'fr' ? 'Statistiques Trimestrielles du Conseil' : 'Quarterly Council Statistics'}
                     </h4>
                   </div>
                   <div className="p-4">
-                    <table className="w-full text-xs border border-gray-200 rounded">
+                    <table id="quarterly-statistics-table" className="w-full text-xs border border-gray-200 rounded">
                       <thead>
-                        <tr className="bg-gray-50">
+                        {/* <tr className="bg-gray-50">
                           <th
                             className="border px-2 py-1 text-left font-medium"
                             colSpan={2}
@@ -1413,7 +1457,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                               ? 'Statistiques'
                               : 'Statistics'}
                           </th>
-                        </tr>
+                        </tr> */}
                       </thead>
                       <tbody>
                         {allRows &&
@@ -1448,20 +1492,20 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                   <div className="bg-gradient-to-r from-purple-600 to-violet-600 px-4 py-3">
                     <h4 className="text-sm font-semibold text-white">
-                      {language === 'fr' ? 'Competences' : 'Competencies'}
+                      {language === 'fr' ? 'Competences Trimestrielles visees' : 'Quarterly Learning Objectives'}
                     </h4>
                   </div>
                   <div className="p-4">
-                    <table className="w-full text-xs border border-gray-200 rounded">
+                    <table id="quarterly-competencies-table" className="w-full text-xs border border-gray-200 rounded">
                       <thead>
-                        <tr className="bg-gray-50">
+                        {/* <tr className="bg-gray-50">
                           <th
                             className="border px-2 py-1 text-left font-medium"
                             colSpan={3}
                           >
                             {language === 'fr' ? 'Competences' : 'Competencies'}
                           </th>
-                        </tr>
+                        </tr> */}
                       </thead>
                       <tbody>
                         {allRows &&
@@ -1502,14 +1546,14 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                   <div className="bg-gradient-to-r from-orange-600 to-red-600 px-4 py-3">
                     <h4 className="text-sm font-semibold text-white">
                       {language === 'fr'
-                        ? 'Statistiques annuelles'
-                        : 'Annual Statistics'}
+                        ? 'Statistiques annuelles du conseil'
+                        : 'Annual Council Statistics'}
                     </h4>
                   </div>
                   <div className="p-4">
-                    <table className="w-full text-xs border border-gray-200 rounded">
+                    <table id="annual-statistics-table" className="w-full text-xs border border-gray-200 rounded">
                       <thead>
-                        <tr className="bg-gray-50">
+                        {/* <tr className="bg-gray-50">
                           <th
                             className="border px-2 py-1 text-left font-medium"
                             colSpan={3}
@@ -1518,7 +1562,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                               ? 'Statistiques annuelles'
                               : 'Annual Statistics'}
                           </th>
-                        </tr>
+                        </tr> */}
                       </thead>
                       <tbody>
                         <tr>
