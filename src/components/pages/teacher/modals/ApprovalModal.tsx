@@ -12,6 +12,10 @@ interface ApprovalModalProps {
   onClose: () => void;
   onApprove: () => void;
   message?: string;
+  title?: string;
+  approveButtonText?: string;
+  cancelButtonText?: string;
+  approveButtonVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
   isLoading?: boolean;
   t: (key: string) => string;
   language: string;
@@ -22,6 +26,10 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({
   onClose,
   onApprove,
   message,
+  title,
+  approveButtonText,
+  cancelButtonText,
+  approveButtonVariant = 'default',
   isLoading,
   t,
   language,
@@ -31,9 +39,10 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {language === 'fr'
-              ? 'Confirmer la suppression'
-              : 'Confirm Deletion'}
+            {title ||
+              (language === 'fr'
+                ? 'Confirmer la suppression'
+                : 'Confirm Deletion')}
           </DialogTitle>
         </DialogHeader>
         <div className="py-4">
@@ -44,10 +53,14 @@ const ApprovalModal: React.FC<ApprovalModalProps> = ({
         </div>
         <div className="flex justify-end mt-4 space-x-2">
           <Button onClick={onClose} variant="outline" disabled={isLoading}>
-            {language === 'fr' ? 'Annuler' : 'Cancel'}
+            {cancelButtonText || (language === 'fr' ? 'Annuler' : 'Cancel')}
           </Button>
-          <Button onClick={onApprove} disabled={isLoading}>
-            {language === 'fr' ? 'Supprimer' : 'Delete'}
+          <Button
+            onClick={onApprove}
+            disabled={isLoading}
+            variant={approveButtonVariant}
+          >
+            {approveButtonText || (language === 'fr' ? 'Supprimer' : 'Delete')}
           </Button>
         </div>
       </DialogContent>

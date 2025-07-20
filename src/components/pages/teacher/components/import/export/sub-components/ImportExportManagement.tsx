@@ -994,11 +994,22 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           isOpen={showApprovalModal}
           onClose={() => setShowApprovalModal(false)}
           onApprove={handleUploadApproval}
+          title={
+            language === 'fr'
+              ? 'Confirmer le téléchargement'
+              : 'Confirm Upload'
+          }
           message={
             language === 'fr'
-              ? 'Voulez-vous vraiment approuver et télécharger ce fichier ?'
-              : 'Do you really want to approve and upload this file?'
+              ? 'Voulez-vous vraiment approuver et télécharger ce fichier de notes rempli ?'
+              : 'Do you really want to approve and upload this filled grading file?'
           }
+          approveButtonText={
+            language === 'fr'
+              ? 'Approuver et Télécharger'
+              : 'Approve & Upload'
+          }
+          approveButtonVariant="default"
           isLoading={approvalLoading}
           t={t}
           language={language}
@@ -1102,11 +1113,22 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           setFileToDelete(null);
         }}
         onApprove={handleDeleteFile}
+        title={
+          language === 'fr'
+            ? 'Confirmer la suppression'
+            : 'Confirm Deletion'
+        }
         message={
           language === 'fr'
-            ? 'Voulez-vous vraiment supprimer ce fichier ?'
-            : 'Are you sure you want to delete this file?'
+            ? `Voulez-vous vraiment supprimer le fichier "${fileToDelete?.name}" de vos fichiers téléchargés ? Cette action ne peut pas être annulée.`
+            : `Are you sure you want to delete "${fileToDelete?.name}" from your uploaded files? This action cannot be undone.`
         }
+        approveButtonText={
+          language === 'fr'
+            ? 'Supprimer définitivement'
+            : 'Delete Permanently'
+        }
+        approveButtonVariant="destructive"
         isLoading={false}
         t={t}
         language={language}
