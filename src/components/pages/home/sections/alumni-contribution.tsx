@@ -118,6 +118,7 @@ export default function AlumniContribution() {
           language === 'fr'
             ? 'Merci pour votre généreuse contribution à GBHS Bafia!'
             : 'Thank you for your generous contribution to GBHS Bafia!',
+        variant: 'success',
       });
       contributionForm.reset();
       setIsContributionOpen(false);
@@ -142,6 +143,7 @@ export default function AlumniContribution() {
           language === 'fr'
             ? 'Votre abonnement récurrent a été créé avec succès!'
             : 'Your recurring subscription has been created successfully!',
+        variant: 'success',
       });
       subscriptionForm.reset();
       setIsSubscriptionOpen(false);

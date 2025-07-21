@@ -286,6 +286,7 @@ export default function NewsManagement() {
       toast({
         title: 'Success',
         description: 'News article created successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -320,6 +321,7 @@ export default function NewsManagement() {
       toast({
         title: 'Success',
         description: 'News article updated successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({

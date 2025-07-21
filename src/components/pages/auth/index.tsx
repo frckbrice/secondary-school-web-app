@@ -148,6 +148,7 @@ export default function AuthPage() {
         toast({
           title: language === 'fr' ? 'Connexion réussie' : 'Login successful',
           description: language === 'fr' ? 'Bienvenue!' : 'Welcome!',
+          variant: 'success',
         });
         if (user.role === 'teacher') {
           router.push('/teacher');
@@ -187,6 +188,7 @@ export default function AuthPage() {
             language === 'fr'
               ? 'Compte créé avec succès!'
               : 'Account created successfully!',
+          variant: 'success',
         });
         if (user.role === 'teacher') {
           router.push('/teacher');

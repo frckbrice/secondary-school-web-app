@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from '../../ui/select';
 import { useAuth } from '../../../hooks/use-auth';
-import { apiRequest } from '../../../lib/queryClient';
 import { useRouter } from 'next/navigation';
 import {
   BarChart,

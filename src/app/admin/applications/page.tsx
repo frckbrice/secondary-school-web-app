@@ -312,6 +312,7 @@ export default function ApplicationsManagement() {
       toast({
         title: 'Success',
         description: 'Application updated successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -329,6 +330,7 @@ export default function ApplicationsManagement() {
       toast({
         title: 'Success',
         description: 'Application deleted successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({

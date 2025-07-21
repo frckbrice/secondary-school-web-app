@@ -299,6 +299,7 @@ export default function GalleryManagement() {
       toast({
         title: 'Success',
         description: 'Gallery item created successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -324,6 +325,7 @@ export default function GalleryManagement() {
       toast({
         title: 'Success',
         description: 'Gallery item updated successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -341,6 +343,7 @@ export default function GalleryManagement() {
       toast({
         title: 'Success',
         description: 'Gallery item deleted successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({

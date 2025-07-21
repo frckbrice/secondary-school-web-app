@@ -244,6 +244,7 @@ export default function StudentPortal() {
           language === 'fr'
             ? 'Votre rapport a été soumis de manière anonyme et sera traité confidentiellement.'
             : 'Your report has been submitted anonymously and will be handled confidentially.',
+        variant: 'success',
       });
       reportForm.reset();
     },
@@ -270,6 +271,7 @@ export default function StudentPortal() {
           language === 'fr'
             ? "Votre pétition a été soumise et sera examinée par l'administration."
             : 'Your petition has been submitted and will be reviewed by the administration.',
+        variant: 'success',
       });
       petitionForm.reset();
       queryClient.invalidateQueries({ queryKey: ['/api/petitions'] });
@@ -346,6 +348,7 @@ export default function StudentPortal() {
           language === 'fr'
             ? 'Résultat supprimé avec succès'
             : 'Result deleted successfully',
+        variant: 'success',
       });
       // Invalidate and refetch results
       queryClient.invalidateQueries({ queryKey: ['/api/student-results'] });
@@ -395,6 +398,7 @@ export default function StudentPortal() {
           language === 'fr'
             ? 'Résultat mis à jour avec succès'
             : 'Result updated successfully',
+        variant: 'success',
       });
       // Invalidate and refetch results
       queryClient.invalidateQueries({ queryKey: ['/api/student-results'] });

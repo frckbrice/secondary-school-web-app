@@ -71,6 +71,7 @@ export default function ContactPage() {
           language === 'fr'
             ? 'Votre message a été envoyé avec succès. Nous vous répondrons bientôt.'
             : 'Your message has been sent successfully. We will get back to you soon.',
+        variant: 'success',
       });
       form.reset();
     },

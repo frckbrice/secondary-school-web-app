@@ -194,3 +194,81 @@ export async function parseGradingFile(
 }
 
 // Add other utility functions (parseStudentList, parseCSVContent, etc.) as needed.
+
+/**
+ * Fills a grading template file with app grade data, mapping values to the correct cells.
+ * @param {ArrayBuffer} templateArrayBuffer - The original template file as ArrayBuffer
+ * @param {any[][]} gradeTable - The grade table data (header + rows, without IDE column)
+ * @param {any[][]} allRows - The full app data rows (for statistics, etc.)
+ * @param {string} teacherName - The teacher's name to write to cell B6
+ * @returns {Promise<Blob>} - The filled template as a Blob
+ */
+export async function fillTemplateWithGrades(
+  templateArrayBuffer: ArrayBuffer,
+  gradeTable: any[][],
+  allRows: any[][],
+  teacherName: string
+): Promise<Blob> {
+  let XLSX;
+  try {
+    const xlsxModule = await import('xlsx');
+    XLSX = xlsxModule.default || xlsxModule;
+  } catch (importError) {
+    throw new Error('Failed to load Excel processing library');
+  }
+  const workbook = XLSX.read(templateArrayBuffer, { type: 'array' });
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+
+  // Write teacher name to B6
+  worksheet['B6'] = { t: 's', v: teacherName };
+
+  // Write annual statistics to J9, J10, J11 (from allRows[8][9], [9][9], [10][9])
+  if (allRows?.[8]?.[9]) worksheet['J9'] = { t: 'n', v: allRows[8][9] };
+  if (allRows?.[9]?.[9]) worksheet['J10'] = { t: 'n', v: allRows[9][9] };
+  if (allRows?.[10]?.[9]) worksheet['J11'] = { t: 'n', v: allRows[10][9] };
+
+  // Write quarterly competencies to merged I4:K6 (from allRows[4][8])
+  if (allRows?.[4]?.[8]) {
+    worksheet['I4'] = { t: 's', v: allRows[4][8] };
+    worksheet['J4'] = { t: 's', v: allRows[4][8] };
+    worksheet['K4'] = { t: 's', v: allRows[4][8] };
+    worksheet['I5'] = { t: 's', v: allRows[4][8] };
+    worksheet['J5'] = { t: 's', v: allRows[4][8] };
+    worksheet['K5'] = { t: 's', v: allRows[4][8] };
+    worksheet['I6'] = { t: 's', v: allRows[4][8] };
+    worksheet['J6'] = { t: 's', v: allRows[4][8] };
+    worksheet['K6'] = { t: 's', v: allRows[4][8] };
+  }
+
+  // Write quarterly statistics to E9:E14 (from allRows[8+i][1])
+  for (let i = 0; i < 6; i++) {
+    if (allRows?.[8 + i]?.[1]) {
+      worksheet[`E${9 + i}`] = { t: 'n', v: allRows[8 + i][1] };
+    }
+  }
+
+  // Write grade table header and data (skipping IDE column)
+  // Header: row 4 (index 3), columns E (NOM ET PRENOM), F (NOTE 1), G (NOTE 2)
+  worksheet['E4'] = { t: 's', v: 'NOM ET PRENOM' };
+  worksheet['F4'] = { t: 's', v: 'NOTE 1' };
+  worksheet['G4'] = { t: 's', v: 'NOTE 2' };
+
+  // Write student rows starting from row 5 (index 4)
+  for (let i = 1; i < gradeTable.length; i++) {
+    const row = gradeTable[i];
+    const excelRow = 4 + i;
+    worksheet[`E${excelRow}`] = { t: 's', v: row[1] }; // NOM ET PRENOM
+    worksheet[`F${excelRow}`] = { t: 'n', v: row[2] }; // NOTE 1
+    worksheet[`G${excelRow}`] = { t: 'n', v: row[3] }; // NOTE 2
+  }
+
+  // Remove IDE column if present (Excel: D)
+  // (No action needed if not present, as we only write E-G)
+
+  // Export the filled workbook as a Blob
+  const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  return new Blob([wbout], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+}

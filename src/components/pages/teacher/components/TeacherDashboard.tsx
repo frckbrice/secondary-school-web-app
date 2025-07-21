@@ -39,9 +39,17 @@ import {
 } from '../../../ui/dialog';
 import { Input } from '../../../ui/input';
 import { ProfileImageUpload } from '../../../ui/profile-image-upload';
-import { Sun, Moon, User as UserIcon, ChevronDown } from 'lucide-react';
+import { Sun, Moon, User as UserIcon, ChevronDown, Menu } from 'lucide-react';
 import { TeacherSidebar } from '../../../ui/teacher-sidebar';
 import TemplateList from './TemplateList';
+import { User } from '../../../../schema';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '../../../ui/sheet';
 
 const TeacherDashboard: React.FC = () => {
   const { t, language, setLanguage } = useLanguage();
@@ -164,6 +172,7 @@ const TeacherDashboard: React.FC = () => {
   ];
 
   const importExportProps: ImportExportManagementProps = {
+    user: user as User,
     classList: constants.CLASS_LIST,
     classFolderMap: constants.CLASS_FOLDER_MAP,
     englishClasses: constants.ENGLISH_CLASSES,
@@ -207,78 +216,87 @@ const TeacherDashboard: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Fixed Sidebar with different theme */}
-      <div
-        className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-full bg-gradient-to-b from-indigo-600 to-indigo-800 
-      shadow-lg z-10"
-      >
+      {/* Sidebar: hidden on mobile, visible on md+ */}
+      <div className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-full bg-gradient-to-b from-indigo-600 to-indigo-800 shadow-lg z-10">
         <TeacherSidebar
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           sections={['importExport', 'gradeReports', 'studentGrades']}
         />
       </div>
+      {/* Mobile menu button (optional) */}
+      <div className="md:hidden fixed top-2 left-2 z-30">
+        {/* Add a menu button here if you want a mobile drawer */}
+      </div>
       {/* Main Content Area - scrollable */}
-      <main className="flex-1 md:ml-64 flex flex-col overflow-y-auto">
+      <main className="flex-1 md:ml-64 flex flex-col overflow-y-auto w-full px-2 sm:px-4">
         {/* Modern Header */}
-        <div className="w-full bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-20">
-          <div className="flex items-center gap-2">
+        <div className="w-full bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800 px-2 sm:px-4 py-2 flex items-center justify-between gap-2 sticky top-0 z-20">
+          {/* Left: Hamburger menu */}
+          <div className="md:hidden flex items-center">
+            <Sheet>
+              <SheetTrigger asChild>
+                <button
+                  className="p-2 rounded-md text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  aria-label="Menu"
+                >
+                  <Menu className="w-6 h-6" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-64 max-w-full">
+                <SheetHeader>
+                  <SheetTitle>
+                    {language === 'fr' ? 'Navigation' : 'Navigation'}
+                  </SheetTitle>
+                </SheetHeader>
+                <nav className="flex flex-col gap-2 p-4">
+                  {['importExport', 'gradeReports', 'studentGrades'].map(
+                    section => (
+                      <button
+                        key={section}
+                        className={`w-full text-left px-4 py-2 rounded-lg font-medium ${activeSection === section ? 'bg-indigo-600 text-white' : 'text-indigo-700 dark:text-indigo-200 hover:bg-indigo-100 dark:hover:bg-indigo-800'}`}
+                        onClick={() => {
+                          setActiveSection(section);
+                          (document.activeElement as HTMLElement)?.blur();
+                        }}
+                      >
+                        {section === 'importExport' &&
+                          (language === 'fr'
+                            ? 'Import/Export'
+                            : 'Import/Export')}
+                        {section === 'gradeReports' &&
+                          (language === 'fr'
+                            ? 'Relevés de Notes'
+                            : 'Grade Reports')}
+                        {section === 'studentGrades' &&
+                          (language === 'fr'
+                            ? 'Notes Étudiants'
+                            : 'Student Grades')}
+                      </button>
+                    )
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
+          {/* Center: Title (optional, hide on mobile for space) */}
+          <div className="hidden sm:flex items-center gap-2">
             <span className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
               {language === 'fr' ? 'Espace Enseignant' : 'Teacher Portal'}
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            {/* Language Switcher */}
-            <Button
-              variant={language === 'fr' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleLanguageChange('fr')}
-              className="px-2"
-            >
-              FR
-            </Button>
-            <Button
-              variant={language === 'en' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleLanguageChange('en')}
-              className="px-2"
-            >
-              EN
-            </Button>
-            {/* Theme Toggler */}
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Toggle theme"
-              onClick={toggleTheme}
-              className="rounded-full"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-yellow-400" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-700" />
-              )}
-            </Button>
-            {/* Avatar and Name with Profile Modal Trigger */}
+          {/* Right: Avatar, Language, Theme */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Avatar with user name and dropdown chevron, wrapped in Dialog */}
             <Dialog open={showProfileModal} onOpenChange={setShowProfileModal}>
               <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-2 px-2"
-                >
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage
-                      src={user?.profileImageUrl || profileForm.profileImageUrl}
-                      alt={user?.fullName || 'User'}
-                    />
-                    <AvatarFallback>
-                      <UserIcon className="w-5 h-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="font-medium text-gray-900 dark:text-white max-w-[120px] truncate">
+                <button className="flex items-center gap-1 focus:outline-none">
+                  <span className="ml-1 text-sm font-medium text-gray-900 dark:text-white max-w-[80px] truncate block sm:hidden">
                     {user?.fullName || user?.username || 'Teacher'}
                   </span>
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
-                </Button>
+                  <UserIcon className="w-6 h-6 text-gray-400" />
+                  <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                </button>
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
@@ -290,9 +308,9 @@ const TeacherDashboard: React.FC = () => {
                 </DialogHeader>
                 <form onSubmit={handleProfileUpdate} className="space-y-4">
                   <ProfileImageUpload
-                    userId={user?.id?.toString() || ''}
-                    currentImageUrl={profileForm.profileImageUrl}
-                    userName={profileForm.fullName}
+                    userId={user?.id ? String(user.id) : ''}
+                    currentImageUrl={profileForm.profileImageUrl || ''}
+                    userName={profileForm.fullName || ''}
                     onImageChange={url =>
                       setProfileForm(f => ({ ...f, profileImageUrl: url }))
                     }
@@ -377,6 +395,30 @@ const TeacherDashboard: React.FC = () => {
                 </form>
               </DialogContent>
             </Dialog>
+            {/* Language toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="p-2 text-indigo-700 dark:text-indigo-300"
+              onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+              aria-label="Switch language"
+            >
+              {language === 'fr' ? 'EN' : 'FR'}
+            </Button>
+            {/* Theme toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="p-2 text-indigo-700 dark:text-indigo-300"
+              onClick={toggleTheme}
+              aria-label="Switch theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </Button>
           </div>
         </div>
         {/* Accessibility button remains floating (not in header) */}
@@ -401,6 +443,7 @@ const TeacherDashboard: React.FC = () => {
                 {/* Available Templates Card */}
                 <div className="rounded-xl shadow-sm border p-6 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
                   <ImportExportManagement
+                    user={user as User}
                     section="availableTemplatesFor"
                     classList={constants.CLASS_LIST}
                     classFolderMap={constants.CLASS_FOLDER_MAP}

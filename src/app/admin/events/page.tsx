@@ -189,6 +189,7 @@ export default function EventsManagement() {
       toast({
         title: 'Success',
         description: 'Event created successfully',
+        variant: 'success',
       });
       setIsDialogOpen(false);
       resetForm();
@@ -220,6 +221,7 @@ export default function EventsManagement() {
       toast({
         title: 'Success',
         description: 'Event updated successfully',
+        variant: 'success',
       });
       setIsDialogOpen(false);
       setEditingEvent(null);

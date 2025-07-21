@@ -55,6 +55,7 @@ export default function ContactSection() {
         title: 'Message Sent',
         description:
           'Your message has been sent successfully. We will get back to you soon.',
+        variant: 'success',
       });
       form.reset();
     },
