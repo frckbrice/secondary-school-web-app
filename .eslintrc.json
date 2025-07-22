@@ -1,9 +1,25 @@
 {
   "extends": ["next/core-web-vitals", "prettier"],
-  "plugins": ["prettier"],
+  "plugins": [
+    "prettier",
+    "unused-imports"
+  ],
   "rules": {
     "prettier/prettier": "error",
     "no-unused-vars": "warn",
-    "no-console": "warn"
+    "no-console": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "@next/next/no-img-element": "off",
+    "react/no-unescaped-entities": "off",
+    "unused-imports/no-unused-imports": "warn",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ]
   }
 }

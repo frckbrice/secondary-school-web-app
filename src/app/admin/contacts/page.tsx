@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/use-auth';
-import { useLanguage } from '../../../hooks/use-language';
 import {
   Card,
   CardContent,
@@ -55,21 +54,13 @@ import {
   MessageSquare,
   Plus,
   Search,
-  Edit,
   Trash2,
   Eye,
-  Clock,
-  Calendar,
   ArrowLeft,
   CheckCircle,
-  XCircle,
   AlertCircle,
-  User,
-  Mail,
-  Phone,
   Send,
   Reply,
-  Archive,
   Star,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -98,6 +89,135 @@ interface Contact {
   isRead: boolean;
   isStarred: boolean;
 }
+
+// Mock data - replace with API calls
+const mockContacts: Contact[] = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    phone: '+237612345678',
+    subject: 'Admission Inquiry for Form 1',
+    message:
+      'I would like to inquire about the admission process for Form 1 for the upcoming academic year. What documents are required and what are the deadlines?',
+    category: 'admission',
+    status: 'new',
+    priority: 'high',
+    submittedAt: '2024-01-15T10:30:00Z',
+    isRead: false,
+    isStarred: true,
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane.smith@example.com',
+    phone: '+237612345679',
+    subject: 'Academic Performance Concern',
+    message:
+      "I am concerned about my child's academic performance in Mathematics. Could you please provide information about available tutoring services?",
+    category: 'academic',
+    status: 'in_progress',
+    priority: 'medium',
+    submittedAt: '2024-01-10T14:20:00Z',
+    isRead: true,
+    isStarred: false,
+  },
+  {
+    id: 3,
+    name: 'Michael Johnson',
+    email: 'michael.johnson@example.com',
+    phone: '+237612345680',
+    subject: 'Technical Issue with Student Portal',
+    message:
+      'I am unable to access the student portal. The login page keeps showing an error message. Please help resolve this issue.',
+    category: 'technical',
+    status: 'responded',
+    priority: 'urgent',
+    submittedAt: '2024-01-05T11:45:00Z',
+    respondedAt: '2024-01-06T09:15:00Z',
+    response:
+      'Thank you for reporting this issue. Our technical team has been notified and is working on a fix. Please try clearing your browser cache and cookies.',
+    respondedBy: 1,
+    responderName: 'Admin User',
+    isRead: true,
+    isStarred: false,
+  },
+  {
+    id: 4,
+    name: 'Sarah Wilson',
+    email: 'sarah.wilson@example.com',
+    phone: '+237612345681',
+    subject: 'Suggestion for Library Hours',
+    message:
+      'I would like to suggest extending the library hours during exam periods to allow students more study time.',
+    category: 'suggestion',
+    status: 'resolved',
+    priority: 'low',
+    submittedAt: '2024-01-20T08:15:00Z',
+    respondedAt: '2024-01-22T13:45:00Z',
+    response:
+      'Thank you for your suggestion. We have implemented extended library hours during exam periods as requested.',
+    respondedBy: 1,
+    responderName: 'Admin User',
+    isRead: true,
+    isStarred: false,
+  },
+  {
+    id: 5,
+    name: 'David Brown',
+    email: 'david.brown@example.com',
+    phone: '+237612345682',
+    subject: 'General Information Request',
+    message:
+      "Could you please provide information about the school's extracurricular activities and sports programs?",
+    category: 'general',
+    status: 'new',
+    priority: 'medium',
+    submittedAt: '2024-01-25T15:30:00Z',
+    isRead: false,
+    isStarred: false,
+  },
+];
+
+const statusOptions = [
+  { value: 'new', label: 'New', color: 'bg-blue-100 text-blue-800' },
+  {
+    value: 'in_progress',
+    label: 'In Progress',
+    color: 'bg-yellow-100 text-yellow-800',
+  },
+  {
+    value: 'responded',
+    label: 'Responded',
+    color: 'bg-green-100 text-green-800',
+  },
+  {
+    value: 'resolved',
+    label: 'Resolved',
+    color: 'bg-purple-100 text-purple-800',
+  },
+  {
+    value: 'archived',
+    label: 'Archived',
+    color: 'bg-gray-100 text-gray-800',
+  },
+];
+
+const categoryOptions = [
+  { value: 'general', label: 'General' },
+  { value: 'admission', label: 'Admission' },
+  { value: 'academic', label: 'Academic' },
+  { value: 'technical', label: 'Technical' },
+  { value: 'complaint', label: 'Complaint' },
+  { value: 'suggestion', label: 'Suggestion' },
+];
+
+const priorityOptions = [
+  { value: 'low', label: 'Low', color: 'bg-gray-100 text-gray-800' },
+  { value: 'medium', label: 'Medium', color: 'bg-blue-100 text-blue-800' },
+  { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-800' },
+  { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-800' },
+];
 
 export default function ContactsManagement() {
   const { user } = useAuth();
@@ -154,135 +274,6 @@ export default function ContactsManagement() {
     response: '',
     status: 'responded',
   });
-
-  // Mock data - replace with API calls
-  const mockContacts: Contact[] = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '+237612345678',
-      subject: 'Admission Inquiry for Form 1',
-      message:
-        'I would like to inquire about the admission process for Form 1 for the upcoming academic year. What documents are required and what are the deadlines?',
-      category: 'admission',
-      status: 'new',
-      priority: 'high',
-      submittedAt: '2024-01-15T10:30:00Z',
-      isRead: false,
-      isStarred: true,
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      phone: '+237612345679',
-      subject: 'Academic Performance Concern',
-      message:
-        "I am concerned about my child's academic performance in Mathematics. Could you please provide information about available tutoring services?",
-      category: 'academic',
-      status: 'in_progress',
-      priority: 'medium',
-      submittedAt: '2024-01-10T14:20:00Z',
-      isRead: true,
-      isStarred: false,
-    },
-    {
-      id: 3,
-      name: 'Michael Johnson',
-      email: 'michael.johnson@example.com',
-      phone: '+237612345680',
-      subject: 'Technical Issue with Student Portal',
-      message:
-        'I am unable to access the student portal. The login page keeps showing an error message. Please help resolve this issue.',
-      category: 'technical',
-      status: 'responded',
-      priority: 'urgent',
-      submittedAt: '2024-01-05T11:45:00Z',
-      respondedAt: '2024-01-06T09:15:00Z',
-      response:
-        'Thank you for reporting this issue. Our technical team has been notified and is working on a fix. Please try clearing your browser cache and cookies.',
-      respondedBy: 1,
-      responderName: 'Admin User',
-      isRead: true,
-      isStarred: false,
-    },
-    {
-      id: 4,
-      name: 'Sarah Wilson',
-      email: 'sarah.wilson@example.com',
-      phone: '+237612345681',
-      subject: 'Suggestion for Library Hours',
-      message:
-        'I would like to suggest extending the library hours during exam periods to allow students more study time.',
-      category: 'suggestion',
-      status: 'resolved',
-      priority: 'low',
-      submittedAt: '2024-01-20T08:15:00Z',
-      respondedAt: '2024-01-22T13:45:00Z',
-      response:
-        'Thank you for your suggestion. We have implemented extended library hours during exam periods as requested.',
-      respondedBy: 1,
-      responderName: 'Admin User',
-      isRead: true,
-      isStarred: false,
-    },
-    {
-      id: 5,
-      name: 'David Brown',
-      email: 'david.brown@example.com',
-      phone: '+237612345682',
-      subject: 'General Information Request',
-      message:
-        "Could you please provide information about the school's extracurricular activities and sports programs?",
-      category: 'general',
-      status: 'new',
-      priority: 'medium',
-      submittedAt: '2024-01-25T15:30:00Z',
-      isRead: false,
-      isStarred: false,
-    },
-  ];
-
-  const categoryOptions = [
-    { value: 'general', label: 'General' },
-    { value: 'admission', label: 'Admission' },
-    { value: 'academic', label: 'Academic' },
-    { value: 'technical', label: 'Technical' },
-    { value: 'complaint', label: 'Complaint' },
-    { value: 'suggestion', label: 'Suggestion' },
-  ];
-
-  const statusOptions = [
-    { value: 'new', label: 'New', color: 'bg-blue-100 text-blue-800' },
-    {
-      value: 'in_progress',
-      label: 'In Progress',
-      color: 'bg-yellow-100 text-yellow-800',
-    },
-    {
-      value: 'responded',
-      label: 'Responded',
-      color: 'bg-green-100 text-green-800',
-    },
-    {
-      value: 'resolved',
-      label: 'Resolved',
-      color: 'bg-purple-100 text-purple-800',
-    },
-    {
-      value: 'archived',
-      label: 'Archived',
-      color: 'bg-gray-100 text-gray-800',
-    },
-  ];
-
-  const priorityOptions = [
-    { value: 'low', label: 'Low', color: 'bg-gray-100 text-gray-800' },
-    { value: 'medium', label: 'Medium', color: 'bg-blue-100 text-blue-800' },
-    { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-800' },
-    { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-800' },
-  ];
 
   useEffect(() => {
     // Simulate API call

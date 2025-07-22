@@ -135,14 +135,13 @@ const sampleNews = [
   },
   // Achievement-related news items
   {
-    title: 'GBHS Bafia Wins Regional Academic Excellence Award 2024',
-    titleFr:
-      "GBHS Bafia Remporte le Prix d'Excellence Académique Régionale 2024",
+    title: 'GBHS XYZ Wins Regional Academic Excellence Award 2024',
+    titleFr: "GBHS Remporte le Prix d'Excellence Académique Régionale 2024",
     content:
-      'We are proud to announce that GBHS Bafia has been awarded the Regional Academic Excellence Award for 2024. This recognition comes after our outstanding performance in regional and national examinations, with a 95% pass rate and numerous distinctions.',
+      'We are proud to announce that  "" has been awarded the Regional Academic Excellence Award for 2024. This recognition comes after our outstanding performance in regional and national examinations, with a 95% pass rate and numerous distinctions.',
     contentFr:
-      "Nous sommes fiers d'annoncer que GBHS Bafia a reçu le Prix d'Excellence Académique Régionale pour 2024. Cette reconnaissance vient après notre performance exceptionnelle aux examens régionaux et nationaux, avec un taux de réussite de 95% et de nombreuses distinctions.",
-    category: 'academic',
+      "Nous sommes fiers d'annoncer que  le lycee de XYZ a reçu le Prix d'Excellence Académique Régionale pour 2024. Cette reconnaissance vient après notre performance exceptionnelle aux examens régionaux et nationaux, avec un taux de réussite de 95% et de nombreuses distinctions.",
+    category: 'general',
     isPublished: true,
     publishedAt: new Date('2025-08-15'),
   },
@@ -508,9 +507,9 @@ const sampleGallery = [
     title: 'School Building Front View',
     titleFr: 'Vue de Face du Bâtiment Scolaire',
     description:
-      'The main entrance of GBHS Bafia showing the beautiful architecture and welcoming environment for students.',
+      'The main entrance of  GBHS XYZ showing the beautiful architecture and welcoming environment for students.',
     descriptionFr:
-      "L'entrée principale du GBHS Bafia montrant la belle architecture et l'environnement accueillant pour les étudiants.",
+      "L'entrée principale du GBHS XYZ montrant la belle architecture et l'environnement accueillant pour les étudiants.",
     imageUrl:
       'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop',
     category: 'infrastructure',

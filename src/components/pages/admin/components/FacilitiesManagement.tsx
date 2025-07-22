@@ -205,6 +205,7 @@ export default function FacilitiesManagement() {
             language === 'fr'
               ? 'Installation créée avec succès'
               : 'Facility created successfully',
+          variant: 'success',
         });
         setIsCreateModalOpen(false);
         resetForm();
@@ -250,6 +251,7 @@ export default function FacilitiesManagement() {
             language === 'fr'
               ? 'Installation mise à jour avec succès'
               : 'Facility updated successfully',
+          variant: 'success',
         });
         setIsEditModalOpen(false);
         setEditingFacility(null);
@@ -289,6 +291,7 @@ export default function FacilitiesManagement() {
             language === 'fr'
               ? 'Installation supprimée avec succès'
               : 'Facility deleted successfully',
+          variant: 'success',
         });
         fetchFacilities();
       } else {

@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { GradeReport, StudentGrade } from '../../api/constants';
-import type {
+import {
   calculateStatistics,
   calculateTermStatistics,
   parseStudentList,
   parseCSVContent,
+  fillTemplateWithGrades,
 } from '../../api/utils';
 import type ImportModal from '../../modals/ImportModal';
 import type PreviewModal from '../../modals/PreviewModal';
@@ -28,6 +28,7 @@ import {
   Trash2,
   MoreVertical,
   Share2,
+  Pencil,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -36,8 +37,22 @@ import {
   DropdownMenuItem,
 } from '../../../../ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
-import ShareModal from '@/components/pages/teacher/modals/ShareModal';
-import { useAuth } from '../../../../../hooks/use-auth';
+import ShareModal from '../../modals/ShareModal';
+import { User } from '../../../../../schema';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '../../../../ui/sheet';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../../ui/select';
 
 export interface ImportExportManagementProps {
   classList: string[];
@@ -55,6 +70,7 @@ export interface ImportExportManagementProps {
   t: (key: string) => string;
   language: string;
   section?: string;
+  user: User;
   // Sub-component dependencies to be injected as needed
 }
 
@@ -63,20 +79,20 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   classFolderMap,
   englishClasses,
   frenchClasses,
-  calculateStatistics,
-  calculateTermStatistics,
-  parseStudentList,
-  parseCSVContent,
-  ImportModal,
+  // calculateStatistics,
+  // calculateTermStatistics,
+  // parseStudentList,
+  // parseCSVContent,
+  // ImportModal,
   PreviewModal,
   ApprovalModal,
   t,
   language,
-  section,
+  // section,
+  user,
   // ...other injected dependencies
 }) => {
   const { toast } = useToast();
-  const { user } = useAuth();
   const router = useRouter();
   const [selectedClass, setSelectedClass] = useState('');
   const [templates, setTemplates] = useState<string[]>([]);
@@ -104,6 +120,11 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
   const [shareLoading, setShareLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<any>(null);
+  // Store the original template ArrayBuffer when loading the template
+  const [originalTemplateArrayBuffer, setOriginalTemplateArrayBuffer] =
+    useState<ArrayBuffer | null>(null);
+  const [teacherName, setTeacherName] = useState(user?.fullName || '');
+  const [editingTeacherName, setEditingTeacherName] = useState(false);
 
   useEffect(() => {
     if (!selectedClass) return;
@@ -151,6 +172,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       }
       const blob = await res.blob();
       const arrayBuffer = await blob.arrayBuffer();
+      setOriginalTemplateArrayBuffer(arrayBuffer);
 
       // Dynamic import of XLSX with proper error handling
       let XLSX;
@@ -288,30 +310,50 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
 
   // Handle finalize/upload
   const handleFinalizeUpload = async () => {
-    // Convert editorData back to Excel file
-    let XLSX;
-    try {
-      const xlsxModule = await import('xlsx');
-      XLSX = xlsxModule.default || xlsxModule;
-    } catch (importError) {
-      console.error('Failed to import XLSX library:', importError);
+    if (!originalTemplateArrayBuffer) {
       toast({
-        title:
-          t('errorLoadingLibrary') ||
-          (language === 'fr'
-            ? 'Erreur lors du chargement de la bibliothèque'
-            : 'Error loading library'),
-        description: 'Failed to load Excel processing library',
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description:
+          language === 'fr'
+            ? "Modèle original introuvable pour l'export."
+            : 'Original template not found for export.',
         variant: 'destructive',
       });
       return;
     }
 
-    const ws = XLSX.utils.aoa_to_sheet(editorData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    const outFile = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
-
+    if (!user?.id) {
+      toast({
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description:
+          language === 'fr'
+            ? "Impossible d'uploader sans identifiant utilisateur."
+            : 'Cannot upload without a user ID.',
+        variant: 'destructive',
+      });
+      setUploading(false);
+      return console.error('User ID is required to upload grades');
+    }
+    // Use the modular utility to fill the template with grades
+    let filledBlob;
+    try {
+      filledBlob = await fillTemplateWithGrades(
+        originalTemplateArrayBuffer,
+        editorData,
+        allRows,
+        user?.fullName || user?.username || ''
+      );
+    } catch (err) {
+      toast({
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description:
+          language === 'fr'
+            ? 'Échec du remplissage du modèle.'
+            : 'Failed to fill template.',
+        variant: 'destructive',
+      });
+      return;
+    }
     // Create filename with subject, term, and NOTE columns
     const subject = editorFileName.replace('.xlsx', '');
     const noteColumns =
@@ -320,7 +362,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
         .filter(col => col && col.toString().includes('NOTE'))
         .join('|') || 'NOTE_1|NOTE_2';
     const originalName = `${subject}-${term || 'T1'}-${noteColumns}.xlsx`;
-    const file = new File([outFile], originalName, {
+    const file = new File([filledBlob], originalName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
 
@@ -329,7 +371,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
     formData.append('file', file);
     formData.append('relatedType', 'grading');
     formData.append('relatedId', `teacher-grades-${Date.now()}`);
-    formData.append('uploadedBy', 'teacher-user'); // Provide a valid user ID
+    formData.append('uploadedBy', user?.id); // Provide a valid user ID
 
     setUploading(true);
     try {
@@ -781,17 +823,42 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
     }
   };
 
+  console.log('\n\n teacherName: ', teacherName);
+
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">
-        {language === 'fr' ? 'Import/Export des Notes' : 'Import/Export Grades'}
+        <span className="text-base sm:text-xl font-bold">
+          {language === 'fr' ? 'Choisir la classe' : 'Select a class'}
+        </span>
       </h2>
-      <div className="flex gap-8 mb-6">
+      <div className="flex gap-8 mb-6 flex-col sm:flex-row">
         <div className="flex-1">
           <h4 className="font-semibold mb-2 text-blue-700">
             {language === 'fr' ? 'Système Anglophone' : 'English Sub-system'}
           </h4>
-          <div className="flex flex-wrap gap-2">
+          {/* Mobile: dropdown, Desktop: button grid */}
+          <div className="sm:hidden">
+            <Select value={selectedClass} onValueChange={setSelectedClass}>
+              <SelectTrigger className="w-full">
+                <SelectValue
+                  placeholder={
+                    language === 'fr'
+                      ? 'Sélectionner une classe'
+                      : 'Select a class'
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {englishClasses.map(cls => (
+                  <SelectItem key={cls} value={cls}>
+                    {cls}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="hidden sm:flex flex-wrap gap-2">
             {englishClasses.map(cls => (
               <button
                 key={cls}
@@ -807,7 +874,28 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
           <h4 className="font-semibold mb-2 text-green-700">
             {language === 'fr' ? 'Système Francophone' : 'French Sub-system'}
           </h4>
-          <div className="flex flex-wrap gap-2">
+          {/* Mobile: dropdown, Desktop: button grid */}
+          <div className="sm:hidden">
+            <Select value={selectedClass} onValueChange={setSelectedClass}>
+              <SelectTrigger className="w-full">
+                <SelectValue
+                  placeholder={
+                    language === 'fr'
+                      ? 'Sélectionner une classe'
+                      : 'Select a class'
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {frenchClasses.map((cls: string) => (
+                  <SelectItem key={cls} value={cls}>
+                    {cls}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="hidden sm:flex flex-wrap gap-2">
             {frenchClasses.map(cls => (
               <button
                 key={cls}
@@ -963,20 +1051,24 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       )}
 
       {/* File Upload */}
-      <div className="my-6 border-t border-gray-400 dark:border-gray-600" />
-      <div className="rounded-xl shadow-sm dark:shadow-sm dark:shadow-gray-400 border p-6 mb-6 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
+      {/* <div className="my-6 border-t border-gray-400 dark:border-gray-600" /> */}
+      <div className="rounded-xl shadow-sm dark:shadow-sm dark:shadow-gray-400 border p-4 sm:p-6 mb-6 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 w-full min-w-0 overflow-x-hidden">
         <h3 className="font-semibold mb-2">
-          {language === 'fr'
-            ? 'Télécharger le Fichier de Notes Rempli'
-            : 'Upload Filled Grading File'}
+          <span className="text-base sm:text-lg">
+            {language === 'fr'
+              ? 'Télécharger le Fichier de Notes Rempli'
+              : 'Upload Filled Grading File'}
+          </span>
         </h3>
-        <input
-          type="file"
-          accept=".xlsx"
-          onChange={handleFileChange}
-          disabled={uploading || showUploadPreview}
-          className="mb-2"
-        />
+        <div className="w-full min-w-0 overflow-x-hidden">
+          <input
+            type="file"
+            accept=".xlsx"
+            onChange={handleFileChange}
+            disabled={uploading || showUploadPreview}
+            className="mb-2 w-full min-w-0"
+          />
+        </div>
         {uploadPreviewFile && (
           <div className="flex items-center gap-2 mt-2">
             <span className="text-gray-700 text-sm">
@@ -1064,9 +1156,11 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
       <div className="rounded-xl shadow-sm dark:shadow-sm dark:shadow-gray-400 border p-6 mb-6 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold">
-            {language === 'fr'
-              ? 'Vos Fichiers Téléchargés'
-              : 'Your Uploaded Files'}
+            <span className="text-base sm:text-lg">
+              {language === 'fr'
+                ? 'Vos Fichiers Téléchargés'
+                : 'Your Uploaded Files'}
+            </span>
           </h3>
           <Button
             size="sm"
@@ -1230,181 +1324,744 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
 
       {/* Comprehensive Grading Table Modal */}
       <Dialog open={showEditor} onOpenChange={setShowEditor}>
-        <DialogContent className="max-w-7xl w-full h-[95vh] flex flex-col overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">
-          <DialogHeader className="bg-white rounded-t-lg shadow-sm border-b border-gray-200 p-6">
-            <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-              <FileText className="w-6 h-6 text-blue-600" />
-              Fill Grades: {editorFileName} ({editorClass})
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="flex-1 overflow-y-auto p-6">
-            {/* Header Section */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <div className="text-center font-bold text-xl text-gray-800 mb-4">
-                LYCEE BILINGUE DE BAFIA. RELEVE DE NOTES
+        <DialogContent className="max-w-7xl w-full h-[95vh] flex flex-col overflow-y-auto bg-gradient-to-br from-blue-50 to-indigo-50 p-2 sm:p-auto">
+          {/* Desktop layout */}
+          <div className="hidden lg:block max-w-3/4 mx-auto">
+            <DialogHeader className="bg-white rounded-t-lg shadow-sm border-b border-gray-200 p-6">
+              <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <FileText className="w-6 h-6 text-blue-600" />
+                Fill Grades: {editorFileName} ({editorClass})
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 overflow-y-auto p-6">
+              {/* Header Section */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <div className="text-center font-bold text-xl text-gray-800 mb-4">
+                  <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                    <FileText className="w-6 h-6 text-blue-600" />
+                    {language === 'fr'
+                      ? 'LYCEE BILINGUE DE BAFIA. RELEVE DE NOTES'
+                      : ' "" GRADE REPORT'}
+                  </DialogTitle>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'CLASSE' : 'CLASS'}:
+                    </span>
+                    <span className="text-blue-600 font-medium">
+                      {editorClass}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'MATIERE' : 'SUBJECT'}:
+                    </span>
+                    <span className="text-blue-600 font-medium">
+                      {editorFileName.replace('.xlsx', '')}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'TRIMESTRE' : 'TERM'}:
+                    </span>
+                    <Input
+                      value={term}
+                      onChange={e => setTerm(e.target.value)}
+                      className="w-24 h-8 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 placeholder:text-gray-500"
+                      placeholder="1/2/3"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'ENSEIGNANT' : 'TEACHER'}:
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {editingTeacherName ? (
+                        <Input
+                          value={teacherName}
+                          onChange={e => setTeacherName(e.target.value)}
+                          onBlur={() => setEditingTeacherName(false)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') setEditingTeacherName(false);
+                          }}
+                          className="w-40 h-8 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          autoFocus
+                        />
+                      ) : (
+                        <span className="text-blue-600 font-medium flex items-center gap-1">
+                          {teacherName}
+                          <button
+                            type="button"
+                            className="ml-1 p-1 rounded hover:bg-blue-100"
+                            onClick={() => setEditingTeacherName(true)}
+                            aria-label={language === 'fr' ? 'Modifier' : 'Edit'}
+                          >
+                            <Pencil className="w-4 h-4 text-blue-400" />
+                          </button>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-gray-700">
-                    {language === 'fr' ? 'CLASSE' : 'CLASS'}:
-                  </span>
-                  <span className="text-blue-600 font-medium">
-                    {editorClass}
-                  </span>
+              {/* Main Content */}
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* Main Grade Table */}
+                <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Users className="w-5 h-5" />
+                      Student Grades
+                    </h3>
+                  </div>
+                  <div className="p-4 overflow-x-auto">
+                    {editorData && editorData.length > 1 ? (
+                      <table className="w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
+                        <thead>
+                          <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
+                            {editorData[0].map((cell, colIdx) => (
+                              <th
+                                key={colIdx}
+                                className={`px-4 py-3 text-left font-semibold text-gray-700 border-b border-gray-200 ${
+                                  colIdx === 0
+                                    ? 'w-16'
+                                    : colIdx === 1
+                                      ? 'min-w-[200px]'
+                                      : 'w-24 text-center'
+                                }`}
+                              >
+                                {cell}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {editorData.slice(1).map((row, rowIdx) => {
+                            // Determine if this is francophone or english system based on class
+                            const isFrancophone =
+                              editorClass &&
+                              [
+                                '6eme',
+                                '5eme',
+                                '4eme',
+                                '3eme',
+                                '2nd C',
+                                '2nd A',
+                                'Pre A',
+                                'Pre C',
+                                'Pre D',
+                                'Tle A',
+                                'Tle C',
+                                'Tle D',
+                              ].includes(editorClass);
+                            return (
+                              <tr
+                                key={rowIdx}
+                                className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${
+                                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                                }`}
+                              >
+                                {row.map((cell, colIdx) => (
+                                  <td
+                                    key={colIdx}
+                                    className={`px-4 py-3 border-r border-gray-100 last:border-r-0 ${
+                                      colIdx === 0
+                                        ? 'text-center font-medium text-gray-600 bg-gray-50'
+                                        : colIdx === 1
+                                          ? 'font-medium text-gray-800'
+                                          : 'text-center'
+                                    }`}
+                                  >
+                                    {colIdx === 2 || colIdx === 3 ? (
+                                      <Input
+                                        value={cell || ''}
+                                        onChange={e =>
+                                          handleCellChange(
+                                            rowIdx + 1,
+                                            colIdx,
+                                            e.target.value
+                                          )
+                                        }
+                                        className="w-full h-8 text-center border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm"
+                                        placeholder={
+                                          isFrancophone ? '0-20' : '0-100'
+                                        }
+                                      />
+                                    ) : (
+                                      <span
+                                        className={
+                                          colIdx === 0
+                                            ? 'font-semibold text-gray-700'
+                                            : ''
+                                        }
+                                      >
+                                        {cell}
+                                      </span>
+                                    )}
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="text-center text-gray-500 py-12">
+                        <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                        <p>No student data found in this template.</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-gray-700">
-                    {language === 'fr' ? 'MATIERE' : 'SUBJECT'}:
-                  </span>
-                  <span className="text-blue-600 font-medium">
-                    {editorFileName.replace('.xlsx', '')}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-gray-700">
-                    {language === 'fr' ? 'TRIMESTRE' : 'TERM'}:
-                  </span>
-                  <Input
-                    value={term}
-                    onChange={e => setTerm(e.target.value)}
-                    className="w-24 h-8 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 placeholder:text-gray-500"
-                    placeholder="1/2/3"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-gray-700">
-                    {language === 'fr' ? 'ENSEIGNANT' : 'TEACHER'}:
-                  </span>
-                  <span className="text-blue-600 font-medium">Teacher</span>
+
+                {/* Right Side Tables */}
+                <div className="lg:w-80 space-y-4">
+                  {/* Statistics Table */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-white">
+                        {language === 'fr'
+                          ? 'Statistiques Trimestrielles du Conseil'
+                          : 'Quarterly Council Statistics'}
+                      </h4>
+                    </div>
+                    <div className="p-4">
+                      <table
+                        id="quarterly-statistics-table"
+                        className="w-full text-xs border border-gray-200 rounded"
+                      >
+                        <thead>
+                          {/* <tr className="bg-gray-50">
+                            <th
+                              className="border px-2 py-1 text-left font-medium"
+                              colSpan={2}
+                            >
+                              {allRows[7]?.[0] || language === 'fr'
+                                ? 'Statistiques'
+                                : 'Statistics'}
+                            </th>
+                          </tr> */}
+                        </thead>
+                        <tbody>
+                          {allRows &&
+                            allRows.slice(8, 14).map((row, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="border px-2 py-1 text-left text-sm">
+                                  {row[0]}
+                                </td>
+                                <td className="border px-2 py-1 text-left">
+                                  <Input
+                                    value={String(row[1] || '')}
+                                    onChange={e => {
+                                      const validatedValue =
+                                        validateNumericInput(e.target.value);
+                                      const newRows = [...allRows];
+                                      newRows[idx + 8][1] = validatedValue;
+                                      setAllRows(newRows);
+                                    }}
+                                    className="w-full h-6 text-xs border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                    placeholder="0"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Competencies Table */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gradient-to-r from-purple-600 to-violet-600 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-white">
+                        {language === 'fr'
+                          ? 'Competences Trimestrielles visees'
+                          : 'Quarterly Learning Objectives'}
+                      </h4>
+                    </div>
+                    <div className="p-4">
+                      <table
+                        id="quarterly-competencies-table"
+                        className="w-full text-xs border border-gray-200 rounded"
+                      >
+                        <thead>
+                          {/* <tr className="bg-gray-50">
+                            <th
+                              className="border px-2 py-1 text-left font-medium"
+                              colSpan={3}
+                            >
+                              {language === 'fr' ? 'Competences' : 'Competencies'}
+                            </th>
+                          </tr> */}
+                        </thead>
+                        <tbody>
+                          {allRows &&
+                            allRows.slice(4, 5).map((row, idx) => (
+                              <tr key={idx}>
+                                <td
+                                  className="border px-2 py-1 text-left"
+                                  colSpan={3}
+                                >
+                                  <Textarea
+                                    value={String(row[8] || '')}
+                                    onChange={e => {
+                                      const sanitizedValue = sanitizeTextInput(
+                                        e.target.value
+                                      );
+                                      const newRows = [...allRows];
+                                      newRows[idx + 4][8] = sanitizedValue;
+                                      setAllRows(newRows);
+                                    }}
+                                    className="w-full text-xs border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                                    rows={4}
+                                    placeholder={
+                                      language === 'fr'
+                                        ? 'Entrez les compétences...'
+                                        : 'Enter competencies...'
+                                    }
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Annual Statistics Table */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gradient-to-r from-orange-600 to-red-600 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-white">
+                        {language === 'fr'
+                          ? 'Statistiques annuelles du conseil'
+                          : 'Annual Council Statistics'}
+                      </h4>
+                    </div>
+                    <div className="p-4">
+                      <table
+                        id="annual-statistics-table"
+                        className="w-full text-xs border border-gray-200 rounded"
+                      >
+                        <thead>
+                          {/* <tr className="bg-gray-50">
+                            <th
+                              className="border px-2 py-1 text-left font-medium"
+                              colSpan={3}
+                            >
+                              {language === 'fr'
+                                ? 'Statistiques annuelles'
+                                : 'Annual Statistics'}
+                            </th>
+                          </tr> */}
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="border px-2 py-1 text-left text-sm">
+                              {language === 'fr'
+                                ? 'Leçons Prévues'
+                                : 'Lessons Planned'}
+                            </td>
+                            <td className="border px-2 py-1 text-left">
+                              <Input
+                                value={String(allRows[8]?.[9] || '')}
+                                onChange={e => {
+                                  const validatedValue = validateNumericInput(
+                                    e.target.value
+                                  );
+                                  const newRows = [...allRows];
+                                  newRows[8][9] = validatedValue;
+                                  setAllRows(newRows);
+                                }}
+                                className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                placeholder="0"
+                              />
+                            </td>
+                            <td
+                              className="border px-2 py-1 text-left text-sm"
+                              rowSpan={3}
+                            >
+                              {allRows[8]?.[10] || ''}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border px-2 py-1 text-left text-sm">
+                              {language === 'fr'
+                                ? 'Heures Prévues'
+                                : 'Hours Planned'}
+                            </td>
+                            <td className="border px-2 py-1 text-left">
+                              <Input
+                                value={String(allRows[9]?.[9] || '')}
+                                onChange={e => {
+                                  const validatedValue = validateNumericInput(
+                                    e.target.value
+                                  );
+                                  const newRows = [...allRows];
+                                  newRows[9][9] = validatedValue;
+                                  setAllRows(newRows);
+                                }}
+                                className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                placeholder="0"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border px-2 py-1 text-left text-sm">
+                              {language === 'fr'
+                                ? 'TP/TD Prévus'
+                                : 'TP/TD Planned'}
+                            </td>
+                            <td className="border px-2 py-1 text-left">
+                              <Input
+                                value={String(allRows[10]?.[9] || '')}
+                                onChange={e => {
+                                  const validatedValue = validateNumericInput(
+                                    e.target.value
+                                  );
+                                  const newRows = [...allRows];
+                                  newRows[10][9] = validatedValue;
+                                  setAllRows(newRows);
+                                }}
+                                className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                placeholder="0"
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Main Content */}
-            <div className="flex flex-col lg:flex-row gap-6">
-              {/* Main Grade Table */}
-              <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    Student Grades
-                  </h3>
+            {/* Footer Actions */}
+            <div className="bg-white border-t border-gray-200 p-6 rounded-b-lg">
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-gray-600">
+                  {editorData && editorData.length > 1
+                    ? `${editorData.length - 1} students loaded`
+                    : 'No students found'}
                 </div>
-                <div className="p-4 overflow-x-auto">
-                  {editorData && editorData.length > 1 ? (
-                    <table className="w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
-                      <thead>
-                        <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
-                          {editorData[0].map((cell, colIdx) => (
-                            <th
-                              key={colIdx}
-                              className={`px-4 py-3 text-left font-semibold text-gray-700 border-b border-gray-200 ${
-                                colIdx === 0
-                                  ? 'w-16'
-                                  : colIdx === 1
-                                    ? 'min-w-[200px]'
-                                    : 'w-24 text-center'
-                              }`}
-                            >
-                              {cell}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {editorData.slice(1).map((row, rowIdx) => {
-                          // Determine if this is francophone or english system based on class
-                          const isFrancophone =
-                            editorClass &&
-                            [
-                              '6eme',
-                              '5eme',
-                              '4eme',
-                              '3eme',
-                              '2nd C',
-                              '2nd A',
-                              'Pre A',
-                              'Pre C',
-                              'Pre D',
-                              'Tle A',
-                              'Tle C',
-                              'Tle D',
-                            ].includes(editorClass);
+                {/* Desktop: show row of action buttons */}
+                <div className="hidden sm:flex flex-row gap-3 w-auto">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowEditor(false);
+                      setEditorOpen(false);
+                    }}
+                    disabled={uploading}
+                    className="border-gray-300 hover:bg-gray-50 w-full sm:w-auto"
+                  >
+                    {language === 'fr' ? 'Annuler' : 'Cancel'}
+                  </Button>
 
-                          return (
-                            <tr
-                              key={rowIdx}
-                              className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${
-                                rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                              }`}
-                            >
-                              {row.map((cell, colIdx) => (
-                                <td
-                                  key={colIdx}
-                                  className={`px-4 py-3 border-r border-gray-100 last:border-r-0 ${
-                                    colIdx === 0
-                                      ? 'text-center font-medium text-gray-600 bg-gray-50'
-                                      : colIdx === 1
-                                        ? 'font-medium text-gray-800'
-                                        : 'text-center'
-                                  }`}
-                                >
-                                  {colIdx === 2 || colIdx === 3 ? (
-                                    <Input
-                                      value={cell || ''}
-                                      onChange={e =>
-                                        handleCellChange(
-                                          rowIdx + 1,
-                                          colIdx,
-                                          e.target.value
-                                        )
-                                      }
-                                      className="w-full h-8 text-center border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm"
-                                      placeholder={
-                                        isFrancophone ? '0-20' : '0-100'
-                                      }
-                                    />
-                                  ) : (
-                                    <span
-                                      className={
-                                        colIdx === 0
-                                          ? 'font-semibold text-gray-700'
-                                          : ''
-                                      }
-                                    >
-                                      {cell}
-                                    </span>
-                                  )}
-                                </td>
-                              ))}
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="text-center text-gray-500 py-12">
-                      <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p>No student data found in this template.</p>
-                    </div>
+                  {/* Preview Button */}
+                  <Button
+                    onClick={handlePreview}
+                    disabled={
+                      uploading || !editorData || editorData.length === 0
+                    }
+                    className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm w-full sm:w-auto"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                    {language === 'fr' ? 'Prévisualiser' : 'Preview'}
+                  </Button>
+
+                  {/* Download Preview Button */}
+                  <Button
+                    onClick={handleDownloadPreview}
+                    disabled={
+                      uploading || !editorData || editorData.length === 0
+                    }
+                    variant="outline"
+                    className="border-purple-300 text-purple-600 hover:bg-purple-50 w-full sm:w-auto"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    {language === 'fr' ? 'Télécharger' : 'Download'}
+                  </Button>
+
+                  {/* Show "Open in Full Page" button when in modal */}
+                  {editorOpen && (
+                    <Button
+                      onClick={() => {
+                        sessionStorage.setItem('openFullPage', '1');
+                        router.push('/teacher/import-export');
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
+                    >
+                      {language === 'fr'
+                        ? 'Ouvrir dans la page complète'
+                        : 'Open in Full Page'}
+                    </Button>
                   )}
+                  <Button
+                    onClick={handleFinalizeUpload}
+                    disabled={uploading}
+                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm w-full sm:w-auto"
+                  >
+                    {uploading ? (
+                      <>
+                        <span className="animate-spin mr-2">⏳</span>
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4 mr-2" />
+                        {language === 'fr'
+                          ? 'Finaliser et Télécharger'
+                          : 'Finalize & Upload'}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Mobile layout */}
+          <div className="block lg:hidden relative">
+            <DialogHeader className="bg-white rounded-t-lg shadow-sm border-b border-gray-200 p-4 sm:p-6">
+              <DialogTitle className="text-xl font-bold text-gray-800 flex items-center gap-3 justify-center">
+                <FileText className="w-8 h-8 text-blue-600 text-center text-[1.5rem]" />
+                <span className="text-[1.4rem]">
+                  {language === 'fr' ? 'Remplir les notes' : 'Fill Grades'}:{' '}
+                  {editorFileName.replace('.xlsx', '')} ({editorClass})
+                </span>
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="flex-1 overflow-y-auto p-2 sm:p-6 flex flex-col lg:flex-row gap-4 sm:gap-6">
+              {/* Header Section */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 sm:p-6 mb-4 sm:mb-6 w-full">
+                <div className="text-center font-bold text-xl text-gray-800 mb-4">
+                  <span className="text-base sm:text-xl font-bold">
+                    {language === 'fr'
+                      ? 'LYCEE BILINGUE DE BAFIA. RELEVE DE NOTES'
+                      : ' "" GRADES REPORT'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'CLASSE' : 'CLASS'}:
+                    </span>
+                    <span className="text-blue-600 font-medium">
+                      {editorClass}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'MATIERE' : 'SUBJECT'}:
+                    </span>
+                    <span className="text-blue-600 font-medium">
+                      {editorFileName.replace('.xlsx', '')}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'TRIMESTRE' : 'TERM'}:
+                    </span>
+                    <Input
+                      value={term}
+                      onChange={e => setTerm(e.target.value)}
+                      className="w-24 h-8 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500 placeholder:text-gray-500"
+                      placeholder="1/2/3"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-700">
+                      {language === 'fr' ? 'ENSEIGNANT' : 'TEACHER'}:
+                    </span>
+                    {editingTeacherName ? (
+                      <Input
+                        value={teacherName}
+                        onChange={e => setTeacherName(e.target.value)}
+                        onBlur={() => setEditingTeacherName(false)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') setEditingTeacherName(false);
+                        }}
+                        className="w-40 h-8 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        autoFocus
+                      />
+                    ) : (
+                      <span className="text-blue-600 font-medium flex items-center gap-1">
+                        {teacherName}
+                        <button
+                          type="button"
+                          className="ml-1 p-1 rounded hover:bg-blue-100"
+                          onClick={() => setEditingTeacherName(true)}
+                          aria-label={language === 'fr' ? 'Modifier' : 'Edit'}
+                        >
+                          <Pencil className="w-4 h-4 text-blue-400" />
+                        </button>
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* Right Side Tables */}
-              <div className="lg:w-80 space-y-4">
-                {/* Statistics Table */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3">
-                    <h4 className="text-sm font-semibold text-white">
-                      {language === 'fr' ? 'Statistiques' : 'Statistics'}
-                    </h4>
+              {/* Main Content */}
+              <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
+                {/* Main Grade Table */}
+                <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden min-w-0">
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-2 sm:px-6 py-2 sm:py-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Users className="w-5 h-5" />
+                      {language === 'fr'
+                        ? 'Notes des élèves'
+                        : 'Student Grades'}
+                    </h3>
                   </div>
-                  <div className="p-4">
-                    <table className="w-full text-xs border border-gray-200 rounded">
-                      <thead>
-                        <tr className="bg-gray-50">
+                  <div className="p-2 sm:p-4 overflow-x-auto">
+                    {editorData && editorData.length > 1 ? (
+                      <table className="w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm text-xs sm:text-sm">
+                        <thead>
+                          <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
+                            {editorData[0].map((cell, colIdx) => (
+                              <th
+                                key={colIdx}
+                                className={`px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-gray-700 border-b border-gray-200 ${
+                                  colIdx === 0
+                                    ? 'w-12 sm:w-16'
+                                    : colIdx === 1
+                                      ? 'min-w-[120px] sm:min-w-[200px]'
+                                      : 'w-16 sm:w-24 text-center'
+                                }`}
+                              >
+                                {cell}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {editorData.slice(1).map((row, rowIdx) => {
+                            // Determine if this is francophone or english system based on class
+                            const isFrancophone =
+                              editorClass &&
+                              [
+                                '6eme',
+                                '5eme',
+                                '4eme',
+                                '3eme',
+                                '2nd C',
+                                '2nd A',
+                                'Pre A',
+                                'Pre C',
+                                'Pre D',
+                                'Tle A',
+                                'Tle C',
+                                'Tle D',
+                              ].includes(editorClass);
+
+                            return (
+                              <tr
+                                key={rowIdx}
+                                className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${
+                                  rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                                }`}
+                              >
+                                {row.map((cell, colIdx) => (
+                                  <td
+                                    key={colIdx}
+                                    className={`px-4 py-3 border-r border-gray-100 last:border-r-0 ${
+                                      colIdx === 0
+                                        ? 'text-center font-medium text-gray-600 bg-gray-50'
+                                        : colIdx === 1
+                                          ? 'font-medium text-gray-800'
+                                          : 'text-center'
+                                    }`}
+                                  >
+                                    {colIdx === 2 || colIdx === 3 ? (
+                                      <Input
+                                        value={cell || ''}
+                                        onChange={e =>
+                                          handleCellChange(
+                                            rowIdx + 1,
+                                            colIdx,
+                                            e.target.value
+                                          )
+                                        }
+                                        className="min-w-[60px] w-full h-10 text-center border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-base"
+                                        placeholder={
+                                          isFrancophone ? '0-20' : '0-100'
+                                        }
+                                      />
+                                    ) : (
+                                      <span
+                                        className={
+                                          colIdx === 0
+                                            ? 'font-semibold text-gray-700'
+                                            : ''
+                                        }
+                                      >
+                                        {cell}
+                                      </span>
+                                    )}
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="text-center text-gray-500 py-12">
+                        <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                        <p>No student data found in this template.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right Side Tables */}
+                <div className="w-full lg:w-80 space-y-2 sm:space-y-4 mt-4 lg:mt-0">
+                  {/* Statistics Table */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-white">
+                        {language === 'fr'
+                          ? 'Statistiques Trimestrielles du Conseil'
+                          : 'Quarterly Council Statistics'}
+                      </h4>
+                    </div>
+                    <div className="p-4">
+                      <table
+                        id="quarterly-statistics-table"
+                        className="w-full text-xs border border-gray-200 rounded"
+                      >
+                        <thead>
+                          {/* <tr className="bg-gray-50">
                           <th
                             className="border px-2 py-1 text-left font-medium"
                             colSpan={2}
@@ -1413,103 +2070,110 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                               ? 'Statistiques'
                               : 'Statistics'}
                           </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {allRows &&
-                          allRows.slice(8, 14).map((row, idx) => (
-                            <tr key={idx} className="hover:bg-gray-50">
-                              <td className="border px-2 py-1 text-left text-sm">
-                                {row[0]}
-                              </td>
-                              <td className="border px-2 py-1 text-left">
-                                <Input
-                                  value={String(row[1] || '')}
-                                  onChange={e => {
-                                    const validatedValue = validateNumericInput(
-                                      e.target.value
-                                    );
-                                    const newRows = [...allRows];
-                                    newRows[idx + 8][1] = validatedValue;
-                                    setAllRows(newRows);
-                                  }}
-                                  className="w-full h-6 text-xs border-gray-300 focus:border-green-500 focus:ring-green-500"
-                                  placeholder="0"
-                                />
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
+                        </tr> */}
+                        </thead>
+                        <tbody>
+                          {allRows &&
+                            allRows.slice(8, 14).map((row, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50">
+                                <td className="border px-2 py-1 text-left text-sm">
+                                  {row[0]}
+                                </td>
+                                <td className="border px-2 py-1 text-left">
+                                  <Input
+                                    value={String(row[1] || '')}
+                                    onChange={e => {
+                                      const validatedValue =
+                                        validateNumericInput(e.target.value);
+                                      const newRows = [...allRows];
+                                      newRows[idx + 8][1] = validatedValue;
+                                      setAllRows(newRows);
+                                    }}
+                                    className="w-full h-6 text-xs border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                    placeholder="0"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
 
-                {/* Competencies Table */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-600 to-violet-600 px-4 py-3">
-                    <h4 className="text-sm font-semibold text-white">
-                      {language === 'fr' ? 'Competences' : 'Competencies'}
-                    </h4>
-                  </div>
-                  <div className="p-4">
-                    <table className="w-full text-xs border border-gray-200 rounded">
-                      <thead>
-                        <tr className="bg-gray-50">
+                  {/* Competencies Table */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gradient-to-r from-purple-600 to-violet-600 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-white">
+                        {language === 'fr'
+                          ? 'Competences Trimestrielles visees'
+                          : 'Quarterly Learning Objectives'}
+                      </h4>
+                    </div>
+                    <div className="p-4">
+                      <table
+                        id="quarterly-competencies-table"
+                        className="w-full text-xs border border-gray-200 rounded"
+                      >
+                        <thead>
+                          {/* <tr className="bg-gray-50">
                           <th
                             className="border px-2 py-1 text-left font-medium"
                             colSpan={3}
                           >
                             {language === 'fr' ? 'Competences' : 'Competencies'}
                           </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {allRows &&
-                          allRows.slice(4, 5).map((row, idx) => (
-                            <tr key={idx}>
-                              <td
-                                className="border px-2 py-1 text-left"
-                                colSpan={3}
-                              >
-                                <Textarea
-                                  value={String(row[8] || '')}
-                                  onChange={e => {
-                                    const sanitizedValue = sanitizeTextInput(
-                                      e.target.value
-                                    );
-                                    const newRows = [...allRows];
-                                    newRows[idx + 4][8] = sanitizedValue;
-                                    setAllRows(newRows);
-                                  }}
-                                  className="w-full text-xs border-gray-300 focus:border-purple-500 focus:ring-purple-500"
-                                  rows={4}
-                                  placeholder={
-                                    language === 'fr'
-                                      ? 'Entrez les compétences...'
-                                      : 'Enter competencies...'
-                                  }
-                                />
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
+                        </tr> */}
+                        </thead>
+                        <tbody>
+                          {allRows &&
+                            allRows.slice(4, 5).map((row, idx) => (
+                              <tr key={idx}>
+                                <td
+                                  className="border px-2 py-1 text-left"
+                                  colSpan={3}
+                                >
+                                  <Textarea
+                                    value={String(row[8] || '')}
+                                    onChange={e => {
+                                      const sanitizedValue = sanitizeTextInput(
+                                        e.target.value
+                                      );
+                                      const newRows = [...allRows];
+                                      newRows[idx + 4][8] = sanitizedValue;
+                                      setAllRows(newRows);
+                                    }}
+                                    className="w-full text-xs border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                                    rows={4}
+                                    placeholder={
+                                      language === 'fr'
+                                        ? 'Entrez les compétences...'
+                                        : 'Enter competencies...'
+                                    }
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
 
-                {/* Annual Statistics Table */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="bg-gradient-to-r from-orange-600 to-red-600 px-4 py-3">
-                    <h4 className="text-sm font-semibold text-white">
-                      {language === 'fr'
-                        ? 'Statistiques annuelles'
-                        : 'Annual Statistics'}
-                    </h4>
-                  </div>
-                  <div className="p-4">
-                    <table className="w-full text-xs border border-gray-200 rounded">
-                      <thead>
-                        <tr className="bg-gray-50">
+                  {/* Annual Statistics Table */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gradient-to-r from-orange-600 to-red-600 px-4 py-3">
+                      <h4 className="text-sm font-semibold text-white">
+                        {language === 'fr'
+                          ? 'Statistiques annuelles du conseil'
+                          : 'Annual Council Statistics'}
+                      </h4>
+                    </div>
+                    <div className="p-4">
+                      <table
+                        id="annual-statistics-table"
+                        className="w-full text-xs border border-gray-200 rounded"
+                      >
+                        <thead>
+                          {/* <tr className="bg-gray-50">
                           <th
                             className="border px-2 py-1 text-left font-medium"
                             colSpan={3}
@@ -1518,199 +2182,453 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                               ? 'Statistiques annuelles'
                               : 'Annual Statistics'}
                           </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td className="border px-2 py-1 text-left text-sm">
-                            {language === 'fr'
-                              ? 'Leçons Prévues'
-                              : 'Lessons Planned'}
-                          </td>
-                          <td className="border px-2 py-1 text-left">
-                            <Input
-                              value={String(allRows[8]?.[9] || '')}
-                              onChange={e => {
-                                const validatedValue = validateNumericInput(
-                                  e.target.value
-                                );
-                                const newRows = [...allRows];
-                                newRows[8][9] = validatedValue;
-                                setAllRows(newRows);
-                              }}
-                              className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                              placeholder="0"
-                            />
-                          </td>
-                          <td
-                            className="border px-2 py-1 text-left text-sm"
-                            rowSpan={3}
-                          >
-                            {allRows[8]?.[10] || ''}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="border px-2 py-1 text-left text-sm">
-                            {language === 'fr'
-                              ? 'Heures Prévues'
-                              : 'Hours Planned'}
-                          </td>
-                          <td className="border px-2 py-1 text-left">
-                            <Input
-                              value={String(allRows[9]?.[9] || '')}
-                              onChange={e => {
-                                const validatedValue = validateNumericInput(
-                                  e.target.value
-                                );
-                                const newRows = [...allRows];
-                                newRows[9][9] = validatedValue;
-                                setAllRows(newRows);
-                              }}
-                              className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                              placeholder="0"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="border px-2 py-1 text-left text-sm">
-                            {language === 'fr'
-                              ? 'TP/TD Prévus'
-                              : 'TP/TD Planned'}
-                          </td>
-                          <td className="border px-2 py-1 text-left">
-                            <Input
-                              value={String(allRows[10]?.[9] || '')}
-                              onChange={e => {
-                                const validatedValue = validateNumericInput(
-                                  e.target.value
-                                );
-                                const newRows = [...allRows];
-                                newRows[10][9] = validatedValue;
-                                setAllRows(newRows);
-                              }}
-                              className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                              placeholder="0"
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                        </tr> */}
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="border px-2 py-1 text-left text-sm">
+                              {language === 'fr'
+                                ? 'Leçons Prévues'
+                                : 'Lessons Planned'}
+                            </td>
+                            <td className="border px-2 py-1 text-left">
+                              <Input
+                                value={String(allRows[8]?.[9] || '')}
+                                onChange={e => {
+                                  const validatedValue = validateNumericInput(
+                                    e.target.value
+                                  );
+                                  const newRows = [...allRows];
+                                  newRows[8][9] = validatedValue;
+                                  setAllRows(newRows);
+                                }}
+                                className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                placeholder="0"
+                              />
+                            </td>
+                            <td
+                              className="border px-2 py-1 text-left text-sm"
+                              rowSpan={3}
+                            >
+                              {allRows[8]?.[10] || ''}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border px-2 py-1 text-left text-sm">
+                              {language === 'fr'
+                                ? 'Heures Prévues'
+                                : 'Hours Planned'}
+                            </td>
+                            <td className="border px-2 py-1 text-left">
+                              <Input
+                                value={String(allRows[9]?.[9] || '')}
+                                onChange={e => {
+                                  const validatedValue = validateNumericInput(
+                                    e.target.value
+                                  );
+                                  const newRows = [...allRows];
+                                  newRows[9][9] = validatedValue;
+                                  setAllRows(newRows);
+                                }}
+                                className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                placeholder="0"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border px-2 py-1 text-left text-sm">
+                              {language === 'fr'
+                                ? 'TP/TD Prévus'
+                                : 'TP/TD Planned'}
+                            </td>
+                            <td className="border px-2 py-1 text-left">
+                              <Input
+                                value={String(allRows[10]?.[9] || '')}
+                                onChange={e => {
+                                  const validatedValue = validateNumericInput(
+                                    e.target.value
+                                  );
+                                  const newRows = [...allRows];
+                                  newRows[10][9] = validatedValue;
+                                  setAllRows(newRows);
+                                }}
+                                className="w-full h-6 text-xs border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                placeholder="0"
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Footer Actions */}
-          <div className="bg-white border-t border-gray-200 p-6 rounded-b-lg">
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-gray-600">
-                {editorData && editorData.length > 1
-                  ? `${editorData.length - 1} students loaded`
-                  : 'No students found'}
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowEditor(false);
-                    setEditorOpen(false);
-                  }}
-                  disabled={uploading}
-                  className="border-gray-300 hover:bg-gray-50"
-                >
-                  {language === 'fr' ? 'Annuler' : 'Cancel'}
-                </Button>
-
-                {/* Preview Button */}
-                <Button
-                  onClick={handlePreview}
-                  disabled={uploading || !editorData || editorData.length === 0}
-                  className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                  {language === 'fr' ? 'Prévisualiser' : 'Preview'}
-                </Button>
-
-                {/* Download Preview Button */}
-                <Button
-                  onClick={handleDownloadPreview}
-                  disabled={uploading || !editorData || editorData.length === 0}
-                  variant="outline"
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  {language === 'fr' ? 'Télécharger' : 'Download'}
-                </Button>
-
-                {/* Show "Open in Full Page" button when in modal */}
-                {editorOpen && (
+            {/* Footer Actions */}
+            <div className="bg-white border-t border-gray-200 p-2 sm:p-6 rounded-b-lg relative">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+                <div className="text-sm text-gray-600">
+                  {editorData && editorData.length > 1
+                    ? `${editorData.length - 1} students loaded`
+                    : 'No students found'}
+                </div>
+                {/* Desktop: show row of action buttons */}
+                <div className="hidden sm:flex flex-row gap-3 w-auto">
                   <Button
+                    variant="outline"
                     onClick={() => {
-                      sessionStorage.setItem('openFullPage', '1');
-                      router.push('/teacher/import-export');
+                      setShowEditor(false);
+                      setEditorOpen(false);
                     }}
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    disabled={uploading}
+                    className="border-gray-300 hover:bg-gray-50 w-full sm:w-auto"
                   >
-                    {language === 'fr'
-                      ? 'Ouvrir dans la page complète'
-                      : 'Open in Full Page'}
+                    {language === 'fr' ? 'Annuler' : 'Cancel'}
                   </Button>
-                )}
-                <Button
-                  onClick={handleFinalizeUpload}
-                  disabled={uploading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                >
-                  {uploading ? (
-                    <>
-                      <span className="animate-spin mr-2">⏳</span>
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-4 h-4 mr-2" />
+
+                  {/* Preview Button */}
+                  <Button
+                    onClick={handlePreview}
+                    disabled={
+                      uploading || !editorData || editorData.length === 0
+                    }
+                    className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm w-full sm:w-auto"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                    {language === 'fr' ? 'Prévisualiser' : 'Preview'}
+                  </Button>
+
+                  {/* Download Preview Button */}
+                  <Button
+                    onClick={handleDownloadPreview}
+                    disabled={
+                      uploading || !editorData || editorData.length === 0
+                    }
+                    variant="outline"
+                    className="border-purple-300 text-purple-600 hover:bg-purple-50 w-full sm:w-auto"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    {language === 'fr' ? 'Télécharger' : 'Download'}
+                  </Button>
+
+                  {/* Show "Open in Full Page" button when in modal */}
+                  {editorOpen && (
+                    <Button
+                      onClick={() => {
+                        sessionStorage.setItem('openFullPage', '1');
+                        router.push('/teacher/import-export');
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
+                    >
                       {language === 'fr'
-                        ? 'Finaliser et Télécharger'
-                        : 'Finalize & Upload'}
-                    </>
+                        ? 'Ouvrir dans la page complète'
+                        : 'Open in Full Page'}
+                    </Button>
                   )}
-                </Button>
+                  <Button
+                    onClick={handleFinalizeUpload}
+                    disabled={uploading}
+                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm w-full sm:w-auto"
+                  >
+                    {uploading ? (
+                      <>
+                        <span className="animate-spin mr-2">⏳</span>
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4 mr-2" />
+                        {language === 'fr'
+                          ? 'Finaliser et Télécharger'
+                          : 'Finalize & Upload'}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+              {/* Mobile: show FAB */}
+              <div className="sm:hidden">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <button
+                      className="absolute  z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg p-4 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      aria-label="Actions"
+                    >
+                      <MoreVertical className="w-6 h-6" />
+                    </button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="rounded-t-2xl p-6">
+                    <SheetHeader>
+                      <SheetTitle>
+                        {language === 'fr' ? 'Actions' : 'Actions'}
+                      </SheetTitle>
+                    </SheetHeader>
+                    <div className="flex flex-col gap-3 mt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setShowEditor(false);
+                          setEditorOpen(false);
+                        }}
+                        disabled={uploading}
+                        className="border-gray-300 hover:bg-gray-50 w-full sm:w-auto"
+                      >
+                        {language === 'fr' ? 'Annuler' : 'Cancel'}
+                      </Button>
+
+                      {/* Preview Button */}
+                      <Button
+                        onClick={handlePreview}
+                        disabled={
+                          uploading || !editorData || editorData.length === 0
+                        }
+                        className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm w-full sm:w-auto"
+                      >
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                        {language === 'fr' ? 'Prévisualiser' : 'Preview'}
+                      </Button>
+
+                      {/* Download Preview Button */}
+                      <Button
+                        onClick={handleDownloadPreview}
+                        disabled={
+                          uploading || !editorData || editorData.length === 0
+                        }
+                        variant="outline"
+                        className="border-purple-300 text-purple-600 hover:bg-purple-50 w-full sm:w-auto"
+                      >
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        {language === 'fr' ? 'Télécharger' : 'Download'}
+                      </Button>
+
+                      {/* Show "Open in Full Page" button when in modal */}
+                      {editorOpen && (
+                        <Button
+                          onClick={() => {
+                            sessionStorage.setItem('openFullPage', '1');
+                            router.push('/teacher/import-export');
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
+                        >
+                          {language === 'fr'
+                            ? 'Ouvrir dans la page complète'
+                            : 'Open in Full Page'}
+                        </Button>
+                      )}
+                      <Button
+                        onClick={handleFinalizeUpload}
+                        disabled={uploading}
+                        className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm w-full sm:w-auto"
+                      >
+                        {uploading ? (
+                          <>
+                            <span className="animate-spin mr-2">⏳</span>
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            {language === 'fr'
+                              ? 'Finaliser et Télécharger'
+                              : 'Finalize & Upload'}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </div>
             </div>
           </div>
+          {/* Fallback if no data */}
+          {(!editorData || editorData.length === 0) && (
+            <div className="text-center text-gray-500 py-12">
+              <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+              <p>No student data found in this template.</p>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
+      {/* Mobile: show FAB always at bottom right of modal/dialog viewport */}
+      <div className="sm:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <button
+              className="fixed -bottom-1/2 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg p-4 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-400"
+              aria-label="Actions"
+            >
+              <MoreVertical className="w-6 h-6" />
+            </button>
+          </SheetTrigger>
+          {/* SheetContent remains unchanged */}
+          <SheetContent side="bottom" className="rounded-t-2xl p-6">
+            <SheetHeader>
+              <SheetTitle>
+                {language === 'fr' ? 'Actions' : 'Actions'}
+              </SheetTitle>
+            </SheetHeader>
+            <div className="flex flex-col gap-3 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowEditor(false);
+                  setEditorOpen(false);
+                }}
+                disabled={uploading}
+                className="border-gray-300 hover:bg-gray-50 w-full sm:w-auto"
+              >
+                {language === 'fr' ? 'Annuler' : 'Cancel'}
+              </Button>
+
+              {/* Preview Button */}
+              <Button
+                onClick={handlePreview}
+                disabled={uploading || !editorData || editorData.length === 0}
+                className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm w-full sm:w-auto"
+              >
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+                {language === 'fr' ? 'Prévisualiser' : 'Preview'}
+              </Button>
+
+              {/* Download Preview Button */}
+              <Button
+                onClick={handleDownloadPreview}
+                disabled={uploading || !editorData || editorData.length === 0}
+                variant="outline"
+                className="border-purple-300 text-purple-600 hover:bg-purple-50 w-full sm:w-auto"
+              >
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                {language === 'fr' ? 'Télécharger' : 'Download'}
+              </Button>
+
+              {/* Show "Open in Full Page" button when in modal */}
+              {editorOpen && (
+                <Button
+                  onClick={() => {
+                    sessionStorage.setItem('openFullPage', '1');
+                    router.push('/teacher/import-export');
+                  }}
+                  className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto"
+                >
+                  {language === 'fr'
+                    ? 'Ouvrir dans la page complète'
+                    : 'Open in Full Page'}
+                </Button>
+              )}
+              <Button
+                onClick={handleFinalizeUpload}
+                disabled={uploading}
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm w-full sm:w-auto"
+              >
+                {uploading ? (
+                  <>
+                    <span className="animate-spin mr-2">⏳</span>
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4 mr-2" />
+                    {language === 'fr'
+                      ? 'Finaliser et Télécharger'
+                      : 'Finalize & Upload'}
+                  </>
+                )}
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
     </div>
   );
 };

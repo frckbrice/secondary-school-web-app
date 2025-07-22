@@ -138,7 +138,7 @@ export default function NewsDetail({ news }: NewsDetailProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-gray-600">
                   <User className="w-5 h-5 mr-2" />
-                  <span>By GBHS Bafia Administration</span>
+                  <span>By "" Administration</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -278,7 +278,7 @@ export default function NewsDetail({ news }: NewsDetailProps) {
             <Card className="bg-blue-50 border-blue-200">
               <CardContent className="p-8">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Stay Updated with GBHS Bafia News
+                  Stay Updated with "" News
                 </h3>
                 <p className="text-gray-600 mb-6">
                   Don&apos;t miss out on the latest announcements, achievements,

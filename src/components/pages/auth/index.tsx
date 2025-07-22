@@ -148,6 +148,7 @@ export default function AuthPage() {
         toast({
           title: language === 'fr' ? 'Connexion réussie' : 'Login successful',
           description: language === 'fr' ? 'Bienvenue!' : 'Welcome!',
+          variant: 'success',
         });
         if (user.role === 'teacher') {
           router.push('/teacher');
@@ -187,6 +188,7 @@ export default function AuthPage() {
             language === 'fr'
               ? 'Compte créé avec succès!'
               : 'Account created successfully!',
+          variant: 'success',
         });
         if (user.role === 'teacher') {
           router.push('/teacher');
@@ -229,7 +231,7 @@ export default function AuthPage() {
             <School className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            GBHS Bafia
+            ""
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
             {language === 'fr' ? 'Portail de Connexion' : 'Login Portal'}

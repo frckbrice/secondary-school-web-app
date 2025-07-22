@@ -15,7 +15,7 @@ const translations = {
     'header.phone': '+237 222 17 51 75',
     'header.email': 'lyceebilinguebafia@yahoo.fr',
     'header.studentPortal': 'Student Portal',
-    'header.schoolName': 'GBHS Bafia',
+    'header.schoolName': ' ""',
     'header.schoolFullName': 'Government Bilingual High School',
     'header.home': 'Home',
     'header.about': 'About',
@@ -39,7 +39,7 @@ const translations = {
 
     // News Section
     'news.title': 'Latest News & Announcements',
-    'news.subtitle': 'Stay updated with the latest happenings at GBHS Bafia',
+    'news.subtitle': 'Stay updated with the latest happenings at  ""',
     'news.readMore': 'Read More',
     'news.viewAll': 'View All News',
 
@@ -77,7 +77,7 @@ const translations = {
     // Admissions
     'admissions.title': 'Admissions',
     'admissions.subtitle':
-      'Join the GBHS Bafia family and excel in your academic journey',
+      'Join the  "" family and excel in your academic journey',
     'admissions.requirements': 'Admission Requirements',
     'admissions.onlineApp': 'Online Application',
     'admissions.firstName': 'First Name',
@@ -120,7 +120,7 @@ const translations = {
     'header.phone': '+237 233 XX XX XX',
     'header.email': 'lyceebilinguebafia@yahoo.fr',
     'header.studentPortal': 'Portail Étudiant',
-    'header.schoolName': 'GBHS Bafia',
+    'header.schoolName': ' ""',
     'header.schoolFullName': 'Lycée Bilingue Gouvernemental',
     'header.home': 'Accueil',
     'header.about': 'À Propos',
@@ -144,7 +144,7 @@ const translations = {
 
     // News Section
     'news.title': 'Dernières Nouvelles & Annonces',
-    'news.subtitle': 'Restez informé des derniers événements au GBHS Bafia',
+    'news.subtitle': 'Restez informé des derniers événements au  ""',
     'news.readMore': 'Lire Plus',
     'news.viewAll': 'Voir Toutes les Nouvelles',
 
@@ -182,7 +182,7 @@ const translations = {
     // Admissions
     'admissions.title': 'Admissions',
     'admissions.subtitle':
-      'Rejoignez la famille GBHS Bafia et excellez dans votre parcours académique',
+      'Rejoignez la famille  "" et excellez dans votre parcours académique',
     'admissions.requirements': "Exigences d'Admission",
     'admissions.onlineApp': 'Candidature en Ligne',
     'admissions.firstName': 'Prénom',

@@ -26,10 +26,12 @@ import {
 import { insertContactSchema, type InsertContact } from '../../../../schema';
 import { apiRequest } from '../../../../lib/queryClient';
 import { useToast } from '../../../../hooks/use-toast';
+import { useSettings } from '../../../providers/settings-provider';
 import { useLanguage } from '../../../../hooks/use-language';
 import { MapPin, Phone, Mail, Clock, Loader2 } from 'lucide-react';
 
 export default function ContactSection() {
+  const { settings } = useSettings();
   const { language } = useLanguage();
   const { toast } = useToast();
 
@@ -55,6 +57,7 @@ export default function ContactSection() {
         title: 'Message Sent',
         description:
           'Your message has been sent successfully. We will get back to you soon.',
+        variant: 'success',
       });
       form.reset();
     },
@@ -106,14 +109,16 @@ export default function ContactSection() {
                     </h4>
                     <p className="text-muted-foreground">
                       {language === 'fr'
-                        ? 'Lycée Bilingue de Bafia'
-                        : 'Government Bilingual High School'}
+                        ? settings?.siteNameFr || 'Nom du Site'
+                        : settings?.siteName || 'Site Name'}
                       <br />
                       {language === 'fr'
-                        ? 'Bafia, Centre Region'
-                        : 'Bafia, Centre Region'}
+                        ? settings?.address || 'Ville, Région'
+                        : settings?.address || 'City, Region'}
                       <br />
-                      {language === 'fr' ? 'Cameroun' : 'Cameroon'}
+                      {language === 'fr'
+                        ? settings?.country || 'Cameroun'
+                        : settings?.country || 'Cameroon'}
                     </p>
                   </div>
                 </div>
@@ -126,7 +131,9 @@ export default function ContactSection() {
                     <h4 className="font-semibold text-foreground mb-1">
                       {language === 'fr' ? 'Téléphone' : 'Phone'}
                     </h4>
-                    <p className="text-muted-foreground">+237 222 175 175</p>
+                    <p className="text-muted-foreground">
+                      {settings?.phone || '+237 222 xxx xxx'}
+                    </p>
                   </div>
                 </div>
 
@@ -139,7 +146,7 @@ export default function ContactSection() {
                       {language === 'fr' ? 'Email' : 'Email'}
                     </h4>
                     <p className="text-muted-foreground">
-                      lyceebilinguebafia@gmail.com
+                      {settings?.contactEmail || 'example@gmail.com'}
                     </p>
                   </div>
                 </div>
@@ -152,7 +159,9 @@ export default function ContactSection() {
                     <h4 className="font-semibold text-foreground mb-1">
                       P.O. Box
                     </h4>
-                    <p className="text-muted-foreground">327</p>
+                    <p className="text-muted-foreground">
+                      {settings?.poBox || '327'}
+                    </p>
                   </div>
                 </div>
 
@@ -166,12 +175,12 @@ export default function ContactSection() {
                     </h4>
                     <p className="text-muted-foreground">
                       {language === 'fr'
-                        ? 'Lun - Ven: 7:00 AM - 15:30 PM'
-                        : 'Mon - Fri: 7:00 AM - 15:30 PM'}
+                        ? settings?.hours || 'Lun - Ven: 7:00 AM - 15:30 PM'
+                        : settings?.hours || 'Mon - Fri: 7:00 AM - 15:30 PM'}
                       <br />
                       {language === 'fr'
-                        ? 'Sam: Réserver un rendez-vous'
-                        : 'Sat: Book an appointment'}
+                        ? settings?.hours || 'Sam: Réserver un rendez-vous'
+                        : settings?.hours || 'Sat: Book an appointment'}
                     </p>
                   </div>
                 </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Inter, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
+import { SettingsProvider } from '../components/providers/settings-provider';
 import { AuthProvider } from '../components/providers/auth-provider';
 import { QueryClientProvider } from '../components/providers/query-provider';
 import { ThemeProvider } from '../components/providers/theme-provider';
@@ -38,14 +39,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default:
-      'GBHS Bafia - Government Bilingual High School | Excellence in Education',
-    template: '%s | GBHS Bafia',
+    default: ' "" - Government Bilingual High School | Excellence in Education',
+    template: '%s |  ""',
   },
   description:
     'Government Bilingual High School Bafia - Premier secondary education in Centre Region, Cameroon. Admissions open for Forms 1-7. Excellence in academics, sports, and character development. Join our community of learners.',
   keywords: [
-    'GBHS Bafia',
+    ' ""',
     'Government Bilingual High School',
     'Cameroon',
     'Education',
@@ -66,11 +66,9 @@ export const metadata: Metadata = {
     'Form 6',
     'Form 7',
   ],
-  authors: [
-    { name: 'GBHS Bafia', url: 'https://gbhs-bafia-web-site.vercel.app' },
-  ],
-  creator: 'GBHS Bafia',
-  publisher: 'GBHS Bafia',
+  authors: [{ name: ' ""', url: 'https://gbhs-bafia-web-site.vercel.app' }],
+  creator: ' ""',
+  publisher: ' ""',
   formatDetection: {
     email: false,
     address: false,
@@ -85,24 +83,24 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'GBHS Bafia - Government Bilingual High School',
+    title: ' "" - Government Bilingual High School',
     description:
       'Premier secondary education in Centre Region, Cameroon. Excellence in academics, sports, and character development. Join our community of learners.',
     url: 'https://gbhs-bafia-web-site.vercel.app',
-    siteName: 'GBHS Bafia',
+    siteName: ' ""',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'GBHS Bafia - Government Bilingual High School',
+        alt: ' "" - Government Bilingual High School',
         type: 'image/jpeg',
       },
       {
         url: '/og-image-fr.jpg',
         width: 1200,
         height: 630,
-        alt: 'GBHS Bafia - Lycée Bilingue de Bafia',
+        alt: ' "" - Lycée Bilingue de Bafia',
         type: 'image/jpeg',
       },
     ],
@@ -112,7 +110,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GBHS Bafia - Government Bilingual High School',
+    title: ' "" - Government Bilingual High School',
     description:
       'Premier secondary education in Centre Region, Cameroon. Excellence in academics, sports, and character development.',
     images: ['/twitter-image.jpg'],
@@ -151,7 +149,7 @@ const structuredData = {
   '@type': 'EducationalOrganization',
   '@id': 'https://gbhs-bafia-web-site.vercel.app/#organization',
   name: 'Government Bilingual High School Bafia',
-  alternateName: ['GBHS Bafia', 'Lycée Bilingue du Gouvernement Bafia'],
+  alternateName: [' ""', 'Lycée Bilingue du Gouvernement Bafia'],
   url: 'https://gbhs-bafia-web-site.vercel.app',
   logo: {
     '@type': 'ImageObject',
@@ -178,7 +176,7 @@ const structuredData = {
   },
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+237-233-XX-XX-XX',
+    telephone: '+237-222-17-51-75',
     contactType: 'customer service',
     areaServed: 'CM',
     availableLanguage: ['English', 'French'],
@@ -368,19 +366,21 @@ export default function RootLayout({
           fontVariationSettings: '"opsz" 32',
         }}
       >
-        <QueryClientProvider>
-          <AuthProvider>
-            <ThemeProvider>
-              <LanguageProvider>
-                <AccessibilityProvider>
-                  <AccessibilitySettings />
-                  {children}
-                </AccessibilityProvider>
-              </LanguageProvider>
-            </ThemeProvider>
-          </AuthProvider>
-          <Toaster />
-        </QueryClientProvider>
+        <SettingsProvider>
+          <QueryClientProvider>
+            <AuthProvider>
+              <ThemeProvider>
+                <LanguageProvider>
+                  <AccessibilityProvider>
+                    <AccessibilitySettings />
+                    {children}
+                  </AccessibilityProvider>
+                </LanguageProvider>
+              </ThemeProvider>
+            </AuthProvider>
+            <Toaster />
+          </QueryClientProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

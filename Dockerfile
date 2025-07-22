@@ -1,4 +1,4 @@
-# Dockerfile for GBHS Bafia Next.js App
+# Dockerfile for X school Next.js App
 FROM node:20-alpine
 WORKDIR /app
 COPY package.json yarn.lock ./

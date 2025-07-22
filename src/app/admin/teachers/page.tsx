@@ -276,6 +276,7 @@ export default function TeachersManagement() {
       toast({
         title: 'Success',
         description: 'Teacher created successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -307,6 +308,7 @@ export default function TeachersManagement() {
       toast({
         title: 'Success',
         description: 'Teacher updated successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -324,6 +326,7 @@ export default function TeachersManagement() {
       toast({
         title: 'Success',
         description: 'Teacher deleted successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({

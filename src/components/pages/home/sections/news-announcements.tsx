@@ -76,9 +76,6 @@ export default function NewsAnnouncements() {
             <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
               {language === 'fr' ? 'Actualités' : 'News'}
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {language === 'fr' ? 'Actualités' : 'News'}
-            </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map(i => (
@@ -120,19 +117,18 @@ export default function NewsAnnouncements() {
   return (
     <section id="news" className="py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 flex items-center justify-center border-b border-gray-200 pb-4 bg-gradient-to-br from-blue-300 via-background to-orange-50 dark:from-blue-950 dark:via-background dark:to-orange-950 dark:border-none rounded-md sm:rounded-lg">
           <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
             {language === 'fr' ? 'Actualités' : 'News'}
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {language === 'fr' ? 'Actualités' : 'News'}
-          </p>
         </div>
 
         {displayNews.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
-              No news articles available at the moment.
+              {language === 'fr'
+                ? 'Aucune actualité disponible pour le moment.'
+                : 'No news articles available at the moment.'}
             </p>
           </div>
         ) : (

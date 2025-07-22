@@ -81,7 +81,7 @@ export default function GalleryPage() {
   );
 
   // Flattened gallery list
-  const galleryImages: Gallery[] = data?.data || [];
+  const galleryImages: any[] = (data as any)?.pages[0]?.data || [];
 
   // Intersection observer for infinite scroll
   const { ref: loadMoreRef } = useInfiniteScroll(
@@ -90,6 +90,9 @@ export default function GalleryPage() {
     },
     { enabled: !!hasNextPage }
   );
+
+  // Track loading state for each image
+  const [imageLoaded, setImageLoaded] = useState<{ [id: string]: boolean }>({});
 
   const categories = [
     {
@@ -115,15 +118,15 @@ export default function GalleryPage() {
       case 'campus':
         return 'bg-green-100 text-green-700';
       case 'events':
-        return 'bg-purple-100 text-purple-700';
+        return 'bg-purple-400 text-purple-800';
       case 'students':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-blue-400 text-blue-800';
       case 'sports':
-        return 'bg-orange-100 text-orange-700';
+        return 'bg-orange-400 text-orange-800';
       case 'academics':
-        return 'bg-indigo-100 text-indigo-700';
+        return 'bg-indigo-400 text-indigo-800';
       case 'facilities':
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-gray-400 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-700';
     }
@@ -303,7 +306,16 @@ export default function GalleryPage() {
       <Header />
 
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 pt-20 pb-16">
+      <div
+        className="relative min-h-[70vh] flex-col 
+        sm:flex items-center justify-center p-4 sm:p-0"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -319,11 +331,11 @@ export default function GalleryPage() {
                 : 'Discover the precious moments of our school through our captivating photo collection'}
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-8">
-              <Badge className="bg-white/20 text-white border-white/30">
+              <Badge className="bg-white/20 text-white border-white/30 text-base sm:text-sm">
                 {filteredImages.length}{' '}
                 {language === 'fr' ? 'photos' : 'photos'}
               </Badge>
-              <Badge className="bg-white/20 text-white border-white/30">
+              <Badge className="bg-white/20 text-white border-white/30 text-base sm:text-sm">
                 {categories.length - 1}{' '}
                 {language === 'fr' ? 'catégories' : 'categories'}
               </Badge>
@@ -362,11 +374,23 @@ export default function GalleryPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map(category => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}
-                      </SelectItem>
-                    ))}
+                    {categories.map(category => {
+                      if (!filteredImages.length)
+                        return (
+                          <SelectItem
+                            key={category.value}
+                            value={category.value}
+                          >
+                            {language === 'fr' ? 'Aucune photo' : 'No photos'}
+                          </SelectItem>
+                        );
+
+                      return (
+                        <SelectItem key={category.value} value={category.value}>
+                          {category.label}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -399,11 +423,21 @@ export default function GalleryPage() {
                       className="relative aspect-square overflow-hidden"
                       onClick={() => openLightbox(index)}
                     >
+                      {/* Skeleton while image loads */}
+                      {!imageLoaded[image.id] && (
+                        <div className="absolute inset-0 bg-gray-200 animate-pulse z-10" />
+                      )}
                       <Image
                         src={image.imageUrl}
                         alt={getTitle(image)}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className={
+                          'object-cover group-hover:scale-105 transition-transform duration-300 ' +
+                          (!imageLoaded[image.id] ? 'opacity-0' : 'opacity-100')
+                        }
+                        onLoadingComplete={() =>
+                          setImageLoaded(l => ({ ...l, [image.id]: true }))
+                        }
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">

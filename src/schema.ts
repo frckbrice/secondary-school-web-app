@@ -9,6 +9,7 @@ import {
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 
 export const users = pgTable('users', {
   id: text('id')
@@ -594,3 +595,28 @@ export type Facility = typeof facilities.$inferSelect;
 export type InsertFacility = z.infer<typeof insertFacilitySchema>;
 export type Achievement = typeof achievements.$inferSelect;
 export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+
+export const settings = pgTable('settings', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => cuid()),
+  siteName: text('site_name').notNull(),
+  siteNameFr: text('site_name_fr').default(''),
+  siteDescription: text('site_description').default(''),
+  siteDescriptionFr: text('site_description_fr').default(''),
+  contactEmail: text('contact_email').notNull(),
+  maintenanceMode: boolean('maintenance_mode').notNull().default(false),
+  logoUrl: text('logo_url'),
+  theme: text('theme').default('auto'),
+  address: text('address'),
+  phone: text('phone'),
+  facebook: text('facebook'),
+  twitter: text('twitter'),
+  announcementText: text('announcement_text'),
+  announcementEnabled: boolean('announcement_enabled').notNull().default(false),
+  languageDefault: text('language_default').default('fr'),
+  languagesAvailable: text('languages_available').array().default(['fr', 'en']),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

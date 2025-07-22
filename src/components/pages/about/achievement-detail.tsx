@@ -259,14 +259,21 @@ export default function AchievementDetailPage({
                     </Link>
                   </li>
                   <li>/</li>
-                  <li className="text-foreground font-medium">
-                    {displayTitle}
+                  <li className="text-foreground font-medium text-wrap">
+                    {displayTitle.length > 20 ? (
+                      <>
+                        <br className="sm:hidden" />
+                        {displayTitle}
+                      </>
+                    ) : (
+                      displayTitle
+                    )}
                   </li>
                 </ol>
               </nav>
 
               {/* Back Button */}
-              <div className="mb-6">
+              <div className="mb-6 sm:">
                 <Button
                   variant="outline"
                   onClick={() => router.back()}
@@ -285,7 +292,7 @@ export default function AchievementDetailPage({
                       <IconComponent className="h-10 w-10 text-yellow-700 dark:text-yellow-300" />
                     </div>
                     <div className="flex-1">
-                      <CardTitle className="text-3xl font-bold text-foreground mb-2">
+                      <CardTitle className="text-xl sm:text-3xl  font-bold text-foreground mb-2">
                         {displayTitle}
                       </CardTitle>
                       <div className="flex items-center space-x-3">
@@ -424,8 +431,8 @@ export default function AchievementDetailPage({
             </div>
 
             {/* Right Sidebar */}
-            <div className="lg:col-span-1 mt-14">
-              <div className="sticky top-20 mt-10 space-y-6">
+            <div className="lg:col-span-1 sm:mt-14">
+              <div className="sticky top-20 sm:mt-10 space-y-6">
                 {/* Other Achievements - Moved to same level as title */}
                 <Card className="shadow-xl dark:shadow-gray-700 border-0 bg-card/80 backdrop-blur-sm">
                   <CardHeader>

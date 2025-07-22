@@ -26,10 +26,7 @@ export default function GBHSHistory() {
   const timeline = [
     {
       year: '1979',
-      title:
-        language === 'fr'
-          ? 'Fondation de GBHS Bafia'
-          : 'Foundation of GBHS Bafia',
+      title: language === 'fr' ? 'Fondation de  ""' : 'Foundation of  ""',
       description:
         language === 'fr'
           ? "Établissement du Lycée Bilingue de Bafia par le gouvernement camerounais dans le cadre du développement de l'éducation bilingue au Cameroun. L'école a été créée pour répondre aux besoins éducatifs de la région du Centre."
@@ -68,8 +65,8 @@ export default function GBHSHistory() {
           : 'First Baccalaureate Success',
       description:
         language === 'fr'
-          ? "Taux de réussite remarquable de 89% au baccalauréat, établissant GBHS Bafia comme une institution d'excellence dans la région du Centre."
-          : 'Achieved remarkable 89% pass rate in baccalaureate examinations, establishing GBHS Bafia as a center of excellence in the Centre region.',
+          ? "Taux de réussite remarquable de 89% au baccalauréat, établissant GBHS XYZ comme une institution d'excellence dans la région du Centre."
+          : 'Achieved remarkable 89% pass rate in baccalaureate examinations, establishing GBHS XYZ as a center of excellence in the Centre region.',
       icon: Trophy,
       color: 'bg-yellow-100 text-yellow-600',
     },
@@ -208,9 +205,7 @@ export default function GBHSHistory() {
 
         <div className="relative z-10 text-center text-white px-4">
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            {language === 'fr'
-              ? 'Histoire de GBHS Bafia'
-              : 'History of GBHS Bafia'}
+            {language === 'fr' ? 'Histoire de  ""' : 'History of  ""'}
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
             {language === 'fr'
@@ -239,8 +234,8 @@ export default function GBHSHistory() {
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               {language === 'fr'
-                ? "Découvrez les moments clés qui ont façonné GBHS Bafia en l'institution d'excellence qu'elle est aujourd'hui"
-                : 'Discover the key moments that shaped GBHS Bafia into the institution of excellence it is today'}
+                ? "Découvrez les moments clés qui ont façonné GBHS XYZ en l'institution d'excellence qu'elle est aujourd'hui"
+                : 'Discover the key moments that shaped GBHS XYZ into the institution of excellence it is today'}
             </p>
           </div>
 
@@ -334,13 +329,13 @@ export default function GBHSHistory() {
           <Quote className="w-16 h-16 mx-auto mb-8 opacity-50" />
           <blockquote className="text-2xl md:text-3xl font-light leading-relaxed mb-8">
             {language === 'fr'
-              ? "« GBHS Bafia ne forme pas seulement des étudiants, nous façonnons les leaders de demain. Notre engagement envers l'excellence bilingue prépare nos diplômés à exceller dans un monde globalisé. »"
-              : "« GBHS Bafia doesn't just educate students, we shape tomorrow's leaders. Our commitment to bilingual excellence prepares our graduates to excel in a globalized world. »"}
+              ? "«  GBHS XYZ ne forme pas seulement des étudiants, nous façonnons les leaders de demain. Notre engagement envers l'excellence bilingue prépare nos diplômés à exceller dans un monde globalisé. »"
+              : "«  GBHS XYZ doesn't just educate students, we shape tomorrow's leaders. Our commitment to bilingual excellence prepares our graduates to excel in a globalized world. »"}
           </blockquote>
           <p className="text-lg opacity-90">
             {language === 'fr'
-              ? 'Direction de GBHS Bafia'
-              : 'GBHS Bafia Administration'}
+              ? 'Direction de GBHS XYZ'
+              : 'GBHS XYZ Administration'}
           </p>
         </div>
       </div>
@@ -353,8 +348,8 @@ export default function GBHSHistory() {
           </h2>
           <p className="text-xl text-gray-600 mb-8">
             {language === 'fr'
-              ? "Devenez partie intégrante de cette tradition d'excellence académique et contribuez à écrire le prochain chapitre de GBHS Bafia."
-              : "Become part of this tradition of academic excellence and help write the next chapter of GBHS Bafia's story."}
+              ? "Devenez partie intégrante de cette tradition d'excellence académique et contribuez à écrire le prochain chapitre de GBHS XYZ."
+              : "Become part of this tradition of academic excellence and help write the next chapter of GBHS XYZ's story."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/">

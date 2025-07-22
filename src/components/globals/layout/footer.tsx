@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useSettings } from '../../providers/settings-provider';
 import { useLanguage } from '../../../hooks/use-language';
 import {
   MapPin,
@@ -23,7 +24,12 @@ interface FooterProps {
 }
 
 export function Footer({ showStats = false }: FooterProps) {
+  const { settings } = useSettings();
   const { language } = useLanguage();
+
+  if (!settings) {
+    return null; // Or a loading skeleton if you prefer
+  }
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -33,14 +39,26 @@ export function Footer({ showStats = false }: FooterProps) {
           <div className="lg:col-span-2 w-full md:w-2/3">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                <School className="w-6 h-6 text-white" />
+                {settings.logoUrl ? (
+                  <img
+                    src={settings.logoUrl}
+                    alt="Logo"
+                    className="w-6 h-6 object-contain"
+                  />
+                ) : (
+                  <School className="w-6 h-6 text-white" />
+                )}
               </div>
-              <h3 className="text-2xl font-bold">GBHS Bafia</h3>
+              <h3 className="text-2xl font-bold">
+                {language === 'fr'
+                  ? settings.siteNameFr || settings.siteName || 'Nom du site'
+                  : settings.siteName || 'Site Name'}
+              </h3>
             </div>
             <p className="text-gray-300 w-full  mb-6 leading-relaxed">
               {language === 'fr'
-                ? "Le Lycée Bilingue de Bafia est une institution d'excellence académique fondée en 1979. Nous nous engageons à fournir une éducation de qualité dans un environnement bilingue, préparant nos étudiants à devenir des citoyens du monde responsables et compétitifs."
-                : 'Government Bilingual High School Bafia is an academic excellence institution founded in 1979. We are committed to providing quality education in a bilingual environment, preparing our students to become responsible and competitive global citizens.'}
+                ? "Nom du site est une institution d'excellence académique fondée en XXXX. Nous nous engageons à fournir une éducation de qualité dans un environnement bilingue, préparant nos étudiants à devenir des citoyens du monde responsables et compétitifs."
+                : 'Site Name is an academic excellence institution founded in XXXX. We are committed to providing quality education in a bilingual environment, preparing our students to become responsible and competitive global citizens.'}
             </p>
 
             {/* Contact Information */}
@@ -48,35 +66,47 @@ export function Footer({ showStats = false }: FooterProps) {
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="font-semibold">Address</p>
+                  <p className="font-semibold">
+                    {language === 'fr' ? 'Adresse' : 'Address'}
+                  </p>
                   <p className="text-gray-300 text-sm">
-                    Bafia, Centre Region, Cameroon
+                    {settings?.address || 'city, region, country'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="font-semibold">Phone</p>
-                  <p className="text-gray-300 text-sm">+237 222 175 175 </p>
+                  <p className="font-semibold">
+                    {language === 'fr' ? 'Téléphone' : 'Phone'}
+                  </p>
+                  <p className="text-gray-300 text-sm">
+                    {settings?.phone || '+237 6 99 99 99 99'}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="font-semibold">Email</p>
+                  <p className="font-semibold">
+                    {language === 'fr' ? 'Email' : 'Email'}
+                  </p>
                   <p className="text-gray-300 text-sm">
-                    lyceebilinguebafia@yahoo.fr
+                    {settings?.contactEmail || 'example@gmail.com'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <Clock className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="font-semibold">Office Hours</p>
+                  <p className="font-semibold">
+                    {language === 'fr' ? 'Horaires' : 'Office Hours'}
+                    {settings?.officeHours || '7:00 AM - 15:30 PM'}
+                  </p>
                   <p className="text-gray-300 text-sm">
-                    Mon - Fri: 7:00 AM - 15:30 PM, <br /> Sat: Book an
-                    appointment.
+                    {language === 'fr'
+                      ? 'Lundi - Vendredi: 7:00 AM - 15:30 PM, Samedi: Réserver un rendez-vous.'
+                      : 'Monday - Friday: 7:00 AM - 15:30 PM, Saturday: Book an appointment.'}
                   </p>
                 </div>
               </div>
@@ -267,14 +297,14 @@ export function Footer({ showStats = false }: FooterProps) {
           <p className="text-gray-400">
             © {new Date().getFullYear()}{' '}
             {language === 'fr'
-              ? 'Lycée Bilingue de Bafia'
-              : 'Government Bilingual High School Bafia'}
+              ? settings?.siteNameFr || settings?.siteName || 'Nom du site'
+              : settings?.siteName || 'Site Name'}
             .{' '}
             {language === 'fr' ? 'Tous droits réservés' : 'All rights reserved'}
             .
           </p>
           <p className="text-gray-500 text-sm mt-2">
-            {language === 'fr' ? 'Fondé en 1979' : 'Founded in 1979'} |{' '}
+            {language === 'fr' ? 'Fondé en XXXX' : 'Founded in XXXX'} |{' '}
             {language === 'fr'
               ? 'Excellence Académique'
               : 'Academic Excellence'}

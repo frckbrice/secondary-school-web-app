@@ -197,9 +197,7 @@ export default function NewsBlog() {
       <div className="bg-gradient-to-r from-blue-600 to-purple-700 text-white">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              GBHS Bafia News
-            </h1>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">"" News</h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8">
               Stay connected with the latest happenings, achievements, and
               announcements from our school community
@@ -568,8 +566,8 @@ export default function NewsBlog() {
                 </h3>
                 <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
                   Stay informed about the latest news, events, and achievements
-                  from GBHS Bafia. Get important announcements delivered
-                  directly to your inbox.
+                  from "". Get important announcements delivered directly to
+                  your inbox.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
                   <Input
@@ -582,7 +580,7 @@ export default function NewsBlog() {
                 </div>
                 <p className="text-sm text-blue-200 mt-4">
                   Join over 2,000 parents, students, and community members who
-                  stay connected with GBHS Bafia.
+                  stay connected with "".
                 </p>
               </div>
             </CardContent>

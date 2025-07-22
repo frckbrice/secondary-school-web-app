@@ -143,9 +143,9 @@ export default function GalleryManagement() {
       title: 'School Building Front View',
       titleFr: 'Vue de Face du Bâtiment Scolaire',
       description:
-        'The main entrance of GBHS Bafia showing the beautiful architecture and welcoming environment for students.',
+        'The main entrance of GBHS XYZ showing the beautiful architecture and welcoming environment for students.',
       descriptionFr:
-        "L'entrée principale du GBHS Bafia montrant la belle architecture et l'environnement accueillant pour les étudiants.",
+        "L'entrée principale du GBHS XYZ montrant la belle architecture et l'environnement accueillant pour les étudiants.",
       imageUrl:
         'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=600&fit=crop',
       category: 'facilities',
@@ -299,6 +299,7 @@ export default function GalleryManagement() {
       toast({
         title: 'Success',
         description: 'Gallery item created successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -324,6 +325,7 @@ export default function GalleryManagement() {
       toast({
         title: 'Success',
         description: 'Gallery item updated successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({
@@ -341,6 +343,7 @@ export default function GalleryManagement() {
       toast({
         title: 'Success',
         description: 'Gallery item deleted successfully',
+        variant: 'success',
       });
     } catch (error) {
       toast({

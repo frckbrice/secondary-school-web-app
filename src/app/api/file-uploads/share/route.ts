@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
             
             <div style="text-align: center; margin-top: 30px;">
               <p style="color: #666; font-size: 14px;">
-                This file was shared from the GBHS Bafia School Management System.<br>
+                This file was shared from the  "" School Management System.<br>
                 If you have any questions, please contact the school administration.
               </p>
             </div>
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
         to: recipientEmail,
         subject: `📊 Grading File Shared: ${fileData.fileName}`,
         html: emailHtml,
-        text: `A grading file has been shared with you.\n\nFile: ${fileData.fileName}\nShared: ${new Date().toLocaleDateString()}\n\n${message ? `Message: ${message}\n\n` : ''}The file is attached to this email. You can download it directly without needing to log in.\n\nThis file was shared from the GBHS Bafia School Management System.`,
+        text: `A grading file has been shared with you.\n\nFile: ${fileData.fileName}\nShared: ${new Date().toLocaleDateString()}\n\n${message ? `Message: ${message}\n\n` : ''}The file is attached to this email. You can download it directly without needing to log in.\n\nThis file was shared from the  "" School Management System.`,
         attachments: [
           {
             filename: fileData.fileName,

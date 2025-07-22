@@ -138,7 +138,7 @@ export function AdminSidebar({
               {language === 'fr' ? 'Portail Administrateur' : 'Admin Portal'}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {language === 'fr' ? 'GBHS Bafia' : 'GBHS Bafia'}
+              {language === 'fr' ? ' ""' : ' ""'}
             </p>
           </div>
         </div>
