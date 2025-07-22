@@ -599,8 +599,11 @@ export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
 export const settings = pgTable('settings', {
   id: text('id')
     .primaryKey()
-    .$defaultFn(() => createId()),
+    .$defaultFn(() => cuid()),
   siteName: text('site_name').notNull(),
+  siteNameFr: text('site_name_fr').default(''),
+  siteDescription: text('site_description').default(''),
+  siteDescriptionFr: text('site_description_fr').default(''),
   contactEmail: text('contact_email').notNull(),
   maintenanceMode: boolean('maintenance_mode').notNull().default(false),
   logoUrl: text('logo_url'),

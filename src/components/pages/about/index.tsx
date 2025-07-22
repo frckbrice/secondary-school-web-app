@@ -11,6 +11,7 @@ import {
 import { Badge } from '../../ui/badge';
 import { Button } from '../../ui/button';
 import { useLanguage } from '../../../hooks/use-language';
+import { useSettings } from '../../providers/settings-provider';
 import {
   MapPin,
   Phone,
@@ -57,6 +58,7 @@ interface AchievementsResponse {
 }
 
 export default function AboutPage() {
+  const { settings } = useSettings();
   const { language } = useLanguage();
 
   // Query for news items related to achievements

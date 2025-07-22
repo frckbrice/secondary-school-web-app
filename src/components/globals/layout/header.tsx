@@ -6,6 +6,7 @@ import { Button } from '../../ui/button';
 import { useLanguage } from '../../../hooks/use-language';
 import { useTheme } from 'next-themes';
 import { useAuth } from '../../../hooks/use-auth';
+import { useSettings } from '../../providers/settings-provider';
 import {
   Menu,
   X,

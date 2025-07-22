@@ -26,10 +26,12 @@ import {
 import { insertContactSchema, type InsertContact } from '../../../../schema';
 import { apiRequest } from '../../../../lib/queryClient';
 import { useToast } from '../../../../hooks/use-toast';
+import { useSettings } from '../../../providers/settings-provider';
 import { useLanguage } from '../../../../hooks/use-language';
 import { MapPin, Phone, Mail, Clock, Loader2 } from 'lucide-react';
 
 export default function ContactSection() {
+  const { settings } = useSettings();
   const { language } = useLanguage();
   const { toast } = useToast();
 

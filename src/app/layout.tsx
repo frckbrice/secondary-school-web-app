@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Inter, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
+import { SettingsProvider } from '../components/providers/settings-provider';
 import { AuthProvider } from '../components/providers/auth-provider';
 import { QueryClientProvider } from '../components/providers/query-provider';
 import { ThemeProvider } from '../components/providers/theme-provider';
@@ -178,7 +179,7 @@ const structuredData = {
   },
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+237-233-XX-XX-XX',
+    telephone: '+237-222-17-51-75',
     contactType: 'customer service',
     areaServed: 'CM',
     availableLanguage: ['English', 'French'],
@@ -368,19 +369,21 @@ export default function RootLayout({
           fontVariationSettings: '"opsz" 32',
         }}
       >
-        <QueryClientProvider>
-          <AuthProvider>
-            <ThemeProvider>
-              <LanguageProvider>
-                <AccessibilityProvider>
-                  <AccessibilitySettings />
-                  {children}
-                </AccessibilityProvider>
-              </LanguageProvider>
-            </ThemeProvider>
-          </AuthProvider>
-          <Toaster />
-        </QueryClientProvider>
+        <SettingsProvider>
+          <QueryClientProvider>
+            <AuthProvider>
+              <ThemeProvider>
+                <LanguageProvider>
+                  <AccessibilityProvider>
+                    <AccessibilitySettings />
+                    {children}
+                  </AccessibilityProvider>
+                </LanguageProvider>
+              </ThemeProvider>
+            </AuthProvider>
+            <Toaster />
+          </QueryClientProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

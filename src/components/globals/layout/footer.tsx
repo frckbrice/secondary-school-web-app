@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useSettings } from '../../providers/settings-provider';
 import { useLanguage } from '../../../hooks/use-language';
 import {
   MapPin,
@@ -23,6 +24,7 @@ interface FooterProps {
 }
 
 export function Footer({ showStats = false }: FooterProps) {
+  const { settings } = useSettings();
   const { language } = useLanguage();
 
   return (
@@ -35,7 +37,11 @@ export function Footer({ showStats = false }: FooterProps) {
               <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                 <School className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-2xl font-bold">GBHS Bafia</h3>
+              <h3 className="text-2xl font-bold">
+                {language === 'fr'
+                  ? settings?.siteNameFr || settings?.siteName || 'Nom du site'
+                  : settings?.siteName || 'Site Name'}
+              </h3>
             </div>
             <p className="text-gray-300 w-full  mb-6 leading-relaxed">
               {language === 'fr'
@@ -50,7 +56,7 @@ export function Footer({ showStats = false }: FooterProps) {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-gray-300 text-sm">
-                    Bafia, Centre Region, Cameroon
+                    {settings?.address || 'Bafia, Centre Region, Cameroon'}
                   </p>
                 </div>
               </div>
@@ -58,7 +64,9 @@ export function Footer({ showStats = false }: FooterProps) {
                 <Phone className="w-5 h-5 text-blue-400" />
                 <div>
                   <p className="font-semibold">Phone</p>
-                  <p className="text-gray-300 text-sm">+237 222 175 175 </p>
+                  <p className="text-gray-300 text-sm">
+                    {settings?.phone || '+237 222 175 175'}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
@@ -66,7 +74,7 @@ export function Footer({ showStats = false }: FooterProps) {
                 <div>
                   <p className="font-semibold">Email</p>
                   <p className="text-gray-300 text-sm">
-                    lyceebilinguebafia@yahoo.fr
+                    {settings?.contactEmail || 'lyceebilinguebafia@yahoo.fr'}
                   </p>
                 </div>
               </div>
@@ -267,8 +275,10 @@ export function Footer({ showStats = false }: FooterProps) {
           <p className="text-gray-400">
             © {new Date().getFullYear()}{' '}
             {language === 'fr'
-              ? 'Lycée Bilingue de Bafia'
-              : 'Government Bilingual High School Bafia'}
+              ? settings?.siteNameFr ||
+                settings?.siteName ||
+                'Lycée Bilingue de Bafia'
+              : settings?.siteName || 'Government Bilingual High School Bafia'}
             .{' '}
             {language === 'fr' ? 'Tous droits réservés' : 'All rights reserved'}
             .
