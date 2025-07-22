@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
           const base64Data = `data:${document.type};base64,${buffer.toString('base64')}`;
 
           const uploadResult = await CloudinaryService.uploadImage(base64Data, {
-            folder: 'gbhs-bafia/petitions/documents',
+            folder: 'gbhs-XYZ/petitions/documents',
             public_id: `petition-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
             resource_type: 'raw', // Allow all file types
           });

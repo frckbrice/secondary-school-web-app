@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const base64Data = `data:${imageFile.type};base64,${buffer.toString('base64')}`;
 
     const uploadResult = await CloudinaryService.uploadImage(base64Data, {
-      folder: 'gbhs-bafia/profile-images',
+      folder: 'gbhs-XYZ/profile-images',
       public_id: `profile-${userId}-${Date.now()}`,
       transformation: [
         { width: 400, height: 400, crop: 'fill', gravity: 'face' },

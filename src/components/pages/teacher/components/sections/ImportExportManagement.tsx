@@ -1340,7 +1340,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                   <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
                     <FileText className="w-6 h-6 text-blue-600" />
                     {language === 'fr'
-                      ? 'LYCEE BILINGUE DE BAFIA. RELEVE DE NOTES'
+                      ? 'LYCEE BILINGUE DE XYZ. RELEVE DE NOTES'
                       : ' "" GRADE REPORT'}
                   </DialogTitle>
                 </div>
@@ -1867,7 +1867,7 @@ const ImportExportManagement: React.FC<ImportExportManagementProps> = ({
                 <div className="text-center font-bold text-xl text-gray-800 mb-4">
                   <span className="text-base sm:text-xl font-bold">
                     {language === 'fr'
-                      ? 'LYCEE BILINGUE DE BAFIA. RELEVE DE NOTES'
+                      ? 'LYCEE BILINGUE DE XYZ. RELEVE DE NOTES'
                       : ' "" GRADES REPORT'}
                   </span>
                 </div>

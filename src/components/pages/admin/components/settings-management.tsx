@@ -206,7 +206,7 @@ export default function SettingsManagement() {
               type="email"
               value={form.contactEmail || ''}
               onChange={e => handleChange('contactEmail', e.target.value)}
-              placeholder="info@gbhsbafia.cm"
+              placeholder="info@gbhsXYZ.cm"
             />
           </div>
           {/* Maintenance Mode */}

@@ -13,7 +13,7 @@ const translations = {
   en: {
     // Header
     'header.phone': '+237 222 17 51 75',
-    'header.email': 'lyceebilinguebafia@yahoo.fr',
+    'header.email': 'lyceebilingueXYZ@yahoo.fr',
     'header.studentPortal': 'Student Portal',
     'header.schoolName': ' ""',
     'header.schoolFullName': 'Government Bilingual High School',
@@ -118,7 +118,7 @@ const translations = {
   fr: {
     // Header
     'header.phone': '+237 233 XX XX XX',
-    'header.email': 'lyceebilinguebafia@yahoo.fr',
+    'header.email': 'lyceebilingueXYZ@yahoo.fr',
     'header.studentPortal': 'Portail Étudiant',
     'header.schoolName': ' ""',
     'header.schoolFullName': 'Lycée Bilingue Gouvernemental',

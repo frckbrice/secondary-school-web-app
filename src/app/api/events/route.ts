@@ -118,7 +118,7 @@ export async function PUT(request: NextRequest) {
       const base64Data = `data:${imageFile.type};base64,${buffer.toString('base64')}`;
 
       const uploadResult = await CloudinaryService.uploadImage(base64Data, {
-        folder: 'gbhs-bafia/events',
+        folder: 'gbhs-XYZ/events',
         public_id: `event-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
       });
 

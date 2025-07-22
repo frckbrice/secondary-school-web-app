@@ -43,14 +43,14 @@ export const metadata: Metadata = {
     template: '%s |  ""',
   },
   description:
-    'Government Bilingual High School Bafia - Premier secondary education in Centre Region, Cameroon. Admissions open for Forms 1-7. Excellence in academics, sports, and character development. Join our community of learners.',
+    'Government Bilingual High School XYZ - Premier secondary education in Centre Region, Cameroon. Admissions open for Forms 1-7. Excellence in academics, sports, and character development. Join our community of learners.',
   keywords: [
     ' ""',
     'Government Bilingual High School',
     'Cameroon',
     'Education',
     'Secondary School',
-    'Bafia',
+    'XYZ',
     'Centre Region',
     'Bilingual Education',
     'Academic Excellence',
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     'Form 6',
     'Form 7',
   ],
-  authors: [{ name: ' ""', url: 'https://gbhs-bafia-web-site.vercel.app' }],
+  authors: [{ name: ' ""', url: 'https://secondary-school-web-app' }],
   creator: ' ""',
   publisher: ' ""',
   formatDetection: {
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://gbhs-bafia-web-site.vercel.app'),
+  metadataBase: new URL('https://secondary-school-web-app'),
   alternates: {
     canonical: '/',
     languages: {
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     title: ' "" - Government Bilingual High School',
     description:
       'Premier secondary education in Centre Region, Cameroon. Excellence in academics, sports, and character development. Join our community of learners.',
-    url: 'https://gbhs-bafia-web-site.vercel.app',
+    url: 'https://secondary-school-web-app',
     siteName: ' ""',
     images: [
       {
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
         url: '/og-image-fr.jpg',
         width: 1200,
         height: 630,
-        alt: ' "" - Lycée Bilingue de Bafia',
+        alt: ' "" - Lycée Bilingue de XYZ',
         type: 'image/jpeg',
       },
     ],
@@ -137,7 +137,7 @@ export const metadata: Metadata = {
   classification: 'Educational Institution',
   other: {
     'geo.region': 'CM-CE',
-    'geo.placename': 'Bafia',
+    'geo.placename': 'XYZ',
     'geo.position': '4.7500;11.2333',
     ICBM: '4.7500, 11.2333',
   },
@@ -147,19 +147,19 @@ export const metadata: Metadata = {
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'EducationalOrganization',
-  '@id': 'https://gbhs-bafia-web-site.vercel.app/#organization',
-  name: 'Government Bilingual High School Bafia',
-  alternateName: [' ""', 'Lycée Bilingue du Gouvernement Bafia'],
-  url: 'https://gbhs-bafia-web-site.vercel.app',
+  '@id': 'https://secondary-school-web-app/#organization',
+  name: 'Government Bilingual High School XYZ',
+  alternateName: [' ""', 'Lycée Bilingue du Gouvernement XYZ'],
+  url: 'https://secondary-school-web-app',
   logo: {
     '@type': 'ImageObject',
-    url: 'https://gbhs-bafia-web-site.vercel.app/favicon.png',
+    url: 'https://secondary-school-web-app/favicon.png',
     width: 244,
     height: 244,
   },
   image: {
     '@type': 'ImageObject',
-    url: 'https://gbhs-bafia-web-site.vercel.app/og-image.jpg',
+    url: 'https://secondary-school-web-app/og-image.jpg',
     width: 1200,
     height: 630,
   },
@@ -168,8 +168,8 @@ const structuredData = {
   slogan: 'Excellence in Education',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Bafia',
-    addressLocality: 'Bafia',
+    streetAddress: 'XYZ',
+    addressLocality: 'XYZ',
     addressRegion: 'Centre Region',
     addressCountry: 'CM',
     postalCode: '00000',
@@ -181,7 +181,7 @@ const structuredData = {
     areaServed: 'CM',
     availableLanguage: ['English', 'French'],
   },
-  email: 'lyceebilinguebafia@yahoo.fr',
+  email: 'lyceebilingueXYZ@yahoo.fr',
   foundingDate: '1979',
   educationalLevel: 'Secondary Education',
   educationalProgram: [
@@ -198,9 +198,9 @@ const structuredData = {
     name: 'Cameroon',
   },
   sameAs: [
-    'https://facebook.com/gbhsbafia',
-    'https://twitter.com/gbhsbafia',
-    'https://instagram.com/gbhsbafia',
+    'https://facebook.com/gbhsXYZ',
+    'https://twitter.com/gbhsXYZ',
+    'https://instagram.com/gbhsXYZ',
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
@@ -236,7 +236,7 @@ const structuredData = {
     '@type': 'ApplyAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://gbhs-bafia-web-site.vercel.app/contact',
+      urlTemplate: 'https://secondary-school-web-app/contact',
       inLanguage: 'en',
       actionPlatform: [
         'http://schema.org/DesktopWebPlatform',
@@ -259,7 +259,7 @@ const breadcrumbStructuredData = {
       '@type': 'ListItem',
       position: 1,
       name: 'Home',
-      item: 'https://gbhs-bafia-web-site.vercel.app',
+      item: 'https://secondary-school-web-app',
     },
   ],
 };

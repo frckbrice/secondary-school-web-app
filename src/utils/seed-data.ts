@@ -1222,7 +1222,7 @@ const sampleUsers = [
     password: 'admin123',
     role: 'admin',
     fullName: 'Administrator',
-    email: 'lyceebilinguebafia@gmail.com',
+    email: 'lyceebilingueXYZ@gmail.com',
   },
   {
     id: userIds.super_admin,
@@ -1230,7 +1230,7 @@ const sampleUsers = [
     password: 'admin123',
     role: 'super_admin',
     fullName: 'Super Administrator',
-    email: 'lyceebilinguebafia@gmail.com',
+    email: 'lyceebilingueXYZ@gmail.com',
   },
   {
     id: userIds.teacher1,
@@ -1238,7 +1238,7 @@ const sampleUsers = [
     password: 'teacher123',
     role: 'teacher',
     fullName: 'John Doe',
-    email: 'lyceebilinguebafia@gmail.com',
+    email: 'lyceebilingueXYZ@gmail.com',
     teacherSubject: 'Mathematics',
   },
   {
@@ -1247,7 +1247,7 @@ const sampleUsers = [
     password: 'teacher123',
     role: 'teacher',
     fullName: 'Jane Smith',
-    email: 'lyceebilinguebafia@gmail.com',
+    email: 'lyceebilingueXYZ@gmail.com',
     teacherSubject: 'Physics',
   },
   {
@@ -1256,7 +1256,7 @@ const sampleUsers = [
     password: 'teacher123',
     role: 'teacher',
     fullName: 'Michael Johnson',
-    email: 'lyceebilinguebafia@gmail.com',
+    email: 'lyceebilingueXYZ@gmail.com',
     teacherSubject: 'Chemistry',
   },
 ];
@@ -1276,7 +1276,7 @@ const sampleStudents = [
     parentName: 'Robert Johnson',
     parentEmail: 'robert.johnson@example.com',
     parentPhone: '+237612345679',
-    address: '123 Main Street, Bafia',
+    address: '123 Main Street, XYZ',
     isActive: true,
   },
   {
@@ -1292,7 +1292,7 @@ const sampleStudents = [
     parentName: 'Mary Smith',
     parentEmail: 'mary.smith@example.com',
     parentPhone: '+237612345681',
-    address: '456 Oak Avenue, Bafia',
+    address: '456 Oak Avenue, XYZ',
     isActive: true,
   },
   {
@@ -1308,7 +1308,7 @@ const sampleStudents = [
     parentName: 'James Davis',
     parentEmail: 'james.davis@example.com',
     parentPhone: '+237612345683',
-    address: '789 Pine Road, Bafia',
+    address: '789 Pine Road, XYZ',
     isActive: true,
   },
   {
@@ -1324,7 +1324,7 @@ const sampleStudents = [
     parentName: 'Sarah Wilson',
     parentEmail: 'sarah.wilson@example.com',
     parentPhone: '+237612345685',
-    address: '321 Elm Street, Bafia',
+    address: '321 Elm Street, XYZ',
     isActive: true,
   },
   {
@@ -1340,7 +1340,7 @@ const sampleStudents = [
     parentName: 'Thomas Brown',
     parentEmail: 'thomas.brown@example.com',
     parentPhone: '+237612345687',
-    address: '654 Maple Drive, Bafia',
+    address: '654 Maple Drive, XYZ',
     isActive: true,
   },
 ];

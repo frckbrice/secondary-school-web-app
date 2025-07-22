@@ -34,7 +34,7 @@ export class CloudinaryService {
   ): Promise<UploadResult> {
     try {
       const uploadOptions = {
-        folder: options.folder || 'gbhs-bafia',
+        folder: options.folder || 'gbhs-XYZ',
         transformation: options.transformation || {
           quality: 'auto',
           fetch_format: 'auto',

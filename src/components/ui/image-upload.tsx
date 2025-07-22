@@ -33,7 +33,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   onRemove,
   maxFiles = 10,
   maxSize = 5 * 1024 * 1024,
-  folder = 'gbhs-bafia',
+  folder = 'gbhs-XYZ',
   className,
   disabled = false,
   showPreview = true,

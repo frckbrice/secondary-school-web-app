@@ -522,7 +522,7 @@ export default function AboutPage() {
                     <p className="text-muted-foreground leading-relaxed">
                       Government Bilingual High School
                       <br />
-                      Bafia, Centre Region
+                      XYZ, Centre Region
                       <br />
                       Cameroon
                       <br />

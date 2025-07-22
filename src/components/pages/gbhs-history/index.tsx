@@ -29,8 +29,8 @@ export default function GBHSHistory() {
       title: language === 'fr' ? 'Fondation de  ""' : 'Foundation of  ""',
       description:
         language === 'fr'
-          ? "Établissement du Lycée Bilingue de Bafia par le gouvernement camerounais dans le cadre du développement de l'éducation bilingue au Cameroun. L'école a été créée pour répondre aux besoins éducatifs de la région du Centre."
-          : 'Establishment of Government Bilingual High School Bafia by the Cameroonian government as part of bilingual education development in Cameroon. The school was created to address the educational needs of the Centre region.',
+          ? "Établissement du Lycée Bilingue de XYZ par le gouvernement camerounais dans le cadre du développement de l'éducation bilingue au Cameroun. L'école a été créée pour répondre aux besoins éducatifs de la région du Centre."
+          : 'Establishment of Government Bilingual High School XYZ by the Cameroonian government as part of bilingual education development in Cameroon. The school was created to address the educational needs of the Centre region.',
       icon: Building,
       color: 'bg-blue-100 text-blue-600',
     },
@@ -219,7 +219,7 @@ export default function GBHSHistory() {
             </div>
             <div className="flex items-center space-x-2">
               <MapPin className="w-5 h-5" />
-              <span>Bafia, Cameroun</span>
+              <span>XYZ, Cameroun</span>
             </div>
           </div>
         </div>

@@ -73,7 +73,7 @@ export default function AdmissionsSection() {
   const uploadDocument = async (file: File): Promise<UploadedDocument> => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('folder', 'gbhs-bafia/applications/documents');
+    formData.append('folder', 'gbhs-XYZ/applications/documents');
 
     const response = await fetch('/api/upload', {
       method: 'POST',

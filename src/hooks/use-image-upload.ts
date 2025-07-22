@@ -42,7 +42,7 @@ export const useImageUpload = (options: UseImageUploadOptions = {}) => {
       'image/gif',
       'image/webp',
     ],
-    folder = 'gbhs-bafia',
+    folder = 'gbhs-XYZ',
     onSuccess,
     onError,
   } = options;
