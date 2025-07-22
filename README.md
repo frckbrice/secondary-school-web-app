@@ -1,4 +1,4 @@
-# "" - Next.js Fullstack School Management System
+# - Next.js Fullstack School Management System
 
 > **Note:** All project documentation files (API routes, testing guides, etc.) are now located in the `/docs/` directory. The main `README.md` remains at the root for quick reference.
 
