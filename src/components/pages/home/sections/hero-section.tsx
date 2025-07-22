@@ -4,11 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../../../ui/button';
 import { useLanguage } from '../../../../hooks/use-language';
 import { useTheme } from 'next-themes';
+import { useSettings } from '@/components/providers/settings-provider';
 
 export default function HeroSection() {
   const { t, language } = useLanguage();
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { settings } = useSettings();
 
   useEffect(() => {
     setMounted(true);
@@ -24,7 +26,12 @@ export default function HeroSection() {
   return (
     <section
       id="home"
-      className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white"
+      className="relative 
+      bg-gradient-to-br 
+      from-blue-600
+       via-blue-700 
+       to-blue-900
+        text-white"
     >
       {/* Background overlay - only in light mode, but only after mounting */}
       {mounted && theme !== 'dark' && (
@@ -46,13 +53,15 @@ export default function HeroSection() {
           <div className="text-center lg:text-left">
             <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl mb-6 leading-tight">
               {language === 'fr'
-                ? 'Lycée Bilingue de Bafia'
-                : 'Government Bilingual High School Bafia'}
+                ? settings?.siteNameFr || 'Nom du Site'
+                : settings?.siteName || 'Site Name'}
             </h1>
             <p className="text-xl sm:text-2xl mb-8 text-blue-100 leading-relaxed">
               {language === 'fr'
-                ? 'Lycée Bilingue de Bafia'
-                : 'Government Bilingual High School Bafia'}
+                ? settings?.siteDescription ||
+                  "une description du Site pour le texte de la page d'accueil"
+                : settings?.siteDescriptionFr ||
+                  'a site description for the home page text'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
@@ -78,13 +87,15 @@ export default function HeroSection() {
                 1,500+
               </div>
               <div className="text-blue-100">
-                {language === 'fr' ? 'Élèves inscrits' : 'Students Enrolled'}
+                {language === 'fr'
+                  ? 'Élèves inscrits'
+                  : 'Students Enrolled last year'}
               </div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm p-6 rounded-lg text-center border border-white border-opacity-20">
               <div className="text-3xl font-bold text-orange-400 mb-2">95%</div>
               <div className="text-blue-100">
-                {language === 'fr' ? 'Taux de réussite' : 'Pass Rate'}
+                {language === 'fr' ? 'Taux de réussite' : 'Pass Rate last year'}
               </div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm p-6 rounded-lg text-center border border-white border-opacity-20">
@@ -94,12 +105,14 @@ export default function HeroSection() {
               <div className="text-blue-100">
                 {language === 'fr'
                   ? 'Enseignants qualifiés'
-                  : 'Qualified Teachers'}
+                  : 'Qualified Teachers last year'}
               </div>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-sm p-6 rounded-lg text-center border border-white border-opacity-20">
               <div className="text-3xl font-bold text-orange-400 mb-2">45+</div>
-              <div className="text-blue-100">{t('hero.yearsExcellence')}</div>
+              <div className="text-blue-100">
+                {t('hero.yearsExcellence')} last year
+              </div>
             </div>
           </div>
         </div>

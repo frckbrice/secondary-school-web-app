@@ -1,4 +1,4 @@
-# GBHS Bafia - Next.js Fullstack School Management System
+# "" - Next.js Fullstack School Management System
 
 > **Note:** All project documentation files (API routes, testing guides, etc.) are now located in the `/docs/` directory. The main `README.md` remains at the root for quick reference.
 
@@ -110,7 +110,7 @@ docker run --name gbhs-postgres \
 ## 📦 Dockerfile Example
 
 ```Dockerfile
-# Dockerfile for GBHS Bafia Next.js App
+# Dockerfile for  "" Next.js App
 FROM node:20-alpine
 WORKDIR /app
 COPY package.json yarn.lock ./
@@ -154,4 +154,4 @@ jobs:
 
 ## 📄 License
 
-Proprietary. All rights reserved.
+Copyright (c) 2025 X School. All rights reserved.

@@ -41,7 +41,6 @@ import { Input } from '../../../ui/input';
 import { ProfileImageUpload } from '../../../ui/profile-image-upload';
 import { Sun, Moon, User as UserIcon, ChevronDown, Menu } from 'lucide-react';
 import { TeacherSidebar } from '../../../ui/teacher-sidebar';
-import TemplateList from './TemplateList';
 import { User } from '../../../../schema';
 import {
   Sheet,
@@ -53,8 +52,7 @@ import {
 
 const TeacherDashboard: React.FC = () => {
   const { t, language, setLanguage } = useLanguage();
-  const { user, isLoading, error, logoutMutation, registerMutation } =
-    useAuth();
+  const { user } = useAuth();
   const [activeSection, setActiveSection] = useState('importExport');
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileForm, setProfileForm] = useState({
@@ -212,6 +210,8 @@ const TeacherDashboard: React.FC = () => {
       t('studentGrades.title') ||
       (language === 'fr' ? 'Notes des Étudiants' : 'Student Grades'),
   };
+
+  console.log('user from teacher dashboard', user);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -432,8 +432,8 @@ const TeacherDashboard: React.FC = () => {
                 </h1>
                 <p className="text-gray-500 mt-2">
                   {language === 'fr'
-                    ? 'Bienvenue sur votre espace enseignant GBHS Bafia'
-                    : 'Welcome to your GBHS Bafia teacher portal'}
+                    ? 'Bienvenue sur votre espace enseignant  ""'
+                    : 'Welcome to your  "" teacher portal'}
                 </p>
               </div>
               {/* Add any future header actions here */}

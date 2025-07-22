@@ -54,6 +54,8 @@ import {
 import { apiRequest } from '../../../../lib/queryClient';
 import { useToast } from '../../../../hooks/use-toast';
 import { useLanguage } from '../../../../hooks/use-language';
+import { settings } from '@/schema';
+import { useSettings } from '@/components/providers/settings-provider';
 
 const contributionSchema = z.object({
   contributorName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -89,7 +91,7 @@ export default function AlumniContribution() {
   const { toast } = useToast();
   const [isContributionOpen, setIsContributionOpen] = useState(false);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
-
+  const { settings } = useSettings();
   const contributionForm = useForm<ContributionFormData>({
     resolver: zodResolver(contributionSchema),
     defaultValues: {
@@ -116,8 +118,8 @@ export default function AlumniContribution() {
           language === 'fr' ? 'Contribution envoyée' : 'Contribution submitted',
         description:
           language === 'fr'
-            ? 'Merci pour votre généreuse contribution à GBHS Bafia!'
-            : 'Thank you for your generous contribution to GBHS Bafia!',
+            ? 'Merci pour votre généreuse contribution à  ""!'
+            : 'Thank you for your generous contribution to  ""!',
         variant: 'success',
       });
       contributionForm.reset();
@@ -245,8 +247,10 @@ export default function AlumniContribution() {
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             {language === 'fr'
-              ? "En tant qu'ancien élève, votre contribution aide à développer les infrastructures, soutenir les étudiants et maintenir l'excellence éducative au GBHS Bafia."
-              : 'As an alumnus, your contribution helps develop infrastructure, support students, and maintain educational excellence at GBHS Bafia.'}
+              ? "En tant qu'ancien élève, votre contribution aide à développer les infrastructures, soutenir les étudiants et maintenir l'excellence éducative au  " +
+                (settings?.siteNameFr || 'Site Name')
+              : 'As an alumnus, your contribution helps develop infrastructure, support students, and maintain educational excellence at  ' +
+                (settings?.siteName || 'Site Name')}
           </p>
         </div>
 
@@ -377,8 +381,10 @@ export default function AlumniContribution() {
                     </DialogTitle>
                     <DialogDescription>
                       {language === 'fr'
-                        ? "Votre générosité aide à améliorer l'éducation au GBHS Bafia"
-                        : 'Your generosity helps improve education at GBHS Bafia'}
+                        ? "Votre générosité aide à améliorer l'éducation au  " +
+                          (settings?.siteNameFr || 'Site Name')
+                        : 'Your generosity helps improve education at  ' +
+                          (settings?.siteName || 'Site Name')}
                     </DialogDescription>
                   </DialogHeader>
 

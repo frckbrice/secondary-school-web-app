@@ -23,7 +23,11 @@ import {
   FormLabel,
   FormMessage,
 } from '../../ui/form';
-import { insertContactSchema, type InsertContact } from '../../../schema';
+import {
+  insertContactSchema,
+  settings,
+  type InsertContact,
+} from '../../../schema';
 import { apiRequest } from '../../../lib/queryClient';
 import { useToast } from '../../../hooks/use-toast';
 import { useLanguage } from '../../../hooks/use-language';
@@ -40,11 +44,13 @@ import {
 import Link from 'next/link';
 import { Header } from '../../globals/layout/header';
 import { Footer } from '../../globals/layout/footer';
+import { useSettings } from '@/components/providers/settings-provider';
 
 export default function ContactPage() {
   const { language, t } = useLanguage();
   const { toast } = useToast();
 
+  const { settings } = useSettings();
   const form = useForm<InsertContact>({
     resolver: zodResolver(insertContactSchema),
     defaultValues: {
@@ -95,7 +101,8 @@ export default function ContactPage() {
 
       {/* Hero Section */}
       <div
-        className="relative min-h-[70vh] flex items-center justify-center"
+        className="relative min-h-[70vh] flex-col 
+        sm:flex items-center justify-center p-4 sm:p-0"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')`,
           backgroundSize: 'cover',
@@ -104,25 +111,15 @@ export default function ContactPage() {
         }}
       >
         {/* Navigation Header */}
-        <div className="absolute top-20 left-0 right-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between py-4">
-              <Link href="/">
-                <Button
-                  variant="ghost"
-                  className="text-white hover:bg-white/20 flex items-center space-x-2 backdrop-blur-sm"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>
-                    {language === 'fr' ? "Retour à l'accueil" : 'Back to Home'}
-                  </span>
-                </Button>
-              </Link>
-              <h1 className="text-3xl font-bold text-white text-center">
-                {language === 'fr' ? 'Contactez-Nous' : 'Contact Us'}
-              </h1>
-              <div className="w-32"></div>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            className="flex-col  items-center justify-center py-4 w-full 
+            space-y-4"
+          >
+            <h1 className="text-2xl sm:text-3xl font-bold text-white text-center">
+              {language === 'fr' ? 'Contactez-Nous' : 'Contact Us'}
+            </h1>
+            <div className="w-32 h-0 " />
           </div>
         </div>
 
@@ -185,13 +182,23 @@ export default function ContactPage() {
                         {t('contact.address')}
                       </h4>
                       <p className="text-muted-foreground">
-                        Government Bilingual High School
+                        {settings?.siteName || language === 'fr'
+                          ? 'Nom du Site'
+                          : 'Site Name'}
                         <br />
-                        Bafia, Centre Region
+                        {settings?.address || language === 'fr'
+                          ? 'Ville, Région'
+                          : 'City, Region'}
                         <br />
-                        Cameroon
+                        {settings?.country || language === 'fr'
+                          ? 'Cameroun'
+                          : 'Cameroon'}
                         <br />
-                        <span className="font-medium">P.O. Box 327</span>
+                        <span className="font-medium">
+                          {settings?.poBox || language === 'fr'
+                            ? 'Boîte Postale 327'
+                            : 'P.O. Box 327'}
+                        </span>
                       </p>
                     </div>
                   </div>
@@ -204,7 +211,9 @@ export default function ContactPage() {
                       <h4 className="font-semibold text-foreground mb-1">
                         {t('contact.phone')}
                       </h4>
-                      <p className="text-muted-foreground">+237 222 175 175</p>
+                      <p className="text-muted-foreground">
+                        {settings?.phone || '+237 222 xxx xxx'}
+                      </p>
                     </div>
                   </div>
 
@@ -217,7 +226,7 @@ export default function ContactPage() {
                         {t('contact.email')}
                       </h4>
                       <p className="text-muted-foreground">
-                        lyceebilinguebafia@gmail.com
+                        {settings?.contactEmail || 'example@gmail.com'}
                       </p>
                     </div>
                   </div>
@@ -231,9 +240,13 @@ export default function ContactPage() {
                         {t('contact.hours')}
                       </h4>
                       <p className="text-muted-foreground">
-                        Mon - Fri: 7:00 AM - 15:30 PM
+                        {settings?.hours || language === 'fr'
+                          ? 'Lun - Ven: 7:00 H - 15:30 H'
+                          : 'Mon - Fri: 7:00 AM - 15:30 PM'}
                         <br />
-                        Sat: Book an appointment
+                        {settings?.hours || language === 'fr'
+                          ? 'Samedi: Réservez un rendez-vous'
+                          : 'Sat: Book an appointment'}
                       </p>
                     </div>
                   </div>

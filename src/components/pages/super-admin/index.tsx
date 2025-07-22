@@ -164,7 +164,7 @@ export default function SuperAdminDashboard() {
                   : 'Super Admin Dashboard'}
               </h1>
               <p className="text-gray-600">
-                GBHS Bafia - Comprehensive Analytics & Management
+                "" - Comprehensive Analytics & Management
               </p>
             </div>
             <div className="flex items-center gap-4">

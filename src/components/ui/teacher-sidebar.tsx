@@ -64,7 +64,7 @@ export function TeacherSidebar({
               {language === 'fr' ? 'Portail Enseignant' : 'Teacher Portal'}
             </h2>
             <p className="text-sm text-indigo-200">
-              {language === 'fr' ? 'GBHS Bafia' : 'GBHS Bafia'}
+              {language === 'fr' ? ' ""' : ' ""'}
             </p>
           </div>
         </div>

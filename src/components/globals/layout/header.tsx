@@ -7,6 +7,7 @@ import { useLanguage } from '../../../hooks/use-language';
 import { useTheme } from 'next-themes';
 import { useAuth } from '../../../hooks/use-auth';
 import { useSettings } from '../../providers/settings-provider';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Menu,
   X,
@@ -33,11 +34,18 @@ export function Header() {
   const { user, logoutMutation } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { settings, loading: settingsLoading } = useSettings();
 
   // Prevent hydration mismatch by only rendering theme-dependent content after mount
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (settingsLoading || !settings) {
+    return null; // Or a loading skeleton if you prefer
+  }
 
   const navigation = [
     { name: language === 'fr' ? 'Accueil' : 'Home', href: '/' },
@@ -71,21 +79,61 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+    <header
+      className="bg-white dark:bg-gray-900 
+    shadow-sm border-b border-gray-200
+     dark:border-gray-700 sticky top-0 z-50"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Go Back button for /auth page on mobile */}
+        {pathname === '/auth' && (
+          <div className="md:hidden flex items-center py-2 bg-red-500">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.back()}
+              className="flex items-center text-gray-700 dark:text-gray-300"
+            >
+              <svg
+                className="w-5 h-5 mr-1"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              {language === 'fr' ? 'Retour' : 'Go Back'}
+            </Button>
+          </div>
+        )}
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <Link href="/" className="flex items-center space-x-2">
-              <School className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              {settings.logoUrl ? (
+                <img
+                  src={settings.logoUrl}
+                  alt="Logo"
+                  className="w-8 h-8 object-contain"
+                />
+              ) : (
+                <School className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+              )}
               <div className="hidden sm:block">
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  GBHS Bafia
+                  {language === 'fr'
+                    ? settings.siteNameFr || settings.siteName || 'Nom du site'
+                    : settings.siteName || 'Site Name'}
                 </h1>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  {language === 'fr'
-                    ? 'Lycée Bilingue'
-                    : 'Bilingual High School'}
+                  {language === 'en'
+                    ? settings.siteName || 'Site Name'
+                    : settings.siteNameFr || 'Nom du site'}
                 </p>
               </div>
             </Link>
@@ -115,9 +163,9 @@ export function Header() {
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
               >
                 {theme === 'dark' ? (
-                  <Sun className="w-4 h-4" />
+                  <Sun className="w-8 h-8" />
                 ) : (
-                  <Moon className="w-4 h-4" />
+                  <Moon className="w-8 h-8" />
                 )}
               </Button>
             )}
@@ -130,7 +178,7 @@ export function Header() {
                   size="sm"
                   className="text-gray-700 dark:text-gray-300"
                 >
-                  <Globe className="w-4 h-4 mr-1" />
+                  <Globe className="w-8 h-8" />
                   {language === 'fr' ? 'FR' : 'EN'}
                 </Button>
               </DropdownMenuTrigger>
@@ -152,12 +200,14 @@ export function Header() {
                     variant="ghost"
                     className="h-10 w-10 rounded-full p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
-                    <Avatar className="h-10 w-10">
+                    <Avatar className="h-12 w-12">
                       <AvatarImage
                         src={
                           (user as any).profileImageUrl ??
                           'https://via.placeholder.com/150'
                         }
+                        alt="Profile Image"
+                        className="object-cover h-12 w-12"
                       />
                       <AvatarFallback className="bg-blue-600 text-white font-semibold">
                         {getUserInitials()}
@@ -199,25 +249,40 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center space-x-2">
-                <Link href="/auth">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    {language === 'fr' ? 'Connexion' : 'Login'}
-                  </Button>
-                </Link>
-                <Link href="/auth?mode=register">
-                  <Button
-                    size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    {language === 'fr' ? "S'inscrire" : 'Register'}
-                  </Button>
-                </Link>
-              </div>
+              <>
+                {/* Desktop: show both buttons, Mobile: show icon button */}
+                <div className="hidden md:flex items-center space-x-2">
+                  <Link href="/auth">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      {language === 'fr' ? 'Connexion' : 'Login'}
+                    </Button>
+                  </Link>
+                  <Link href="/auth?mode=register">
+                    <Button
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      {language === 'fr' ? "S'inscrire" : 'Register'}
+                    </Button>
+                  </Link>
+                </div>
+                <div className="flex md:hidden items-center">
+                  <Link href="/auth">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 p-2"
+                      aria-label={language === 'fr' ? 'Connexion' : 'Login'}
+                    >
+                      <User className="w-6 h-6" />
+                    </Button>
+                  </Link>
+                </div>
+              </>
             )}
 
             {/* Mobile menu button */}

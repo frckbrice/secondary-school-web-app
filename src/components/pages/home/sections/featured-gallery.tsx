@@ -43,10 +43,10 @@ export default function FeaturedGallery() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-              {language === 'fr' ? 'Galerie' : 'Gallery'}
+              {language === 'fr' ? 'Galerie' : 'Gallery '}
             </h2>
             <p className="text-xl text-muted-foreground">
-              {language === 'fr' ? 'Galerie' : 'Gallery'}
+              {language === 'fr' ? 'Galerie' : 'Gallery '}
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -113,11 +113,8 @@ export default function FeaturedGallery() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-bold text-3xl sm:text-4xl text-foreground mb-4">
-            {language === 'fr' ? 'Galerie' : 'Gallery'}
+            {language === 'fr' ? 'Galerie' : 'Gallery '}
           </h2>
-          <p className="text-xl text-muted-foreground">
-            {language === 'fr' ? 'Galerie' : 'Gallery'}
-          </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -252,9 +252,7 @@ export default function AdminDashboard() {
                   <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                     {t('admin.dashboard')}
                   </h1>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    GBHS Bafia
-                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">""</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">

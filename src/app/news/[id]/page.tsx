@@ -46,13 +46,13 @@ export async function generateMetadata({
   const news = await getNewsById(id);
   if (!news) {
     return {
-      title: 'News Not Found | GBHS Bafia',
+      title: 'News Not Found |  ""',
       description: 'The news article could not be found.',
     };
   }
   return {
-    title: `${news.title} | GBHS Bafia`,
-    description: news.content?.substring(0, 150) || 'GBHS Bafia News',
+    title: `${news.title} |  ""`,
+    description: news.content?.substring(0, 150) || ' "" News',
     openGraph: {
       title: news.title,
       description: news.content?.substring(0, 150),

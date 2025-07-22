@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/use-auth';
-import { useLanguage } from '../../../hooks/use-language';
 import {
   Card,
   CardContent,
@@ -87,6 +86,81 @@ interface Application {
   notes?: string;
 }
 
+// Mock data - replace with API calls
+const mockApplications: Application[] = [
+  {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    phone: '+237612345678',
+    form: 'form1',
+    documents: ['birth_certificate.pdf', 'previous_report.pdf'],
+    status: 'pending',
+    submittedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: 2,
+    firstName: 'Jane',
+    lastName: 'Smith',
+    email: 'jane.smith@example.com',
+    phone: '+237612345679',
+    form: 'form2',
+    documents: ['birth_certificate.pdf', 'transfer_letter.pdf'],
+    status: 'reviewed',
+    submittedAt: '2024-01-10T14:20:00Z',
+    reviewedAt: '2024-01-12T09:15:00Z',
+    reviewedBy: 1,
+    reviewerName: 'Admin User',
+    notes: 'Documents verified. Good academic record.',
+  },
+  {
+    id: 3,
+    firstName: 'Michael',
+    lastName: 'Johnson',
+    email: 'michael.johnson@example.com',
+    phone: '+237612345680',
+    form: 'form1',
+    documents: ['birth_certificate.pdf', 'medical_certificate.pdf'],
+    status: 'accepted',
+    submittedAt: '2024-01-05T11:45:00Z',
+    reviewedAt: '2024-01-08T16:30:00Z',
+    reviewedBy: 1,
+    reviewerName: 'Admin User',
+    notes: 'All requirements met. Application approved.',
+  },
+  {
+    id: 4,
+    firstName: 'Sarah',
+    lastName: 'Wilson',
+    email: 'sarah.wilson@example.com',
+    phone: '+237612345681',
+    form: 'form3',
+    documents: ['birth_certificate.pdf'],
+    status: 'rejected',
+    submittedAt: '2024-01-20T08:15:00Z',
+    reviewedAt: '2024-01-22T13:45:00Z',
+    reviewedBy: 1,
+    reviewerName: 'Admin User',
+    notes: 'Incomplete documentation. Missing required certificates.',
+  },
+  {
+    id: 5,
+    firstName: 'David',
+    lastName: 'Brown',
+    email: 'david.brown@example.com',
+    phone: '+237612345682',
+    form: 'form2',
+    documents: [
+      'birth_certificate.pdf',
+      'previous_report.pdf',
+      'character_reference.pdf',
+    ],
+    status: 'pending',
+    submittedAt: '2024-01-25T15:30:00Z',
+  },
+];
+
 export default function ApplicationsManagement() {
   const { user } = useAuth();
 
@@ -130,81 +204,6 @@ export default function ApplicationsManagement() {
     status: 'pending',
     notes: '',
   });
-
-  // Mock data - replace with API calls
-  const mockApplications: Application[] = [
-    {
-      id: 1,
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      phone: '+237612345678',
-      form: 'form1',
-      documents: ['birth_certificate.pdf', 'previous_report.pdf'],
-      status: 'pending',
-      submittedAt: '2024-01-15T10:30:00Z',
-    },
-    {
-      id: 2,
-      firstName: 'Jane',
-      lastName: 'Smith',
-      email: 'jane.smith@example.com',
-      phone: '+237612345679',
-      form: 'form2',
-      documents: ['birth_certificate.pdf', 'transfer_letter.pdf'],
-      status: 'reviewed',
-      submittedAt: '2024-01-10T14:20:00Z',
-      reviewedAt: '2024-01-12T09:15:00Z',
-      reviewedBy: 1,
-      reviewerName: 'Admin User',
-      notes: 'Documents verified. Good academic record.',
-    },
-    {
-      id: 3,
-      firstName: 'Michael',
-      lastName: 'Johnson',
-      email: 'michael.johnson@example.com',
-      phone: '+237612345680',
-      form: 'form1',
-      documents: ['birth_certificate.pdf', 'medical_certificate.pdf'],
-      status: 'accepted',
-      submittedAt: '2024-01-05T11:45:00Z',
-      reviewedAt: '2024-01-08T16:30:00Z',
-      reviewedBy: 1,
-      reviewerName: 'Admin User',
-      notes: 'All requirements met. Application approved.',
-    },
-    {
-      id: 4,
-      firstName: 'Sarah',
-      lastName: 'Wilson',
-      email: 'sarah.wilson@example.com',
-      phone: '+237612345681',
-      form: 'form3',
-      documents: ['birth_certificate.pdf'],
-      status: 'rejected',
-      submittedAt: '2024-01-20T08:15:00Z',
-      reviewedAt: '2024-01-22T13:45:00Z',
-      reviewedBy: 1,
-      reviewerName: 'Admin User',
-      notes: 'Incomplete documentation. Missing required certificates.',
-    },
-    {
-      id: 5,
-      firstName: 'David',
-      lastName: 'Brown',
-      email: 'david.brown@example.com',
-      phone: '+237612345682',
-      form: 'form2',
-      documents: [
-        'birth_certificate.pdf',
-        'previous_report.pdf',
-        'character_reference.pdf',
-      ],
-      status: 'pending',
-      submittedAt: '2024-01-25T15:30:00Z',
-    },
-  ];
 
   const formOptions = [
     { value: 'form1', label: 'Form 1' },

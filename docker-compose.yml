@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PWD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - gbhs_pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - '3000:3000'
+    # Uncomment the following if your app needs to wait for db to be ready
+    command:
+      [
+        'sh',
+        '-c',
+        'until pg_isready -h db -U gbhs_user; do sleep 1; done; yarn run dev',
+      ]
+    volumes:
+      - .:/app
+
+volumes:
+  gbhs_pgdata:

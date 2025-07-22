@@ -23,6 +23,7 @@ import {
 } from '../../ui/select';
 import { useLanguage } from '../../../hooks/use-language';
 import { type News } from '../../../schema';
+import { useSettings } from '../../providers/settings-provider';
 import {
   Calendar,
   Clock,
@@ -42,7 +43,7 @@ export default function NewsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [selectedArticle, setSelectedArticle] = useState<News | null>(null);
-
+  const { settings } = useSettings();
   // Infinite query for paginated news
   const {
     data,
@@ -169,6 +170,9 @@ export default function NewsPage() {
       achievements: 'bg-yellow-100 text-yellow-800',
       announcements: 'bg-gray-100 text-gray-800',
       admissions: 'bg-red-100 text-red-800',
+      cultural: 'bg-orange-100 text-orange-800',
+      academic: 'bg-yellow-100 text-yellow-800',
+      general: 'bg-gray-400 text-gray-800',
     };
     return colors[category] || 'bg-gray-100 text-gray-800';
   };
@@ -177,11 +181,11 @@ export default function NewsPage() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 sm:py-8 py-4">
           <Button
             onClick={() => setSelectedArticle(null)}
             variant="ghost"
-            className="mb-6 flex items-center space-x-2"
+            className="mb-6 flex items-center space-x-2 "
           >
             <ArrowLeft className="w-4 h-4" />
             <span>
@@ -212,8 +216,11 @@ export default function NewsPage() {
                   <User className="w-4 h-4 mr-1" />
                   <span>
                     {language === 'fr'
-                      ? "Par l'Administration GBHS Bafia"
-                      : 'By GBHS Bafia Administration'}
+                      ? "Par l'Administration  " +
+                        (settings?.siteNameFr || 'Nom du Site')
+                      : 'By  ' +
+                        (settings?.siteName || 'Nom du Site') +
+                        ' Administration'}
                   </span>
                   <Clock className="w-4 h-4 ml-4 mr-1" />
                   <span>
@@ -254,7 +261,8 @@ export default function NewsPage() {
 
       {/* Hero Section with School Photo Background */}
       <div
-        className="relative min-h-[70vh] flex items-center justify-center"
+        className="relative min-h-[70vh] flex-col 
+        sm:flex items-center justify-center p-4 sm:p-0"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')`,
           backgroundSize: 'cover',
@@ -263,21 +271,30 @@ export default function NewsPage() {
         }}
       >
         {/* Navigation Header */}
-        <div className="absolute top-20 left-0 right-0 z-10">
+        <div className="sm:absolute sm:top-20 sm:left-0 sm:right-0 sm:z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between py-4">
-              <Link href="/">
+            <div
+              className="flex-col  items-center justify-center py-4 w-full 
+            space-y-4"
+            >
+              {/* <Link href="/" className='hidden sm:block'>
                 <Button
                   variant="ghost"
-                  className="text-white hover:bg-white/20 flex items-center space-x-2 backdrop-blur-sm"
+                  className="
+                  text-white hover:bg-white/20
+                  flex items-center
+                  space-x-2 backdrop-blur-sm"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>
                     {language === 'fr' ? "Retour à l'accueil" : 'Back to Home'}
                   </span>
                 </Button>
-              </Link>
-              <h1 className="text-3xl font-bold text-white text-center">
+              </Link> */}
+              <h1
+                className="ml-6 sm:ml-0 text-2xl 
+              sm:text-3xl font-bold text-white text-center"
+              >
                 {language === 'fr'
                   ? 'Actualités & Annonces'
                   : 'News & Announcements'}
@@ -288,26 +305,26 @@ export default function NewsPage() {
         </div>
 
         {/* Hero Content */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+        <div className="max-w-4xl mx-auto sm:mt-10 px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="bg-black/40 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/20">
             <Newspaper className="w-16 h-16 mx-auto mb-6 text-blue-300" />
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">
               {language === 'fr' ? 'Restez Informés' : 'Stay Informed'}
             </h2>
-            <p className="text-xl md:text-2xl text-blue-100 leading-relaxed mb-6">
+            <p className="text-lg md:text-2xl text-blue-100 leading-relaxed mb-6">
               {language === 'fr'
                 ? 'Découvrez les dernières nouvelles, événements et réalisations de notre école'
                 : 'Discover the latest news, events, and achievements from our school'}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <div className="bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20">
-                <span className="text-blue-200 font-medium">
+                <span className="text-blue-200 font-medium text-base sm:text-lg">
                   {filteredNews.length}{' '}
                   {language === 'fr' ? 'articles' : 'articles'}
                 </span>
               </div>
               <div className="bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20">
-                <span className="text-blue-200 font-medium">
+                <span className="text-blue-200 font-medium text-base sm:text-lg">
                   {language === 'fr'
                     ? 'Mise à jour régulière'
                     : 'Regular Updates'}

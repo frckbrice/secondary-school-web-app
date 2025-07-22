@@ -1,6 +1,6 @@
 {
-  "name": "GBHS Bafia - Government Bilingual High School",
-  "short_name": "GBHS Bafia",
+  "name": "GBHS XYZ - Government Bilingual High School",
+  "short_name": "GBHS XYZ",
   "description": "Premier secondary education in Centre Region, Cameroon. Excellence in academics, sports, and character development.",
   "start_url": "/",
   "display": "standalone",
@@ -49,14 +49,14 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "GBHS Bafia Desktop View"
+      "label": "GBHS XYZ Desktop View"
     },
     {
       "src": "/screenshot-mobile.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "GBHS Bafia Mobile View"
+      "label": "GBHS XYZ Mobile View"
     }
   ],
   "shortcuts": [
